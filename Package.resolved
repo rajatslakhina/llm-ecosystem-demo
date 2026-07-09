@@ -1,0 +1,42 @@
+{
+  "originHash" : "bc728ee22f69aa6e22cf4e1b2b7d94397b37966ad50fa766da35d6d61a39a239",
+  "pins" : [
+    {
+      "identity" : "foundation-model-provider-gateway",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/foundation-model-provider-gateway.git",
+      "state" : {
+        "revision" : "e93e63506bd3d81279cd898ca8a9b25c8fe569f5",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "response-cache-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/response-cache-kit.git",
+      "state" : {
+        "revision" : "4e2c3636a8d2487186bd030b1b3f1e6550ee574b",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "structured-output-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/structured-output-kit.git",
+      "state" : {
+        "revision" : "3cefe2bc09a2a311562e999d76a5321dc78f57ae",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "token-meter-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/token-meter-kit.git",
+      "state" : {
+        "revision" : "d817dc67b5ea688c556dde40067cc1dd782631ac",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

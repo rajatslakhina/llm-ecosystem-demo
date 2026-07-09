@@ -1,5 +1,6 @@
 import Foundation
 import ProviderGatewayKit
+import ResponseCacheKit
 import StructuredOutputKit
 import TokenMeterKit
 
@@ -86,37 +87,48 @@ struct EcosystemDemo {
         // own rates against those identifiers is the expected integration
         // pattern rather than a workaround.
         let registry = PricingRegistry()
-        await registry.register(ModelPricing(inputPerMillion: 0, outputPerMillion: 0), for: ProviderIdentifier.onDevice.rawValue)
-        await registry.register(ModelPricing(inputPerMillion: 3, outputPerMillion: 15), for: ProviderIdentifier.cloud.rawValue)
-        await registry.register(ModelPricing(inputPerMillion: 1, outputPerMillion: 4), for: ProviderIdentifier.selfHosted.rawValue)
+        await registry.register(
+            ModelPricing(inputPerMillion: 0, outputPerMillion: 0), for: ProviderIdentifier.onDevice.rawValue
+        )
+        await registry.register(
+            ModelPricing(inputPerMillion: 3, outputPerMillion: 15), for: ProviderIdentifier.cloud.rawValue
+        )
+        await registry.register(
+            ModelPricing(inputPerMillion: 1, outputPerMillion: 4), for: ProviderIdentifier.selfHosted.rawValue
+        )
 
         let meter = TokenMeter(registry: registry)
         let decoder = StructuredOutputDecoder()
         let instructions = PromptBuilder.instructions(for: WeatherReport.jsonSchema, typeName: "a WeatherReport")
 
         await runSingleShotScenario(
-            label: "on-device provider, clean JSON",
-            providerID: .onDevice,
-            script: [#"{"city": "Bengaluru", "temperatureCelsius": 27.5, "conditions": "cloudy"}"#],
+            ScenarioRequest(
+                label: "on-device provider, clean JSON",
+                providerID: .onDevice,
+                script: [#"{"city": "Bengaluru", "temperatureCelsius": 27.5, "conditions": "cloudy"}"#]
+            ),
             instructions: instructions,
             decoder: decoder,
             meter: meter
         )
 
         await runSingleShotScenario(
-            label: "cloud provider, JSON fenced in prose",
-            providerID: .cloud,
-            script: [
-                "Here is the current report:\n```json\n" +
-                    #"{"city": "Mumbai", "temperatureCelsius": 31.0, "conditions": "storm"}"# +
-                    "\n```\nLet me know if you need more detail."
-            ],
+            ScenarioRequest(
+                label: "cloud provider, JSON fenced in prose",
+                providerID: .cloud,
+                script: [
+                    "Here is the current report:\n```json\n" +
+                        #"{"city": "Mumbai", "temperatureCelsius": 31.0, "conditions": "storm"}"# +
+                        "\n```\nLet me know if you need more detail."
+                ]
+            ),
             instructions: instructions,
             decoder: decoder,
             meter: meter
         )
 
         await runSelfRepairingScenario(instructions: instructions, decoder: decoder, meter: meter)
+        await runCachedScenario(instructions: instructions, decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
@@ -124,30 +136,39 @@ struct EcosystemDemo {
         print("Total metered cost across all three routed calls: $\(await meter.totalCost())")
     }
 
+    /// Groups a single-shot scenario's fixed setup so `runSingleShotScenario`
+    /// stays under SwiftLint's parameter-count limit without hiding any of
+    /// the per-scenario configuration.
+    private struct ScenarioRequest {
+        let label: String
+        let providerID: ProviderIdentifier
+        let script: [String]
+    }
+
     /// Routes one call through a real `ProviderRouter`/`LLMSession`, meters
     /// it with `TokenMeter`, and decodes the reply with
     /// `StructuredOutputDecoder` — the three packages' real code, wired
     /// together exactly as a host app would.
     private static func runSingleShotScenario(
-        label: String,
-        providerID: ProviderIdentifier,
-        script: [String],
+        _ scenario: ScenarioRequest,
         instructions: String,
         decoder: StructuredOutputDecoder,
         meter: TokenMeter
     ) async {
-        let router = ProviderRouter(providers: [ScriptedProvider(identifier: providerID, script: script)])
+        let router = ProviderRouter(providers: [
+            ScriptedProvider(identifier: scenario.providerID, script: scenario.script)
+        ])
         let session = LLMSession(router: router)
         do {
             let response = try await session.send(instructions)
             await meter.record(
                 TokenUsage(promptTokens: instructions.count / 4, completionTokens: response.text.count / 4),
-                for: providerID.rawValue
+                for: scenario.providerID.rawValue
             )
             let value = try await decoder.decode(WeatherReport.self, from: response.text)
-            print("[\(label)] routed via \(response.providerID) \u{2192} decoded: \(value)")
+            print("[\(scenario.label)] routed via \(response.providerID) \u{2192} decoded: \(value)")
         } catch {
-            print("[\(label)] FAILED: \(error)")
+            print("[\(scenario.label)] FAILED: \(error)")
         }
     }
 
@@ -176,7 +197,8 @@ struct EcosystemDemo {
                 let response: LLMResponse
                 if let previousError {
                     response = try await session.send(
-                        "Your last answer was invalid: \(previousError). Please answer again, matching the shape exactly."
+                        "Your last answer was invalid: \(previousError). "
+                            + "Please answer again, matching the shape exactly."
                     )
                 } else {
                     response = try await session.send(instructions)
@@ -191,5 +213,62 @@ struct EcosystemDemo {
         } catch {
             print("[self-hosted provider, self-repairing] FAILED: \(error)")
         }
+    }
+
+    /// Sits a `ResponseCache` in front of the same routed pipeline and asks
+    /// the identical question twice. The first call is a real MISS — routed
+    /// through `ProviderRouter`/`LLMSession` and metered with `TokenMeter`
+    /// exactly like the scenarios above. The second call never reaches the
+    /// router at all: `ResponseCache` answers from its own storage, and the
+    /// cost that would have been re-paid is credited to `estimatedSavings`
+    /// instead of a second `TokenMeter` recording.
+    private static func runCachedScenario(
+        instructions: String,
+        decoder: StructuredOutputDecoder,
+        meter: TokenMeter
+    ) async {
+        let cache = ResponseCache(capacity: 50, defaultTTL: 300)
+        // Routed through the cloud provider rather than on-device: the
+        // registered on-device rate is $0, which would make a HIT's
+        // estimatedSavings credit invisible. Cloud pricing makes the
+        // saved cost of the second, cache-answered call actually show up.
+        let providerID = ProviderIdentifier.cloud
+        let router = ProviderRouter(providers: [
+            ScriptedProvider(
+                identifier: providerID,
+                script: [#"{"city": "Pune", "temperatureCelsius": 24.0, "conditions": "clear"}"#]
+            )
+        ])
+        let session = LLMSession(router: router)
+        let request = CacheableRequest(modelID: providerID.rawValue, prompt: instructions)
+
+        for attempt in 1...2 {
+            if await cache.response(for: request) != nil {
+                print("[cached scenario] attempt \(attempt): HIT — no provider call, no additional cost")
+                continue
+            }
+            do {
+                let response = try await session.send(instructions)
+                await meter.record(
+                    TokenUsage(promptTokens: instructions.count / 4, completionTokens: response.text.count / 4),
+                    for: providerID.rawValue
+                )
+                let cost = await meter.cost(for: providerID.rawValue)
+                await cache.store(
+                    CachedResponse(text: response.text, providerID: response.providerID.rawValue),
+                    for: request,
+                    estimatedCost: cost
+                )
+                let value = try await decoder.decode(WeatherReport.self, from: response.text)
+                print(
+                    "[cached scenario] attempt \(attempt): MISS — routed via \(response.providerID), "
+                        + "decoded: \(value)"
+                )
+            } catch {
+                print("[cached scenario] attempt \(attempt): FAILED: \(error)")
+            }
+        }
+
+        print(await cache.statistics().formatted())
     }
 }

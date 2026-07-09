@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 480" font-family="'SF Mono', Menlo, Consolas, monospace">
-  <rect x="0" y="0" width="980" height="480" rx="10" fill="#0d1117"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 580" font-family="'SF Mono', Menlo, Consolas, monospace">
+  <rect x="0" y="0" width="980" height="580" rx="10" fill="#0d1117"/>
   <rect x="0" y="0" width="980" height="34" rx="10" fill="#161b22"/>
   <rect x="0" y="24" width="980" height="10" fill="#161b22"/>
   <circle cx="20" cy="17" r="6" fill="#ff5f56"/>
@@ -10,7 +10,7 @@
   <g font-size="12.5" fill="#c9d1d9">
     <text x="20" y="60"><tspan fill="#58a6ff">$</tspan> swift run LLMEcosystemDemo</text>
     <text x="20" y="86" fill="#7ee787">== LLM Ecosystem Integration Demo ==</text>
-    <text x="20" y="106" fill="#8b949e">ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost)</text>
+    <text x="20" y="106" fill="#8b949e">ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + ResponseCacheKit (caching)</text>
 
     <text x="20" y="140"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
     <text x="20" y="160">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
@@ -19,15 +19,20 @@
     <text x="20" y="236"><tspan fill="#d2a8ff">[self-hosted provider, self-repairing]</tspan> decoded after a repair round-trip:</text>
     <text x="20" y="256">&#160;&#160;WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
 
-    <text x="20" y="296" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
-    <text x="20" y="312" fill="#57606a">-----------------------------------------------------------------------</text>
-    <text x="20" y="332">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;36&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;118&#160;&#160;&#160;&#160;&#160;&#160;$0.000786</text>
-    <text x="20" y="352">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;18&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;100&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
-    <text x="20" y="372">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;48&#160;&#160;&#160;&#160;&#160;&#160;&#160;28&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;76&#160;&#160;&#160;&#160;&#160;&#160;$0.00016</text>
-    <text x="20" y="388" fill="#57606a">-----------------------------------------------------------------------</text>
-    <text x="20" y="408" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;212&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;294&#160;&#160;&#160;&#160;&#160;&#160;$0.000946</text>
+    <text x="20" y="284"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 1: <tspan fill="#f0883e">MISS</tspan> &#8212; routed via cloud, decoded:</text>
+    <text x="20" y="304">&#160;&#160;WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
+    <text x="20" y="324"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 2: <tspan fill="#7ee787">HIT</tspan> &#8212; no provider call, no additional cost</text>
+    <text x="20" y="344" fill="#8b949e">Cache: 1 hit / 1 miss, hit rate 50.0%, saved $0.001272</text>
 
-    <text x="20" y="440" fill="#7ee787">Total metered cost across all three routed calls: $0.000946</text>
-    <text x="20" y="466" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
+    <text x="20" y="386" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
+    <text x="20" y="402" fill="#57606a">-----------------------------------------------------------------------</text>
+    <text x="20" y="422">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;164&#160;&#160;&#160;&#160;&#160;&#160;52&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;216&#160;&#160;&#160;&#160;&#160;&#160;$0.001272</text>
+    <text x="20" y="442">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;18&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;100&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
+    <text x="20" y="462">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;48&#160;&#160;&#160;&#160;&#160;&#160;&#160;28&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;76&#160;&#160;&#160;&#160;&#160;&#160;$0.00016</text>
+    <text x="20" y="478" fill="#57606a">-----------------------------------------------------------------------</text>
+    <text x="20" y="498" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;294&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;392&#160;&#160;&#160;&#160;&#160;&#160;$0.001432</text>
+
+    <text x="20" y="530" fill="#7ee787">Total metered cost across all four routed scenarios: $0.001432</text>
+    <text x="20" y="556" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
   </g>
 </svg>
