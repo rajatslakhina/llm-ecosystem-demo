@@ -133,7 +133,7 @@ struct EcosystemDemo {
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all three routed calls: $\(await meter.totalCost())")
+        print("Total metered cost across all four routed scenarios: $\(await meter.totalCost())")
     }
 
     /// Groups a single-shot scenario's fixed setup so `runSingleShotScenario`
