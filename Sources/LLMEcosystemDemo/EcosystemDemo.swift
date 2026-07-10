@@ -3,6 +3,7 @@ import ProviderGatewayKit
 import ResponseCacheKit
 import StructuredOutputKit
 import TokenMeterKit
+import ToolRegistryKit
 
 /// The response shape every routed call in this demo asks a model to
 /// answer in — shared across all three scenarios below so the story stays
@@ -74,11 +75,42 @@ private actor CallIndex {
     }
 }
 
+/// The shape a tool call is asked to answer in once its result is fed back
+/// for a final routed turn — shared with `WeatherReport`'s spirit but kept
+/// separate since a tool-calling round trip's final answer is a distinct
+/// step from the single-shot scenarios above.
+private struct ToolBackedAnswer: Decodable, Equatable, JSONSchemaConvertible {
+    let city: String
+    let conditions: String
+    let tempF: Double
+
+    static var jsonSchema: JSONSchema {
+        .object(
+            properties: [
+                "city": .string(description: "The city the report is for"),
+                "conditions": .string(description: "Current conditions"),
+                "tempF": .number(description: "Current temperature in Fahrenheit")
+            ],
+            required: ["city", "conditions", "tempF"]
+        )
+    }
+}
+
+/// The scripted "model decided to call a tool" reply, decoded so the demo
+/// can build a real `ToolRegistryKit.ToolCallRequest` from it.
+private struct ScriptedToolCall: Decodable {
+    let tool: String
+    let arguments: [String: String]
+}
+
 @main
 struct EcosystemDemo {
     static func main() async {
         print("== LLM Ecosystem Integration Demo ==")
-        print("ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost)\n")
+        print(
+            "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
+                + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch)\n"
+        )
 
         // Register illustrative rates for the three routed providers this
         // demo uses — TokenMeterKit ships a small default catalog (real
@@ -129,11 +161,12 @@ struct EcosystemDemo {
 
         await runSelfRepairingScenario(instructions: instructions, decoder: decoder, meter: meter)
         await runCachedScenario(instructions: instructions, decoder: decoder, meter: meter)
+        await runToolCallingScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all four routed scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all five routed scenarios: $\(await meter.totalCost())")
     }
 
     /// Groups a single-shot scenario's fixed setup so `runSingleShotScenario`
@@ -270,5 +303,96 @@ struct EcosystemDemo {
         }
 
         print(await cache.statistics().formatted())
+    }
+
+    /// Builds a `ToolRegistryKit.ToolRegistry` with one registered tool —
+    /// a weather lookup whose arguments are schema-validated before this
+    /// handler ever runs. Qualified as `ToolRegistryKit.ToolRegistry`
+    /// throughout this file because `ProviderGatewayKit` also exports its
+    /// own, more minimal `ToolRegistry`/`ToolCallRequest` types.
+    private static func buildToolRegistry() async -> ToolRegistryKit.ToolRegistry {
+        let registry = ToolRegistryKit.ToolRegistry()
+        let weatherParameters = JSONSchema.object(
+            properties: ["city": .string(description: "City name")],
+            required: ["city"]
+        )
+        await registry.register(
+            ToolRegistryKit.ToolDefinition(
+                name: "get_weather",
+                description: "Look up current weather for a city.",
+                parameters: weatherParameters
+            ),
+            handler: ClosureToolHandler { arguments in
+                guard case .object(let fields) = arguments, case .string(let city) = fields["city"] ?? .null else {
+                    return .object(["error": .string("missing city")])
+                }
+                return .object(["city": .string(city), "conditions": .string("Clear"), "tempF": .number(68)])
+            }
+        )
+        return registry
+    }
+
+    /// The full tool-calling round trip: a routed turn "decides" to call a
+    /// tool, `ToolRegistryKit` validates and dispatches it, and the tool's
+    /// result is fed back into a second routed turn for the model's final,
+    /// schema-validated answer. Every hop is metered, exactly like the
+    /// scenarios above.
+    private static func runToolCallingScenario(decoder: StructuredOutputDecoder, meter: TokenMeter) async {
+        let toolRegistry = await buildToolRegistry()
+        let providerID = ProviderIdentifier.cloud
+
+        let decisionScript = #"{"tool": "get_weather", "arguments": {"city": "Denver"}}"#
+        let decisionRouter = ProviderRouter(providers: [
+            ScriptedProvider(identifier: providerID, script: [decisionScript])
+        ])
+        let decisionSession = LLMSession(router: decisionRouter)
+
+        do {
+            let decisionPrompt = "What's the weather in Denver? Call the get_weather tool if you need to."
+            let decisionResponse = try await decisionSession.send(decisionPrompt)
+            await meter.record(
+                TokenUsage(promptTokens: decisionPrompt.count / 4, completionTokens: decisionResponse.text.count / 4),
+                for: providerID.rawValue
+            )
+
+            let scriptedCall = try JSONDecoder().decode(ScriptedToolCall.self, from: Data(decisionResponse.text.utf8))
+            let argumentsData = try JSONEncoder().encode(scriptedCall.arguments)
+
+            let dispatchResult = await toolRegistry.dispatch(
+                ToolRegistryKit.ToolCallRequest(id: "call-1", toolName: scriptedCall.tool, argumentsJSON: argumentsData)
+            )
+
+            guard case .success(let toolOutput) = dispatchResult.outcome else {
+                print("[tool-calling round trip] FAILED: tool dispatch did not succeed: \(dispatchResult.outcome)")
+                return
+            }
+            let toolOutputJSON = String(data: try JSONEncoder().encode(toolOutput), encoding: .utf8) ?? "{}"
+
+            let finalInstructions = PromptBuilder.instructions(
+                for: ToolBackedAnswer.jsonSchema,
+                typeName: "a ToolBackedAnswer"
+            )
+            let finalPrompt = "Tool '\(scriptedCall.tool)' returned: \(toolOutputJSON). \(finalInstructions)"
+            let finalRouter = ProviderRouter(providers: [
+                ScriptedProvider(identifier: providerID, script: [toolOutputJSON])
+            ])
+            let finalSession = LLMSession(router: finalRouter)
+            let finalResponse = try await finalSession.send(finalPrompt)
+            await meter.record(
+                TokenUsage(promptTokens: finalPrompt.count / 4, completionTokens: finalResponse.text.count / 4),
+                for: providerID.rawValue
+            )
+
+            let finalValue = try await decoder.decode(ToolBackedAnswer.self, from: finalResponse.text)
+            print("[tool-calling round trip] dispatched \"\(scriptedCall.tool)\", final answer: \(finalValue)")
+
+            let stats = await toolRegistry.statisticsSnapshot
+            print(
+                "ToolRegistry stats: totalCalls=\(stats.totalCalls) "
+                    + "success=\(stats.successCount) failures=\(stats.failureCount)"
+            )
+        } catch {
+            print("[tool-calling round trip] FAILED: \(error)")
+        }
     }
 }

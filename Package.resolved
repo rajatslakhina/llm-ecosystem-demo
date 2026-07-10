@@ -1,5 +1,5 @@
 {
-  "originHash" : "bc728ee22f69aa6e22cf4e1b2b7d94397b37966ad50fa766da35d6d61a39a239",
+  "originHash" : "19e6254051e2541cbeb8f00ff90670a1e722050d077a6c638364393b3ec50bc8",
   "pins" : [
     {
       "identity" : "foundation-model-provider-gateway",
@@ -34,6 +34,15 @@
       "location" : "https://github.com/rajatslakhina/token-meter-kit.git",
       "state" : {
         "revision" : "d817dc67b5ea688c556dde40067cc1dd782631ac",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "tool-registry-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/tool-registry-kit.git",
+      "state" : {
+        "revision" : "98d712b33235363097ee1779141f8e7ea0cecf8f",
         "version" : "1.0.0"
       }
     }

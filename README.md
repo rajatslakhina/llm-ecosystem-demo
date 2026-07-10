@@ -1,15 +1,16 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all four packages in this
+A single runnable demo that wires together all five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
-[`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit), and
-[`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit)
+[`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
+[`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit), and
+[`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
-and — on a repeat request — answered from cache without touching the
-provider at all.
+answered from cache on a repeat request, or dispatched to a registered tool
+and routed again for a final answer.
 
 | Package | Role in this demo |
 |---|---|
@@ -17,6 +18,7 @@ provider at all.
 | [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit) | Builds the schema instructions and extracts/validates each routed reply |
 | [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit) | Meters every routed hop against registered per-provider rates |
 | [`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit) | Sits in front of the router so a repeated request never re-pays for a call |
+| [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit) | Validates and dispatches a tool call the model "decides" to make, mid round trip |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -38,6 +40,12 @@ provider at all.
    second call never reaches `ProviderRouter` at all; `ResponseCache`
    answers from its own storage, and the cost that would have been
    re-paid shows up in `estimatedSavings` instead of a second metered hop.
+5. **`ToolRegistryKit`** handles a fifth scenario: a routed turn "decides"
+   to call a `get_weather` tool. `ToolRegistry.dispatch(_:)` decodes and
+   schema-validates the arguments *before* the registered handler runs,
+   and the handler's result is fed back into a second routed turn for the
+   model's final, schema-validated answer — two metered hops, one
+   validated tool call, no unchecked handler input.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -45,8 +53,16 @@ fixed script instead of a live network or on-device runtime, exactly the
 same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
-retry loop, caching, and cost accounting — is the real, compiled code
-from all four tagged packages.
+retry loop, caching, tool dispatch, and cost accounting — is the real,
+compiled code from all five tagged packages.
+
+Note: `ProviderGatewayKit` ships its own minimal, string-only
+`ToolRegistry`/`ToolCallRequest` types for basic tool round-tripping.
+`ToolRegistryKit` is a separate, richer package for host apps that want
+real `JSONSchema` argument validation and structured `JSONValue` results
+before a handler ever runs — this demo qualifies both types explicitly
+(`ToolRegistryKit.ToolRegistry`, `ToolRegistryKit.ToolCallRequest`) since
+both packages export a same-named type.
 
 ## Installation
 
@@ -60,8 +76,8 @@ swift run LLMEcosystemDemo
 ```
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
-`StructuredOutputKit`, and `ResponseCacheKit` straight from their `1.0.0`
-tags — no local checkouts or path overrides needed.
+`StructuredOutputKit`, `ResponseCacheKit`, and `ToolRegistryKit` straight
+from their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -69,10 +85,10 @@ tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all four
+- **Build:** `swift build` — clean, zero warnings, resolving all five
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all four packages together; the output above is a genuine capture,
+  of all five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -83,7 +99,7 @@ tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the four real packages compose and run," which the sample output
+means "the five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -106,6 +122,11 @@ ResponseCacheKit.ResponseCache sits in front of a second LLMSession/ProviderRout
 pair for the fourth scenario: response(for:) is checked before every routed
 send() — a HIT returns immediately with no router call; a MISS routes, meters,
 then store()s the reply for the next identical request.
+
+For the fifth scenario, a routed turn's reply is decoded as a tool-call
+request; ToolRegistryKit.ToolRegistry.dispatch(_:) schema-validates the
+arguments, runs the registered handler, and the result is fed into a
+second routed turn whose reply is decoded as the final typed answer.
 ```
 
 ## License
