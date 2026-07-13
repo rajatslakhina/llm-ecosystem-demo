@@ -1,16 +1,18 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all five packages in this
+A single runnable demo that wires together all six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
-[`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit), and
-[`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit)
+[`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit),
+[`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit), and
+[`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
-answered from cache on a repeat request, or dispatched to a registered tool
-and routed again for a final answer.
+answered from cache on a repeat request, dispatched to a registered tool
+and routed again for a final answer, or driven through a multi-step
+tool-calling loop until the model converges.
 
 | Package | Role in this demo |
 |---|---|
@@ -19,6 +21,7 @@ and routed again for a final answer.
 | [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit) | Meters every routed hop against registered per-provider rates |
 | [`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit) | Sits in front of the router so a repeated request never re-pays for a call |
 | [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit) | Validates and dispatches a tool call the model "decides" to make, mid round trip |
+| [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit) | Drives a bounded, multi-step decide/act/observe loop across several dependent tool calls |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -46,6 +49,14 @@ and routed again for a final answer.
    and the handler's result is fed back into a second routed turn for the
    model's final, schema-validated answer — two metered hops, one
    validated tool call, no unchecked handler input.
+6. **`AgentLoopKit`** handles a sixth scenario, and generalizes the one
+   above: rather than hand-wiring a single tool-call round trip across two
+   manually built `LLMSession`s, `AgentLoop.run(initialPrompt:)` drives a
+   bounded loop that chains *two* dependent `get_weather` calls (comparing
+   Austin and Boston) before the model converges on a final answer.
+   `TokenMeterKit` meters every step entirely after the fact, straight off
+   the returned `AgentTranscript` — `AgentLoopKit` never needs to know
+   `TokenMeterKit` exists.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -76,8 +87,9 @@ swift run LLMEcosystemDemo
 ```
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
-`StructuredOutputKit`, `ResponseCacheKit`, and `ToolRegistryKit` straight
-from their `1.0.0` tags — no local checkouts or path overrides needed.
+`StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, and
+`AgentLoopKit` straight from their `1.0.0` tags — no local checkouts or
+path overrides needed.
 
 ## Sample output
 
@@ -85,10 +97,10 @@ from their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all five
+- **Build:** `swift build` — clean, zero warnings, resolving all six
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all five packages together; the output above is a genuine capture,
+  of all six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -127,6 +139,11 @@ For the fifth scenario, a routed turn's reply is decoded as a tool-call
 request; ToolRegistryKit.ToolRegistry.dispatch(_:) schema-validates the
 arguments, runs the registered handler, and the result is fed into a
 second routed turn whose reply is decoded as the final typed answer.
+
+For the sixth scenario, AgentLoopKit.AgentLoop.run(initialPrompt:) drives
+the same LLMSession + ToolRegistry pair through a bounded decide/act/
+observe loop across two dependent get_weather calls; TokenMeterKit meters
+every step straight off the returned AgentTranscript, after the fact.
 ```
 
 ## License

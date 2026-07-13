@@ -1,6 +1,15 @@
 {
-  "originHash" : "19e6254051e2541cbeb8f00ff90670a1e722050d077a6c638364393b3ec50bc8",
+  "originHash" : "43f4562d886c1531f4397289019781e529ef704c49d802cee4cd2f1556bbe598",
   "pins" : [
+    {
+      "identity" : "agent-loop-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/agent-loop-kit.git",
+      "state" : {
+        "revision" : "b9ad3de8bbea46b4c39c11d52c9cafbdc89ebefe",
+        "version" : "1.0.0"
+      }
+    },
     {
       "identity" : "foundation-model-provider-gateway",
       "kind" : "remoteSourceControl",

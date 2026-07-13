@@ -1,3 +1,4 @@
+import AgentLoopKit
 import Foundation
 import ProviderGatewayKit
 import ResponseCacheKit
@@ -109,7 +110,7 @@ struct EcosystemDemo {
         print("== LLM Ecosystem Integration Demo ==")
         print(
             "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
-                + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch)\n"
+                + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop)\n"
         )
 
         // Register illustrative rates for the three routed providers this
@@ -162,11 +163,12 @@ struct EcosystemDemo {
         await runSelfRepairingScenario(instructions: instructions, decoder: decoder, meter: meter)
         await runCachedScenario(instructions: instructions, decoder: decoder, meter: meter)
         await runToolCallingScenario(decoder: decoder, meter: meter)
+        await runAgentLoopScenario(meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all five routed scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all six routed scenarios: $\(await meter.totalCost())")
     }
 
     /// Groups a single-shot scenario's fixed setup so `runSingleShotScenario`
@@ -310,7 +312,7 @@ struct EcosystemDemo {
     /// handler ever runs. Qualified as `ToolRegistryKit.ToolRegistry`
     /// throughout this file because `ProviderGatewayKit` also exports its
     /// own, more minimal `ToolRegistry`/`ToolCallRequest` types.
-    private static func buildToolRegistry() async -> ToolRegistryKit.ToolRegistry {
+    static func buildToolRegistry() async -> ToolRegistryKit.ToolRegistry {
         let registry = ToolRegistryKit.ToolRegistry()
         let weatherParameters = JSONSchema.object(
             properties: ["city": .string(description: "City name")],
