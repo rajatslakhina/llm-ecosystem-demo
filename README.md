@@ -1,12 +1,13 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all six packages in this
+A single runnable demo that wires together all seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
 [`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit),
-[`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit), and
-[`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit)
+[`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit),
+[`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit), and
+[`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -22,6 +23,7 @@ tool-calling loop until the model converges.
 | [`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit) | Sits in front of the router so a repeated request never re-pays for a call |
 | [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit) | Validates and dispatches a tool call the model "decides" to make, mid round trip |
 | [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit) | Drives a bounded, multi-step decide/act/observe loop across several dependent tool calls |
+| [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit) | Redacts PII and enforces content policy before a prompt is routed and after a reply comes back |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -57,6 +59,16 @@ tool-calling loop until the model converges.
    `TokenMeterKit` meters every step entirely after the fact, straight off
    the returned `AgentTranscript` — `AgentLoopKit` never needs to know
    `TokenMeterKit` exists.
+7. **`GuardrailKit`** handles a seventh scenario, sitting in front of *and*
+   behind the same routed pipeline: a user prompt carrying a real email
+   address is redacted by `GuardrailPipeline.screenRequest(_:)` before it
+   ever reaches `ProviderRouter`/`LLMSession` — the provider only ever sees
+   the sanitized text — and the reply is screened again with
+   `screenResponse(_:)` on the way back out. A second prompt trips a
+   banned-phrase content policy rule and is blocked outright: no provider
+   call is made and nothing is metered for it. Every screening — redacted,
+   allowed, or blocked — is recorded as a `GuardrailEvent` by an
+   `InMemoryGuardrailEventRecorder`.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -87,8 +99,8 @@ swift run LLMEcosystemDemo
 ```
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
-`StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, and
-`AgentLoopKit` straight from their `1.0.0` tags — no local checkouts or
+`StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
+and `GuardrailKit` straight from their `1.0.0` tags — no local checkouts or
 path overrides needed.
 
 ## Sample output
@@ -97,10 +109,10 @@ path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all six
+- **Build:** `swift build` — clean, zero warnings, resolving all seven
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all six packages together; the output above is a genuine capture,
+  of all seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -111,7 +123,7 @@ path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the five real packages compose and run," which the sample output
+means "the seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -144,6 +156,13 @@ For the sixth scenario, AgentLoopKit.AgentLoop.run(initialPrompt:) drives
 the same LLMSession + ToolRegistry pair through a bounded decide/act/
 observe loop across two dependent get_weather calls; TokenMeterKit meters
 every step straight off the returned AgentTranscript, after the fact.
+
+For the seventh scenario, GuardrailKit.GuardrailPipeline sits on both sides
+of an LLMSession/ProviderRouter pair: screenRequest(_:) redacts PII from
+the user's prompt before send() is ever called, and screenResponse(_:)
+screens the routed reply on the way back out. A second prompt trips a
+BannedPhraseRule and is blocked before any router call happens at all.
+Every screening is recorded as a GuardrailEvent, regardless of verdict.
 ```
 
 ## License

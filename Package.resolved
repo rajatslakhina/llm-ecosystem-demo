@@ -1,5 +1,5 @@
 {
-  "originHash" : "43f4562d886c1531f4397289019781e529ef704c49d802cee4cd2f1556bbe598",
+  "originHash" : "126232a9026e7d89f025edb7b83377d7b011a3b49eaf60d676f9d714fea17bd7",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -16,6 +16,15 @@
       "location" : "https://github.com/rajatslakhina/foundation-model-provider-gateway.git",
       "state" : {
         "revision" : "e93e63506bd3d81279cd898ca8a9b25c8fe569f5",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "guardrail-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/guardrail-kit.git",
+      "state" : {
+        "revision" : "a27c8e98f482cb1032e5c73db5ee13098b098e3e",
         "version" : "1.0.0"
       }
     },

@@ -1,108 +1,11 @@
 import AgentLoopKit
 import Foundation
+import GuardrailKit
 import ProviderGatewayKit
 import ResponseCacheKit
 import StructuredOutputKit
 import TokenMeterKit
 import ToolRegistryKit
-
-/// The response shape every routed call in this demo asks a model to
-/// answer in — shared across all three scenarios below so the story stays
-/// focused on how the packages compose, not on the schema itself.
-struct WeatherReport: Decodable, Equatable, JSONSchemaConvertible {
-    let city: String
-    let temperatureCelsius: Double
-    let conditions: String
-
-    static var jsonSchema: JSONSchema {
-        .object(
-            properties: [
-                "city": .string(description: "The city the report is for"),
-                "temperatureCelsius": .number(description: "Current temperature in Celsius"),
-                "conditions": .string(enumValues: ["clear", "cloudy", "rain", "storm"])
-            ],
-            required: ["city", "temperatureCelsius", "conditions"]
-        )
-    }
-}
-
-/// A demo-only conformer to ProviderGatewayKit's real `LLMProvider`
-/// protocol: it answers from a fixed script indexed by call count instead
-/// of calling out to a live network or on-device runtime. This mirrors the
-/// same pattern `ProviderGatewayKit` itself uses for its own
-/// `SimulatedCloudProvider`/`SimulatedOnDeviceProvider` — a real,
-/// protocol-conforming provider with scripted rather than live output —
-/// so this demo exercises the actual `ProviderRouter` → `LLMSession`
-/// pipeline instead of hand-waving it.
-struct ScriptedProvider: LLMProvider {
-    let identifier: ProviderIdentifier
-    let capabilities: ProviderCapabilities
-    private let script: [String]
-    private let callIndex = CallIndex()
-
-    init(identifier: ProviderIdentifier, script: [String]) {
-        self.identifier = identifier
-        self.capabilities = ProviderCapabilities(
-            supportsToolCalling: false,
-            supportsStreaming: false,
-            maxContextTokens: 32_000,
-            costTier: .medium,
-            locality: .network
-        )
-        self.script = script
-    }
-
-    func stream(request: LLMRequest) -> AsyncThrowingStream<LLMStreamEvent, Error> {
-        AsyncThrowingStream { continuation in
-            let task = Task {
-                let index = await callIndex.next()
-                let reply = script[min(index, script.count - 1)]
-                continuation.yield(.completed(LLMResponse(text: reply, finishReason: .stop, providerID: identifier)))
-                continuation.finish()
-            }
-            continuation.onTermination = { _ in task.cancel() }
-        }
-    }
-}
-
-/// Tiny actor backing `ScriptedProvider`'s call counter — a struct is
-/// `Sendable`, but the mutable index it closes over needs its own
-/// isolation, exactly as `ProviderGatewayKit`'s own simulated providers do.
-private actor CallIndex {
-    private var value = 0
-    func next() -> Int {
-        defer { value += 1 }
-        return value
-    }
-}
-
-/// The shape a tool call is asked to answer in once its result is fed back
-/// for a final routed turn — shared with `WeatherReport`'s spirit but kept
-/// separate since a tool-calling round trip's final answer is a distinct
-/// step from the single-shot scenarios above.
-private struct ToolBackedAnswer: Decodable, Equatable, JSONSchemaConvertible {
-    let city: String
-    let conditions: String
-    let tempF: Double
-
-    static var jsonSchema: JSONSchema {
-        .object(
-            properties: [
-                "city": .string(description: "The city the report is for"),
-                "conditions": .string(description: "Current conditions"),
-                "tempF": .number(description: "Current temperature in Fahrenheit")
-            ],
-            required: ["city", "conditions", "tempF"]
-        )
-    }
-}
-
-/// The scripted "model decided to call a tool" reply, decoded so the demo
-/// can build a real `ToolRegistryKit.ToolCallRequest` from it.
-private struct ScriptedToolCall: Decodable {
-    let tool: String
-    let arguments: [String: String]
-}
 
 @main
 struct EcosystemDemo {
@@ -110,27 +13,11 @@ struct EcosystemDemo {
         print("== LLM Ecosystem Integration Demo ==")
         print(
             "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
-                + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop)\n"
+                + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + "
+                + "GuardrailKit (PII redaction & policy)\n"
         )
 
-        // Register illustrative rates for the three routed providers this
-        // demo uses — TokenMeterKit ships a small default catalog (real
-        // model names like "gpt-4o"), but a host app routes against
-        // whatever identifiers its own providers use, so registering your
-        // own rates against those identifiers is the expected integration
-        // pattern rather than a workaround.
-        let registry = PricingRegistry()
-        await registry.register(
-            ModelPricing(inputPerMillion: 0, outputPerMillion: 0), for: ProviderIdentifier.onDevice.rawValue
-        )
-        await registry.register(
-            ModelPricing(inputPerMillion: 3, outputPerMillion: 15), for: ProviderIdentifier.cloud.rawValue
-        )
-        await registry.register(
-            ModelPricing(inputPerMillion: 1, outputPerMillion: 4), for: ProviderIdentifier.selfHosted.rawValue
-        )
-
-        let meter = TokenMeter(registry: registry)
+        let meter = await buildMeter()
         let decoder = StructuredOutputDecoder()
         let instructions = PromptBuilder.instructions(for: WeatherReport.jsonSchema, typeName: "a WeatherReport")
 
@@ -164,11 +51,32 @@ struct EcosystemDemo {
         await runCachedScenario(instructions: instructions, decoder: decoder, meter: meter)
         await runToolCallingScenario(decoder: decoder, meter: meter)
         await runAgentLoopScenario(meter: meter)
+        await runGuardrailScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all six routed scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all seven scenarios: $\(await meter.totalCost())")
+    }
+
+    /// Registers illustrative rates for the three routed providers this demo
+    /// uses — TokenMeterKit ships a small default catalog (real model names
+    /// like "gpt-4o"), but a host app routes against whatever identifiers
+    /// its own providers use, so registering your own rates against those
+    /// identifiers is the expected integration pattern rather than a
+    /// workaround.
+    private static func buildMeter() async -> TokenMeter {
+        let registry = PricingRegistry()
+        await registry.register(
+            ModelPricing(inputPerMillion: 0, outputPerMillion: 0), for: ProviderIdentifier.onDevice.rawValue
+        )
+        await registry.register(
+            ModelPricing(inputPerMillion: 3, outputPerMillion: 15), for: ProviderIdentifier.cloud.rawValue
+        )
+        await registry.register(
+            ModelPricing(inputPerMillion: 1, outputPerMillion: 4), for: ProviderIdentifier.selfHosted.rawValue
+        )
+        return TokenMeter(registry: registry)
     }
 
     /// Groups a single-shot scenario's fixed setup so `runSingleShotScenario`
