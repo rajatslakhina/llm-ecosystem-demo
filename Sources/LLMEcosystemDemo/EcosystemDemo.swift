@@ -6,6 +6,7 @@ import ResponseCacheKit
 import StructuredOutputKit
 import TokenMeterKit
 import ToolRegistryKit
+import TraceKit
 
 @main
 struct EcosystemDemo {
@@ -14,7 +15,7 @@ struct EcosystemDemo {
         print(
             "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
                 + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + "
-                + "GuardrailKit (PII redaction & policy)\n"
+                + "GuardrailKit (PII redaction & policy) + TraceKit (tracing & eval gates)\n"
         )
 
         let meter = await buildMeter()
@@ -52,11 +53,12 @@ struct EcosystemDemo {
         await runToolCallingScenario(decoder: decoder, meter: meter)
         await runAgentLoopScenario(meter: meter)
         await runGuardrailScenario(decoder: decoder, meter: meter)
+        await runTraceScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all seven scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all eight scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo

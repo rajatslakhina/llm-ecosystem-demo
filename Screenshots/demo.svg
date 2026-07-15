@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 860" font-family="'SF Mono', Menlo, Consolas, monospace">
-  <rect x="0" y="0" width="980" height="860" rx="10" fill="#0d1117"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1000" font-family="'SF Mono', Menlo, Consolas, monospace">
+  <rect x="0" y="0" width="980" height="1000" rx="10" fill="#0d1117"/>
   <rect x="0" y="0" width="980" height="34" rx="10" fill="#161b22"/>
   <rect x="0" y="24" width="980" height="10" fill="#161b22"/>
   <circle cx="20" cy="17" r="6" fill="#ff5f56"/>
@@ -12,7 +12,7 @@
     <text x="20" y="86" fill="#7ee787">== LLM Ecosystem Integration Demo ==</text>
     <text x="20" y="106" fill="#8b949e">ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) +</text>
     <text x="20" y="124" fill="#8b949e">ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) +</text>
-    <text x="20" y="142" fill="#8b949e">GuardrailKit (PII redaction &amp; policy)</text>
+    <text x="20" y="142" fill="#8b949e">GuardrailKit (PII redaction &amp; policy) + TraceKit (tracing &amp; eval gates)</text>
 
     <text x="20" y="174"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
     <text x="20" y="194">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
@@ -38,15 +38,23 @@
     <text x="20" y="574"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> second prompt verdict: <tspan fill="#f0883e">BLOCKED</tspan> &#8212; no provider call made</text>
     <text x="20" y="594" fill="#8b949e">3 trace events recorded by GuardrailEventRecorder</text>
 
-    <text x="20" y="628" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
-    <text x="20" y="644" fill="#57606a">-----------------------------------------------------------------------</text>
-    <text x="20" y="664">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
-    <text x="20" y="684">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
-    <text x="20" y="704">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;97&#160;&#160;&#160;&#160;&#160;&#160;&#160;65&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;162&#160;&#160;&#160;&#160;&#160;&#160;$0.000357</text>
-    <text x="20" y="720" fill="#57606a">-----------------------------------------------------------------------</text>
-    <text x="20" y="740" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;472&#160;&#160;&#160;&#160;&#160;&#160;178&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;650&#160;&#160;&#160;&#160;&#160;&#160;$0.002358</text>
+    <text x="20" y="626"><tspan fill="#d2a8ff">[trace scenario]</tspan> traced round trip &#8594; final answer:</text>
+    <text x="20" y="646">&#160;&#160;ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
+    <text x="20" y="666" fill="#8b949e">&#160;&#160;span: [agentStep] agent.weatherLookup &#8212; OK (0ms)</text>
+    <text x="20" y="684" fill="#8b949e">&#160;&#160;span: [llmCall] llm.decide &#8212; OK (0ms)</text>
+    <text x="20" y="702" fill="#8b949e">&#160;&#160;span: [toolCall] tool.get_weather &#8212; OK (0ms)</text>
+    <text x="20" y="720" fill="#8b949e">&#160;&#160;span: [llmCall] llm.finalAnswer &#8212; OK (0ms)</text>
+    <text x="20" y="740"><tspan fill="#d2a8ff">[trace scenario]</tspan> EvalGate passed: <tspan fill="#7ee787">true</tspan> (4 spans scored)</text>
 
-    <text x="20" y="776" fill="#7ee787">Total metered cost across all seven scenarios: $0.002358</text>
-    <text x="20" y="802" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
+    <text x="20" y="772" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
+    <text x="20" y="788" fill="#57606a">-----------------------------------------------------------------------</text>
+    <text x="20" y="808">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
+    <text x="20" y="828">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
+    <text x="20" y="848">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;207&#160;&#160;&#160;&#160;&#160;&#160;&#160;91&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;298&#160;&#160;&#160;&#160;&#160;&#160;$0.000571</text>
+    <text x="20" y="864" fill="#57606a">-----------------------------------------------------------------------</text>
+    <text x="20" y="884" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;582&#160;&#160;&#160;&#160;&#160;&#160;204&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;786&#160;&#160;&#160;&#160;&#160;&#160;$0.002572</text>
+
+    <text x="20" y="920" fill="#7ee787">Total metered cost across all eight scenarios: $0.002572</text>
+    <text x="20" y="946" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
   </g>
 </svg>

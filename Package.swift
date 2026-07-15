@@ -17,7 +17,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/response-cache-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/tool-registry-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/agent-loop-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/guardrail-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/guardrail-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/trace-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -29,7 +30,8 @@ let package = Package(
                 .product(name: "ResponseCacheKit", package: "response-cache-kit"),
                 .product(name: "ToolRegistryKit", package: "tool-registry-kit"),
                 .product(name: "AgentLoopKit", package: "agent-loop-kit"),
-                .product(name: "GuardrailKit", package: "guardrail-kit")
+                .product(name: "GuardrailKit", package: "guardrail-kit"),
+                .product(name: "TraceKit", package: "trace-kit")
             ]
         )
     ]

@@ -1,5 +1,5 @@
 {
-  "originHash" : "126232a9026e7d89f025edb7b83377d7b011a3b49eaf60d676f9d714fea17bd7",
+  "originHash" : "0ab164098bc3c86ebf78eba578802c55a5572b5c4c2629287bf17b6f6b189f8c",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -61,6 +61,15 @@
       "location" : "https://github.com/rajatslakhina/tool-registry-kit.git",
       "state" : {
         "revision" : "98d712b33235363097ee1779141f8e7ea0cecf8f",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "trace-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/trace-kit.git",
+      "state" : {
+        "revision" : "5f7a31768adf9e35acc5b440827e2b5d950d6dcb",
         "version" : "1.0.0"
       }
     }

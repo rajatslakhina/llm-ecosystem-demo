@@ -1,19 +1,21 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seven packages in this
+A single runnable demo that wires together all eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
 [`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit),
 [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit),
-[`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit), and
-[`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit)
+[`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit),
+[`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit), and
+[`TraceKit`](https://github.com/rajatslakhina/trace-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
 answered from cache on a repeat request, dispatched to a registered tool
-and routed again for a final answer, or driven through a multi-step
-tool-calling loop until the model converges.
+and routed again for a final answer, driven through a multi-step
+tool-calling loop until the model converges, or captured as a nested trace
+and scored by an eval gate.
 
 | Package | Role in this demo |
 |---|---|
@@ -24,6 +26,7 @@ tool-calling loop until the model converges.
 | [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit) | Validates and dispatches a tool call the model "decides" to make, mid round trip |
 | [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit) | Drives a bounded, multi-step decide/act/observe loop across several dependent tool calls |
 | [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit) | Redacts PII and enforces content policy before a prompt is routed and after a reply comes back |
+| [`TraceKit`](https://github.com/rajatslakhina/trace-kit) | Captures a nested trace of the routed calls and tool dispatch, then scores it with an `EvalGate` |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -69,6 +72,14 @@ tool-calling loop until the model converges.
    call is made and nothing is metered for it. Every screening — redacted,
    allowed, or blocked — is recorded as a `GuardrailEvent` by an
    `InMemoryGuardrailEventRecorder`.
+8. **`TraceKit`** handles an eighth scenario: the same decide/dispatch/answer
+   round trip the fifth scenario hand-rolled, but with each step wrapped in
+   `Tracer.withSpan(name:kind:parentID:operation:)` under one manually
+   managed root `agentStep` span. `Tracer.trace(rootID:)` reconstructs the
+   full nested trace afterward, and an `EvalGate` scores it against
+   `NoErrorSpansScorer` and `MaxDurationScorer` — turning "did this composed
+   call succeed, and fast enough" into an enforced pass/fail check instead
+   of eyeballed print output.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -100,8 +111,8 @@ swift run LLMEcosystemDemo
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
-and `GuardrailKit` straight from their `1.0.0` tags — no local checkouts or
-path overrides needed.
+`GuardrailKit`, and `TraceKit` straight from their `1.0.0` tags — no local
+checkouts or path overrides needed.
 
 ## Sample output
 
@@ -109,10 +120,10 @@ path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seven
+- **Build:** `swift build` — clean, zero warnings, resolving all eight
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seven packages together; the output above is a genuine capture,
+  of all eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -123,7 +134,7 @@ path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seven real packages compose and run," which the sample output
+means "the eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -163,6 +174,14 @@ the user's prompt before send() is ever called, and screenResponse(_:)
 screens the routed reply on the way back out. A second prompt trips a
 BannedPhraseRule and is blocked before any router call happens at all.
 Every screening is recorded as a GuardrailEvent, regardless of verdict.
+
+For the eighth scenario, TraceKit.Tracer wraps the same decide/dispatch/
+answer round trip the fifth scenario hand-rolled: each LLMSession.send()
+and ToolRegistry.dispatch(_:) call is wrapped in withSpan(name:kind:
+parentID:operation:) under one root agentStep span. Tracer.trace(rootID:)
+reconstructs the full nested trace afterward, and EvalGate.run(_:scorers:)
+scores it against NoErrorSpansScorer and MaxDurationScorer, producing an
+EvalGateReport instead of a print statement someone has to read by hand.
 ```
 
 ## License
