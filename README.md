@@ -1,21 +1,23 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eight packages in this
+A single runnable demo that wires together all nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
 [`ResponseCacheKit`](https://github.com/rajatslakhina/response-cache-kit),
 [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit),
 [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit),
-[`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit), and
-[`TraceKit`](https://github.com/rajatslakhina/trace-kit)
+[`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit),
+[`TraceKit`](https://github.com/rajatslakhina/trace-kit), and
+[`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
 answered from cache on a repeat request, dispatched to a registered tool
 and routed again for a final answer, driven through a multi-step
-tool-calling loop until the model converges, or captured as a nested trace
-and scored by an eval gate.
+tool-calling loop until the model converges, captured as a nested trace
+and scored by an eval gate, or grounded in context retrieved from a small
+indexed knowledge base before the model ever answers.
 
 | Package | Role in this demo |
 |---|---|
@@ -27,6 +29,7 @@ and scored by an eval gate.
 | [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit) | Drives a bounded, multi-step decide/act/observe loop across several dependent tool calls |
 | [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit) | Redacts PII and enforces content policy before a prompt is routed and after a reply comes back |
 | [`TraceKit`](https://github.com/rajatslakhina/trace-kit) | Captures a nested trace of the routed calls and tool dispatch, then scores it with an `EvalGate` |
+| [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit) | Indexes a small knowledge base and retrieves the context grounding the final routed answer |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -80,6 +83,15 @@ and scored by an eval gate.
    `NoErrorSpansScorer` and `MaxDurationScorer` — turning "did this composed
    call succeed, and fast enough" into an enforced pass/fail check instead
    of eyeballed print output.
+9. **`RetrievalKit`** handles a ninth scenario, and is the first one that
+   isn't fronting a *routed* call but *preceding* it: a `Retriever` indexes
+   four short documents (one per sibling package) with a deterministic
+   `HashingEmbeddingProvider`, then `retrieveContextBlock(query:)` ranks
+   and returns the chunks most relevant to a real question. That context
+   block is prepended to the prompt handed to a routed `LLMSession.send()`
+   call, and the reply is decoded as a `RAGAnswer` — the actual
+   retrieve-then-generate pattern, with `RetrievalKit` doing real cosine
+   similarity ranking rather than a hand-picked "relevant" string.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -111,8 +123,8 @@ swift run LLMEcosystemDemo
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
-`GuardrailKit`, and `TraceKit` straight from their `1.0.0` tags — no local
-checkouts or path overrides needed.
+`GuardrailKit`, `TraceKit`, and `RetrievalKit` straight from their `1.0.0`
+tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -120,10 +132,10 @@ checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eight
+- **Build:** `swift build` — clean, zero warnings, resolving all nine
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eight packages together; the output above is a genuine capture,
+  of all nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -134,7 +146,7 @@ checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eight real packages compose and run," which the sample output
+means "the nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -182,6 +194,15 @@ parentID:operation:) under one root agentStep span. Tracer.trace(rootID:)
 reconstructs the full nested trace afterward, and EvalGate.run(_:scorers:)
 scores it against NoErrorSpansScorer and MaxDurationScorer, producing an
 EvalGateReport instead of a print statement someone has to read by hand.
+
+For the ninth scenario, RetrievalKit.Retriever indexes four documents with
+a HashingEmbeddingProvider, then retrieveContextBlock(query:) ranks stored
+chunks by cosine similarity and returns the top matches as a prompt-ready
+text block — computed entirely locally, no routed call involved yet. That
+block is prepended to the prompt for a single routed LLMSession.send()
+call, decoded as a RAGAnswer. RetrievalKit has no compile-time dependency
+on ProviderGatewayKit; the seam is exactly what a host app would wire up
+itself — retrieve, then prepend, then send.
 ```
 
 ## License

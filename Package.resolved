@@ -1,5 +1,5 @@
 {
-  "originHash" : "0ab164098bc3c86ebf78eba578802c55a5572b5c4c2629287bf17b6f6b189f8c",
+  "originHash" : "36e4c600364f3a6f7e38c64ada5c093ecfcd9091b6d80f53685ff02bf4cf5cd7",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -34,6 +34,15 @@
       "location" : "https://github.com/rajatslakhina/response-cache-kit.git",
       "state" : {
         "revision" : "4e2c3636a8d2487186bd030b1b3f1e6550ee574b",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "retrieval-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/retrieval-kit.git",
+      "state" : {
+        "revision" : "349c57c04d164dd45114a39f01bd8e46ecc357bc",
         "version" : "1.0.0"
       }
     },

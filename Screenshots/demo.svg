@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1000" font-family="'SF Mono', Menlo, Consolas, monospace">
-  <rect x="0" y="0" width="980" height="1000" rx="10" fill="#0d1117"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1250" font-family="'SF Mono', Menlo, Consolas, monospace">
+  <rect x="0" y="0" width="980" height="1250" rx="10" fill="#0d1117"/>
   <rect x="0" y="0" width="980" height="34" rx="10" fill="#161b22"/>
   <rect x="0" y="24" width="980" height="10" fill="#161b22"/>
   <circle cx="20" cy="17" r="6" fill="#ff5f56"/>
@@ -12,49 +12,63 @@
     <text x="20" y="86" fill="#7ee787">== LLM Ecosystem Integration Demo ==</text>
     <text x="20" y="106" fill="#8b949e">ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) +</text>
     <text x="20" y="124" fill="#8b949e">ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) +</text>
-    <text x="20" y="142" fill="#8b949e">GuardrailKit (PII redaction &amp; policy) + TraceKit (tracing &amp; eval gates)</text>
+    <text x="20" y="142" fill="#8b949e">GuardrailKit (PII redaction &amp; policy) + TraceKit (tracing &amp; eval gates) +</text>
+    <text x="20" y="160" fill="#8b949e">RetrievalKit (retrieval-augmented context)</text>
 
-    <text x="20" y="174"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
-    <text x="20" y="194">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
-    <text x="20" y="222"><tspan fill="#d2a8ff">[cloud provider, JSON fenced in prose]</tspan> routed via cloud &#8594; decoded:</text>
-    <text x="20" y="242">&#160;&#160;WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
-    <text x="20" y="270"><tspan fill="#d2a8ff">[self-hosted provider, self-repairing]</tspan> decoded after a repair round-trip:</text>
-    <text x="20" y="290">&#160;&#160;WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
+    <text x="20" y="192"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
+    <text x="20" y="212">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
+    <text x="20" y="240"><tspan fill="#d2a8ff">[cloud provider, JSON fenced in prose]</tspan> routed via cloud &#8594; decoded:</text>
+    <text x="20" y="260">&#160;&#160;WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
+    <text x="20" y="288"><tspan fill="#d2a8ff">[self-hosted provider, self-repairing]</tspan> decoded after a repair round-trip:</text>
+    <text x="20" y="308">&#160;&#160;WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
 
-    <text x="20" y="318"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 1: <tspan fill="#f0883e">MISS</tspan> &#8212; routed via cloud, decoded:</text>
-    <text x="20" y="338">&#160;&#160;WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
-    <text x="20" y="358"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 2: <tspan fill="#7ee787">HIT</tspan> &#8212; no provider call, no additional cost</text>
-    <text x="20" y="378" fill="#8b949e">Cache: 1 hit / 1 miss, hit rate 50.0%, saved $0.001272</text>
+    <text x="20" y="336"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 1: <tspan fill="#f0883e">MISS</tspan> &#8212; routed via cloud, decoded:</text>
+    <text x="20" y="356">&#160;&#160;WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
+    <text x="20" y="376"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 2: <tspan fill="#7ee787">HIT</tspan> &#8212; no provider call, no additional cost</text>
+    <text x="20" y="396" fill="#8b949e">Cache: 1 hit / 1 miss, hit rate 50.0%, saved $0.001272</text>
 
-    <text x="20" y="410"><tspan fill="#d2a8ff">[tool-calling round trip]</tspan> dispatched "get_weather", final answer:</text>
-    <text x="20" y="430">&#160;&#160;ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
-    <text x="20" y="450" fill="#8b949e">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
+    <text x="20" y="428"><tspan fill="#d2a8ff">[tool-calling round trip]</tspan> dispatched "get_weather", final answer:</text>
+    <text x="20" y="448">&#160;&#160;ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
+    <text x="20" y="468" fill="#8b949e">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
 
-    <text x="20" y="482"><tspan fill="#d2a8ff">[AgentLoopKit orchestrated loop]</tspan> 3 steps, halted: finalAnswer,</text>
-    <text x="20" y="502">&#160;&#160;answer: Austin is warmer than Boston right now.</text>
+    <text x="20" y="500"><tspan fill="#d2a8ff">[AgentLoopKit orchestrated loop]</tspan> 3 steps, halted: finalAnswer,</text>
+    <text x="20" y="520">&#160;&#160;answer: Austin is warmer than Boston right now.</text>
 
-    <text x="20" y="534"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> request redacted, sanitized prompt routed via</text>
-    <text x="20" y="554">&#160;&#160;on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
-    <text x="20" y="574"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> second prompt verdict: <tspan fill="#f0883e">BLOCKED</tspan> &#8212; no provider call made</text>
-    <text x="20" y="594" fill="#8b949e">3 trace events recorded by GuardrailEventRecorder</text>
+    <text x="20" y="552"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> request redacted, sanitized prompt routed via</text>
+    <text x="20" y="572">&#160;&#160;on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
+    <text x="20" y="592"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> second prompt verdict: <tspan fill="#f0883e">BLOCKED</tspan> &#8212; no provider call made</text>
+    <text x="20" y="612" fill="#8b949e">3 trace events recorded by GuardrailEventRecorder</text>
 
-    <text x="20" y="626"><tspan fill="#d2a8ff">[trace scenario]</tspan> traced round trip &#8594; final answer:</text>
-    <text x="20" y="646">&#160;&#160;ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
-    <text x="20" y="666" fill="#8b949e">&#160;&#160;span: [agentStep] agent.weatherLookup &#8212; OK (0ms)</text>
-    <text x="20" y="684" fill="#8b949e">&#160;&#160;span: [llmCall] llm.decide &#8212; OK (0ms)</text>
-    <text x="20" y="702" fill="#8b949e">&#160;&#160;span: [toolCall] tool.get_weather &#8212; OK (0ms)</text>
-    <text x="20" y="720" fill="#8b949e">&#160;&#160;span: [llmCall] llm.finalAnswer &#8212; OK (0ms)</text>
-    <text x="20" y="740"><tspan fill="#d2a8ff">[trace scenario]</tspan> EvalGate passed: <tspan fill="#7ee787">true</tspan> (4 spans scored)</text>
+    <text x="20" y="644"><tspan fill="#d2a8ff">[trace scenario]</tspan> traced round trip &#8594; final answer:</text>
+    <text x="20" y="664">&#160;&#160;ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
+    <text x="20" y="684" fill="#8b949e">&#160;&#160;span: [agentStep] agent.weatherLookup &#8212; OK (0ms)</text>
+    <text x="20" y="702" fill="#8b949e">&#160;&#160;span: [llmCall] llm.decide &#8212; OK (0ms)</text>
+    <text x="20" y="720" fill="#8b949e">&#160;&#160;span: [toolCall] tool.get_weather &#8212; OK (0ms)</text>
+    <text x="20" y="738" fill="#8b949e">&#160;&#160;span: [llmCall] llm.finalAnswer &#8212; OK (0ms)</text>
+    <text x="20" y="758"><tspan fill="#d2a8ff">[trace scenario]</tspan> EvalGate passed: <tspan fill="#7ee787">true</tspan> (4 spans scored)</text>
 
-    <text x="20" y="772" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
-    <text x="20" y="788" fill="#57606a">-----------------------------------------------------------------------</text>
-    <text x="20" y="808">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
-    <text x="20" y="828">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
-    <text x="20" y="848">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;207&#160;&#160;&#160;&#160;&#160;&#160;&#160;91&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;298&#160;&#160;&#160;&#160;&#160;&#160;$0.000571</text>
-    <text x="20" y="864" fill="#57606a">-----------------------------------------------------------------------</text>
-    <text x="20" y="884" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;582&#160;&#160;&#160;&#160;&#160;&#160;204&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;786&#160;&#160;&#160;&#160;&#160;&#160;$0.002572</text>
+    <text x="20" y="790"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> query: "How does token metering and cost work in this ecosystem?"</text>
+    <text x="20" y="810"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> retrieved context:</text>
+    <text x="20" y="830">&#160;&#160;[1] (score: 0.416) TokenMeterKit provides actor-based token usage and cost metering for</text>
+    <text x="20" y="850">&#160;&#160;&#160;&#160;LLM apps in Swift, tracking cost per provider with Decimal-based pricing and a formatted</text>
+    <text x="20" y="870">&#160;&#160;&#160;&#160;cost report.</text>
+    <text x="20" y="890">&#160;&#160;[2] (score: 0.239) GuardrailKit provides actor-based guardrails for Swift LLM apps,</text>
+    <text x="20" y="910">&#160;&#160;&#160;&#160;screening prompts and responses for PII redaction and content policy violations before or</text>
+    <text x="20" y="930">&#160;&#160;&#160;&#160;after routing.</text>
 
-    <text x="20" y="920" fill="#7ee787">Total metered cost across all eight scenarios: $0.002572</text>
-    <text x="20" y="946" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
+    <text x="20" y="962"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> routed via self-hosted &#8594; grounded answer:</text>
+    <text x="20" y="982">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
+    <text x="20" y="1002">&#160;&#160;a cost report.", sourceCount: 2)</text>
+
+    <text x="20" y="1034" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
+    <text x="20" y="1050" fill="#57606a">-------------------------------------------------------------------</text>
+    <text x="20" y="1070">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
+    <text x="20" y="1090">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
+    <text x="20" y="1110">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;330&#160;&#160;&#160;&#160;&#160;&#160;121&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;451&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000814</text>
+    <text x="20" y="1126" fill="#57606a">-------------------------------------------------------------------</text>
+    <text x="20" y="1146" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;705&#160;&#160;&#160;&#160;&#160;&#160;234&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;939&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002815</text>
+
+    <text x="20" y="1182" fill="#7ee787">Total metered cost across all nine scenarios: $0.002815</text>
+    <text x="20" y="1208" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
   </g>
 </svg>

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1330" font-family="'SF Mono', Menlo, Consolas, monospace">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1600" font-family="'SF Mono', Menlo, Consolas, monospace">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
@@ -18,9 +18,12 @@
     <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#9a6700"/>
     </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0a7ea4"/>
+    </marker>
   </defs>
-  <rect x="0" y="0" width="920" height="1330" fill="#ffffff"/>
-  <text x="460" y="26" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2328">llm-ecosystem-demo &#8212; integration across eight packages</text>
+  <rect x="0" y="0" width="920" height="1600" fill="#ffffff"/>
+  <text x="460" y="26" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2328">llm-ecosystem-demo &#8212; integration across nine packages</text>
 
   <!-- StructuredOutputKit: PromptBuilder -->
   <rect x="40" y="60" width="230" height="60" rx="6" fill="#fff1e5" stroke="#bc4c00"/>
@@ -177,5 +180,33 @@
   <text x="450" y="1250" text-anchor="middle" font-size="12" fill="#1f2328">EvalGateReport.passed == true</text>
   <line x1="780" y1="1200" x2="450" y2="1220" stroke="#1a7f37" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
 
-  <text x="460" y="1300" text-anchor="middle" font-size="11" fill="#57606a">All eight packages resolved from their real, tagged 1.0.0 releases &#8212; see README for the full flow.</text>
+  <!-- Scenario 9: RetrievalKit RAG retrieval -->
+  <line x1="0" y1="1330" x2="920" y2="1330" stroke="#d0d7de" stroke-width="1"/>
+  <text x="460" y="1358" text-anchor="middle" font-size="14" font-weight="bold" fill="#1f2328">Scenario 9 &#8212; RetrievalKit RAG retrieval</text>
+
+  <rect x="20" y="1380" width="240" height="60" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="140" y="1404" text-anchor="middle" font-size="12" fill="#57606a">this demo</text>
+  <text x="140" y="1425" text-anchor="middle" font-size="13" fill="#1f2328">4 Document(id:text:) entries</text>
+
+  <rect x="330" y="1380" width="260" height="60" rx="6" fill="#e6f7fb" stroke="#0a7ea4"/>
+  <text x="460" y="1404" text-anchor="middle" font-size="12" fill="#57606a">RetrievalKit</text>
+  <text x="460" y="1425" text-anchor="middle" font-size="13" fill="#1f2328">Retriever.index + retrieveContextBlock</text>
+
+  <rect x="660" y="1380" width="240" height="60" rx="6" fill="#ddf4ff" stroke="#0969da"/>
+  <text x="780" y="1404" text-anchor="middle" font-size="12" fill="#57606a">ProviderGatewayKit</text>
+  <text x="780" y="1425" text-anchor="middle" font-size="13" fill="#1f2328">routed final answer, context grounded</text>
+
+  <line x1="260" y1="1410" x2="328" y2="1410" stroke="#0a7ea4" stroke-width="1.5" marker-end="url(#arrowCyan)"/>
+  <text x="294" y="1400" text-anchor="middle" font-size="10" fill="#0a7ea4">index(_:)</text>
+  <line x1="590" y1="1410" x2="658" y2="1410" stroke="#0a7ea4" stroke-width="1.5" marker-end="url(#arrowCyan)"/>
+  <text x="624" y="1400" text-anchor="middle" font-size="10" fill="#0a7ea4">context block</text>
+
+  <rect x="330" y="1460" width="260" height="50" rx="6" fill="#dafbe1" stroke="#1a7f37"/>
+  <text x="460" y="1490" text-anchor="middle" font-size="12" fill="#1f2328">typed RAGAnswer, grounded in retrieval</text>
+  <line x1="780" y1="1440" x2="460" y2="1460" stroke="#1a7f37" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+
+  <text x="20" y="1540" font-size="10.5" fill="#57606a">RetrievalKit has no compile-time dependency on ProviderGatewayKit &#8212; retrieveContextBlock(query:)'s</text>
+  <text x="20" y="1556" font-size="10.5" fill="#57606a">output is plain text, prepended to the prompt exactly as a host app would do it itself.</text>
+
+  <text x="460" y="1585" text-anchor="middle" font-size="11" fill="#57606a">All nine packages resolved from their real, tagged 1.0.0 releases &#8212; see README for the full flow.</text>
 </svg>

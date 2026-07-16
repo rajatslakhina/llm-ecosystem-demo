@@ -99,3 +99,22 @@ struct ScriptedToolCall: Decodable {
     let tool: String
     let arguments: [String: String]
 }
+
+/// The response shape the retrieval scenario's routed call is asked to
+/// answer in — a plain question-answering shape rather than `WeatherReport`,
+/// since that scenario asks the model to ground its answer in retrieved
+/// context rather than report on the weather.
+struct RAGAnswer: Decodable, Equatable, JSONSchemaConvertible {
+    let answer: String
+    let sourceCount: Int
+
+    static var jsonSchema: JSONSchema {
+        .object(
+            properties: [
+                "answer": .string(description: "The answer, grounded only in the provided context"),
+                "sourceCount": .number(description: "How many retrieved context chunks were used")
+            ],
+            required: ["answer", "sourceCount"]
+        )
+    }
+}
