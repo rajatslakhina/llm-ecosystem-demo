@@ -100,10 +100,23 @@ struct ScriptedToolCall: Decodable {
     let arguments: [String: String]
 }
 
+/// A fourth provider identity, used only by the prompt-template scenario's
+/// routed call. `ProviderIdentifier` is an extensible struct rather than a
+/// closed enum (see `foundation-model-provider-gateway`'s own `.onDevice`/
+/// `.cloud`/`.selfHosted` statics), so declaring a new one here is the same
+/// pattern the upstream package itself uses — registered with its own
+/// explicit rate in `EcosystemDemo.buildMeter()` so this hop's cost is
+/// visible rather than silently defaulting to $0.
+extension ProviderIdentifier {
+    static let promptTemplateHost = ProviderIdentifier("prompt-host")
+}
+
 /// The response shape the retrieval scenario's routed call is asked to
 /// answer in — a plain question-answering shape rather than `WeatherReport`,
 /// since that scenario asks the model to ground its answer in retrieved
-/// context rather than report on the weather.
+/// context rather than report on the weather. Reused as-is by the
+/// prompt-template scenario, whose rendered prompt asks the same
+/// context+question question-answering shape.
 struct RAGAnswer: Decodable, Equatable, JSONSchemaConvertible {
     let answer: String
     let sourceCount: Int

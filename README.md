@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all nine packages in this
+A single runnable demo that wires together all ten packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -8,16 +8,19 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`ToolRegistryKit`](https://github.com/rajatslakhina/tool-registry-kit),
 [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit),
 [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit),
-[`TraceKit`](https://github.com/rajatslakhina/trace-kit), and
-[`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit)
+[`TraceKit`](https://github.com/rajatslakhina/trace-kit),
+[`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit), and
+[`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
 answered from cache on a repeat request, dispatched to a registered tool
 and routed again for a final answer, driven through a multi-step
 tool-calling loop until the model converges, captured as a nested trace
-and scored by an eval gate, or grounded in context retrieved from a small
-indexed knowledge base before the model ever answers.
+and scored by an eval gate, grounded in context retrieved from a small
+indexed knowledge base before the model ever answers, or rendered from a
+versioned, rollback-capable prompt template before that render's own
+output becomes the routed call's prompt text.
 
 | Package | Role in this demo |
 |---|---|
@@ -30,6 +33,7 @@ indexed knowledge base before the model ever answers.
 | [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit) | Redacts PII and enforces content policy before a prompt is routed and after a reply comes back |
 | [`TraceKit`](https://github.com/rajatslakhina/trace-kit) | Captures a nested trace of the routed calls and tool dispatch, then scores it with an `EvalGate` |
 | [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit) | Indexes a small knowledge base and retrieves the context grounding the final routed answer |
+| [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit) | Versions a prompt template, renders the active version, and feeds that rendered text into a routed call |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -92,6 +96,19 @@ indexed knowledge base before the model ever answers.
    call, and the reply is decoded as a `RAGAnswer` — the actual
    retrieve-then-generate pattern, with `RetrievalKit` doing real cosine
    similarity ranking rather than a hand-picked "relevant" string.
+10. **`PromptTemplateKit`** handles a tenth scenario: `PromptRegistry`
+    registers a context+question system-prompt template at v1, promotes a
+    more explicit v2 that becomes active immediately, and
+    `render(name:variables:mode:)` renders that active version (strict
+    mode) into real prompt text. Only that *rendered string* — never the
+    raw template — is handed to a routed `LLMSession.send()` call, decoded
+    as a `RAGAnswer` and metered like every other scenario:
+    `PromptTemplateKit` renders, `ProviderGatewayKit` sends.
+    `rollbackToPrevious(name:)` then restores v1, and a second
+    `render(mode: .lenient)` call leaves an unresolved placeholder as
+    literal text rather than throwing — every register/promote/render/
+    rollback action along the way is captured by an
+    `InMemoryPromptAuditRecorder`.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -100,7 +117,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all five tagged packages.
+compiled code from all ten tagged packages.
 
 Note: `ProviderGatewayKit` ships its own minimal, string-only
 `ToolRegistry`/`ToolCallRequest` types for basic tool round-tripping.
@@ -123,8 +140,8 @@ swift run LLMEcosystemDemo
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
-`GuardrailKit`, `TraceKit`, and `RetrievalKit` straight from their `1.0.0`
-tags — no local checkouts or path overrides needed.
+`GuardrailKit`, `TraceKit`, `RetrievalKit`, and `PromptTemplateKit` straight
+from their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -132,10 +149,10 @@ tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all nine
+- **Build:** `swift build` — clean, zero warnings, resolving all ten
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all nine packages together; the output above is a genuine capture,
+  of all ten packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -146,7 +163,7 @@ tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the nine real packages compose and run," which the sample output
+means "the ten real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -203,6 +220,20 @@ block is prepended to the prompt for a single routed LLMSession.send()
 call, decoded as a RAGAnswer. RetrievalKit has no compile-time dependency
 on ProviderGatewayKit; the seam is exactly what a host app would wire up
 itself — retrieve, then prepend, then send.
+
+For the tenth scenario, PromptTemplateKit.PromptRegistry registers a
+context+question system-prompt template at v1, promotes a more explicit
+v2 that becomes active immediately, and render(name:variables:mode:) renders
+that active version (strict mode) into real prompt text — only that
+rendered string, never the raw template, is handed to a routed
+LLMSession.send() call, decoded as a RAGAnswer and metered exactly like
+every other scenario. rollbackToPrevious(name:) then restores v1, and a
+second render(mode: .lenient) call leaves an unresolved placeholder as
+literal text instead of throwing. Every register/promote/render/rollback
+action is captured by an InMemoryPromptAuditRecorder. PromptTemplateKit
+has no compile-time dependency on ProviderGatewayKit either — the seam is
+the same one every sibling kit uses: render (or retrieve, or dispatch)
+first, then send.
 ```
 
 ## License

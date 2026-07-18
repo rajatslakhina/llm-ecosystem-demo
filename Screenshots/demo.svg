@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1250" font-family="'SF Mono', Menlo, Consolas, monospace">
-  <rect x="0" y="0" width="980" height="1250" rx="10" fill="#0d1117"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1640" font-family="'SF Mono', Menlo, Consolas, monospace">
+  <rect x="0" y="0" width="980" height="1640" rx="10" fill="#0d1117"/>
   <rect x="0" y="0" width="980" height="34" rx="10" fill="#161b22"/>
   <rect x="0" y="24" width="980" height="10" fill="#161b22"/>
   <circle cx="20" cy="17" r="6" fill="#ff5f56"/>
@@ -13,7 +13,7 @@
     <text x="20" y="106" fill="#8b949e">ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) +</text>
     <text x="20" y="124" fill="#8b949e">ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) +</text>
     <text x="20" y="142" fill="#8b949e">GuardrailKit (PII redaction &amp; policy) + TraceKit (tracing &amp; eval gates) +</text>
-    <text x="20" y="160" fill="#8b949e">RetrievalKit (retrieval-augmented context)</text>
+    <text x="20" y="160" fill="#8b949e">RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating &amp; rollback)</text>
 
     <text x="20" y="192"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
     <text x="20" y="212">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
@@ -60,15 +60,33 @@
     <text x="20" y="982">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
     <text x="20" y="1002">&#160;&#160;a cost report.", sourceCount: 2)</text>
 
-    <text x="20" y="1034" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
-    <text x="20" y="1050" fill="#57606a">-------------------------------------------------------------------</text>
-    <text x="20" y="1070">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
-    <text x="20" y="1090">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
-    <text x="20" y="1110">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;330&#160;&#160;&#160;&#160;&#160;&#160;121&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;451&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000814</text>
-    <text x="20" y="1126" fill="#57606a">-------------------------------------------------------------------</text>
-    <text x="20" y="1146" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;705&#160;&#160;&#160;&#160;&#160;&#160;234&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;939&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002815</text>
+    <text x="20" y="1034"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rendered v2 (strict):</text>
+    <text x="20" y="1054">&#160;&#160;You are a grounded assistant. Using ONLY the context provided, answer concisely</text>
+    <text x="20" y="1074">&#160;&#160;and do not rely on anything outside it.</text>
+    <text x="20" y="1094">&#160;&#160;Context:</text>
+    <text x="20" y="1114">&#160;&#160;TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.</text>
+    <text x="20" y="1134">&#160;&#160;Question: How is cost tracked across providers?</text>
+    <text x="20" y="1162"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> routed via prompt-host &#8594; decoded:</text>
+    <text x="20" y="1182">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
+    <text x="20" y="1202">&#160;&#160;a cost report.", sourceCount: 1)</text>
+    <text x="20" y="1230"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rolled back to v1</text>
+    <text x="20" y="1258"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rendered v1 (lenient, question omitted):</text>
+    <text x="20" y="1278">&#160;&#160;Answer the question using only the context below.</text>
+    <text x="20" y="1298">&#160;&#160;Context: TokenMeterKit meters usage per provider with Decimal-based pricing.</text>
+    <text x="20" y="1318">&#160;&#160;Question: {{question}}</text>
+    <text x="20" y="1346"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> 2 version(s) in history, 5 audit events: registered, promoted,</text>
+    <text x="20" y="1366">&#160;&#160;rendered, rolledBack, rendered</text>
 
-    <text x="20" y="1182" fill="#7ee787">Total metered cost across all nine scenarios: $0.002815</text>
-    <text x="20" y="1208" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
+    <text x="20" y="1398" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
+    <text x="20" y="1414" fill="#57606a">-------------------------------------------------------------------</text>
+    <text x="20" y="1434">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
+    <text x="20" y="1454">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
+    <text x="20" y="1474">prompt-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;65&#160;&#160;&#160;&#160;&#160;&#160;&#160;30&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;95&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.00037</text>
+    <text x="20" y="1494">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;330&#160;&#160;&#160;&#160;&#160;&#160;121&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;451&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000814</text>
+    <text x="20" y="1510" fill="#57606a">-------------------------------------------------------------------</text>
+    <text x="20" y="1530" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;770&#160;&#160;&#160;&#160;&#160;&#160;264&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1034&#160;&#160;&#160;&#160;&#160;&#160;$0.003185</text>
+
+    <text x="20" y="1566" fill="#7ee787">Total metered cost across all ten scenarios: $0.003185</text>
+    <text x="20" y="1592" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
   </g>
 </svg>

@@ -1,5 +1,5 @@
 {
-  "originHash" : "36e4c600364f3a6f7e38c64ada5c093ecfcd9091b6d80f53685ff02bf4cf5cd7",
+  "originHash" : "e13368e13cb570ae59a173f40b922e4380a33035afee9825a69055c20e0ae961",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -25,6 +25,15 @@
       "location" : "https://github.com/rajatslakhina/guardrail-kit.git",
       "state" : {
         "revision" : "a27c8e98f482cb1032e5c73db5ee13098b098e3e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "prompt-template-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/prompt-template-kit.git",
+      "state" : {
+        "revision" : "eea4b794a1ea5e9e78343003265ca12c818b9ba7",
         "version" : "1.0.0"
       }
     },
