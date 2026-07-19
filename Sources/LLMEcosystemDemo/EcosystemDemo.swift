@@ -17,7 +17,8 @@ struct EcosystemDemo {
             "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
                 + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + "
                 + "GuardrailKit (PII redaction & policy) + TraceKit (tracing & eval gates) + "
-                + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback)\n"
+                + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback) + "
+                + "RetryPolicyKit (rate limiting & retry policy)\n"
         )
 
         let meter = await buildMeter()
@@ -58,11 +59,12 @@ struct EcosystemDemo {
         await runTraceScenario(decoder: decoder, meter: meter)
         await runRetrievalScenario(decoder: decoder, meter: meter)
         await runPromptTemplateScenario(decoder: decoder, meter: meter)
+        await runRetryPolicyScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all ten scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all eleven scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -84,6 +86,9 @@ struct EcosystemDemo {
         )
         await registry.register(
             ModelPricing(inputPerMillion: 2, outputPerMillion: 8), for: ProviderIdentifier.promptTemplateHost.rawValue
+        )
+        await registry.register(
+            ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6), for: ProviderIdentifier.retryHost.rawValue
         )
         return TokenMeter(registry: registry)
     }

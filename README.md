@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ten packages in this
+A single runnable demo that wires together all eleven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -9,8 +9,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`AgentLoopKit`](https://github.com/rajatslakhina/agent-loop-kit),
 [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit),
 [`TraceKit`](https://github.com/rajatslakhina/trace-kit),
-[`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit), and
-[`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit)
+[`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit),
+[`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit), and
+[`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -18,9 +19,10 @@ answered from cache on a repeat request, dispatched to a registered tool
 and routed again for a final answer, driven through a multi-step
 tool-calling loop until the model converges, captured as a nested trace
 and scored by an eval gate, grounded in context retrieved from a small
-indexed knowledge base before the model ever answers, or rendered from a
+indexed knowledge base before the model ever answers, rendered from a
 versioned, rollback-capable prompt template before that render's own
-output becomes the routed call's prompt text.
+output becomes the routed call's prompt text, or retried with exponential
+backoff after the provider genuinely fails at the transport layer.
 
 | Package | Role in this demo |
 |---|---|
@@ -34,6 +36,7 @@ output becomes the routed call's prompt text.
 | [`TraceKit`](https://github.com/rajatslakhina/trace-kit) | Captures a nested trace of the routed calls and tool dispatch, then scores it with an `EvalGate` |
 | [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit) | Indexes a small knowledge base and retrieves the context grounding the final routed answer |
 | [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit) | Versions a prompt template, renders the active version, and feeds that rendered text into a routed call |
+| [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit) | Retries a routed call with exponential backoff after a genuine transport-layer failure |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -109,6 +112,18 @@ output becomes the routed call's prompt text.
     literal text rather than throwing — every register/promote/render/
     rollback action along the way is captured by an
     `InMemoryPromptAuditRecorder`.
+11. **`RetryPolicyKit`** handles an eleventh scenario: `RetryExecutor` wraps
+    a routed `LLMSession.send()` call against a `FlakyProvider` that
+    genuinely throws for its first two attempts, then succeeds — a real
+    transport-layer failure, not a malformed-reply repair like the third
+    scenario. The same `LLMSession` is retried across all three attempts
+    rather than rebuilt per attempt: `CircuitBreaker`'s default
+    `failureThreshold` is 3 consecutive failures, so two failures followed
+    by a success never trips it. `ExponentialBackoffRetryPolicy` computes
+    the wait between attempts and an `InMemoryRetryEventRecorder` captures
+    every attempt including the two failures; only the final, successful
+    call is metered — matching how real LLM billing charges for completed
+    responses, not failed ones.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -117,7 +132,10 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all ten tagged packages.
+compiled code from all eleven tagged packages. (`RetryPolicyKit`'s own
+scenario additionally uses a `FlakyProvider` — a demo-only conformer that
+genuinely throws for its first two calls, since retrying only makes sense
+against a real transport-layer failure, not a scripted success.)
 
 Note: `ProviderGatewayKit` ships its own minimal, string-only
 `ToolRegistry`/`ToolCallRequest` types for basic tool round-tripping.
@@ -140,8 +158,9 @@ swift run LLMEcosystemDemo
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
-`GuardrailKit`, `TraceKit`, `RetrievalKit`, and `PromptTemplateKit` straight
-from their `1.0.0` tags — no local checkouts or path overrides needed.
+`GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`, and
+`RetryPolicyKit` straight from their `1.0.0` tags — no local checkouts or
+path overrides needed.
 
 ## Sample output
 
@@ -149,10 +168,10 @@ from their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ten
+- **Build:** `swift build` — clean, zero warnings, resolving all eleven
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ten packages together; the output above is a genuine capture,
+  of all eleven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -163,7 +182,7 @@ from their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ten real packages compose and run," which the sample output
+means "the eleven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -234,6 +253,17 @@ action is captured by an InMemoryPromptAuditRecorder. PromptTemplateKit
 has no compile-time dependency on ProviderGatewayKit either — the seam is
 the same one every sibling kit uses: render (or retrieve, or dispatch)
 first, then send.
+
+For the eleventh scenario, RetryPolicyKit.RetryExecutor wraps a routed
+LLMSession.send() call against a FlakyProvider that genuinely throws for
+its first two attempts, then succeeds. The same LLMSession is retried
+across all three attempts rather than rebuilt per attempt: CircuitBreaker's
+default failureThreshold is 3 consecutive failures, so two failures
+followed by a success never trips it. ExponentialBackoffRetryPolicy
+computes the wait between attempts, an InMemoryRetryEventRecorder captures
+every attempt (including the two failures), and only the final, successful
+call is metered — matching how real LLM billing charges for completed
+responses, not failed ones.
 ```
 
 ## License

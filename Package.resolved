@@ -1,5 +1,5 @@
 {
-  "originHash" : "e13368e13cb570ae59a173f40b922e4380a33035afee9825a69055c20e0ae961",
+  "originHash" : "b0b48361ed3a8c0f159123134059b9208c8fbd5a128a5a3f02c73a84faa9f925",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -52,6 +52,15 @@
       "location" : "https://github.com/rajatslakhina/retrieval-kit.git",
       "state" : {
         "revision" : "349c57c04d164dd45114a39f01bd8e46ecc357bc",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "retry-policy-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/retry-policy-kit.git",
+      "state" : {
+        "revision" : "7532f7100c90d8acf2a1386690e6c0cab6519bc4",
         "version" : "1.0.0"
       }
     },

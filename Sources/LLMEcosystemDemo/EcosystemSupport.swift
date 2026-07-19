@@ -111,6 +111,14 @@ extension ProviderIdentifier {
     static let promptTemplateHost = ProviderIdentifier("prompt-host")
 }
 
+/// A fifth provider identity, used only by the retry-policy scenario's
+/// flaky provider — registered with its own explicit rate in
+/// `EcosystemDemo.buildMeter()` so the successful, retried hop's cost is
+/// visible rather than silently defaulting to $0.
+extension ProviderIdentifier {
+    static let retryHost = ProviderIdentifier("retry-host")
+}
+
 /// The response shape the retrieval scenario's routed call is asked to
 /// answer in — a plain question-answering shape rather than `WeatherReport`,
 /// since that scenario asks the model to ground its answer in retrieved
