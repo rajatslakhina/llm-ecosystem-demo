@@ -119,6 +119,15 @@ extension ProviderIdentifier {
     static let retryHost = ProviderIdentifier("retry-host")
 }
 
+/// A sixth provider identity, used only by the context-compaction
+/// scenario's growing-conversation routed calls — registered with its own
+/// explicit rate in `EcosystemDemo.buildMeter()` so every hop of the
+/// growing conversation (and the final, compacted-context hop) shows up in
+/// the cost report rather than silently defaulting to $0.
+extension ProviderIdentifier {
+    static let compactionHost = ProviderIdentifier("compaction-host")
+}
+
 /// The response shape the retrieval scenario's routed call is asked to
 /// answer in — a plain question-answering shape rather than `WeatherReport`,
 /// since that scenario asks the model to ground its answer in retrieved

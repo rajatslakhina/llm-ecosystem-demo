@@ -1,4 +1,5 @@
 import AgentLoopKit
+import ContextCompactionKit
 import Foundation
 import GuardrailKit
 import ProviderGatewayKit
@@ -18,7 +19,8 @@ struct EcosystemDemo {
                 + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + "
                 + "GuardrailKit (PII redaction & policy) + TraceKit (tracing & eval gates) + "
                 + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback) + "
-                + "RetryPolicyKit (rate limiting & retry policy)\n"
+                + "RetryPolicyKit (rate limiting & retry policy) + "
+                + "ContextCompactionKit (conversation compaction under a token budget)\n"
         )
 
         let meter = await buildMeter()
@@ -60,11 +62,12 @@ struct EcosystemDemo {
         await runRetrievalScenario(decoder: decoder, meter: meter)
         await runPromptTemplateScenario(decoder: decoder, meter: meter)
         await runRetryPolicyScenario(decoder: decoder, meter: meter)
+        await runContextCompactionScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all eleven scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all twelve scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -75,21 +78,17 @@ struct EcosystemDemo {
     /// workaround.
     private static func buildMeter() async -> TokenMeter {
         let registry = PricingRegistry()
-        await registry.register(
-            ModelPricing(inputPerMillion: 0, outputPerMillion: 0), for: ProviderIdentifier.onDevice.rawValue
-        )
-        await registry.register(
-            ModelPricing(inputPerMillion: 3, outputPerMillion: 15), for: ProviderIdentifier.cloud.rawValue
-        )
-        await registry.register(
-            ModelPricing(inputPerMillion: 1, outputPerMillion: 4), for: ProviderIdentifier.selfHosted.rawValue
-        )
-        await registry.register(
-            ModelPricing(inputPerMillion: 2, outputPerMillion: 8), for: ProviderIdentifier.promptTemplateHost.rawValue
-        )
-        await registry.register(
-            ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6), for: ProviderIdentifier.retryHost.rawValue
-        )
+        let rates: [(ProviderIdentifier, ModelPricing)] = [
+            (.onDevice, ModelPricing(inputPerMillion: 0, outputPerMillion: 0)),
+            (.cloud, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
+            (.selfHosted, ModelPricing(inputPerMillion: 1, outputPerMillion: 4)),
+            (.promptTemplateHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
+            (.retryHost, ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6)),
+            (.compactionHost, ModelPricing(inputPerMillion: 2.5, outputPerMillion: 10))
+        ]
+        for (identifier, pricing) in rates {
+            await registry.register(pricing, for: identifier.rawValue)
+        }
         return TokenMeter(registry: registry)
     }
 

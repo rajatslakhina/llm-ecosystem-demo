@@ -1,5 +1,5 @@
 {
-  "originHash" : "b0b48361ed3a8c0f159123134059b9208c8fbd5a128a5a3f02c73a84faa9f925",
+  "originHash" : "15c2346b0f1be7e5705aefcf57494f876e7970f513e8a5e3f84a917b8dcd67cf",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -7,6 +7,15 @@
       "location" : "https://github.com/rajatslakhina/agent-loop-kit.git",
       "state" : {
         "revision" : "b9ad3de8bbea46b4c39c11d52c9cafbdc89ebefe",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "context-compaction-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/context-compaction-kit.git",
+      "state" : {
+        "revision" : "be8770e29c516361d9ab6bcc869a200a6804d172",
         "version" : "1.0.0"
       }
     },

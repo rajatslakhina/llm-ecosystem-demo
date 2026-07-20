@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eleven packages in this
+A single runnable demo that wires together all twelve packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -10,8 +10,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`GuardrailKit`](https://github.com/rajatslakhina/guardrail-kit),
 [`TraceKit`](https://github.com/rajatslakhina/trace-kit),
 [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit),
-[`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit), and
-[`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit)
+[`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit),
+[`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit), and
+[`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -21,8 +22,10 @@ tool-calling loop until the model converges, captured as a nested trace
 and scored by an eval gate, grounded in context retrieved from a small
 indexed knowledge base before the model ever answers, rendered from a
 versioned, rollback-capable prompt template before that render's own
-output becomes the routed call's prompt text, or retried with exponential
-backoff after the provider genuinely fails at the transport layer.
+output becomes the routed call's prompt text, retried with exponential
+backoff after the provider genuinely fails at the transport layer, or
+compacted down to a token budget before the compacted result — not the
+raw, ever-growing transcript — becomes the next routed call's context.
 
 | Package | Role in this demo |
 |---|---|
@@ -37,6 +40,7 @@ backoff after the provider genuinely fails at the transport layer.
 | [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit) | Indexes a small knowledge base and retrieves the context grounding the final routed answer |
 | [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit) | Versions a prompt template, renders the active version, and feeds that rendered text into a routed call |
 | [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit) | Retries a routed call with exponential backoff after a genuine transport-layer failure |
+| [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit) | Compacts a growing transcript down to a token budget before the next routed call |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -124,6 +128,19 @@ backoff after the provider genuinely fails at the transport layer.
     every attempt including the two failures; only the final, successful
     call is metered — matching how real LLM billing charges for completed
     responses, not failed ones.
+12. **`ContextCompactionKit`** handles a twelfth scenario: a routed
+    `LLMSession` conversation grows across four real turns (`LLMSession`
+    is given a deliberately huge 100,000-token internal budget so its own
+    `ContextBudgetManager` never trims anything during this scenario), then
+    `session.currentTranscript()` is bridged into
+    `[ContextCompactionKit.CompactableMessage]` and run through a full
+    three-tier `ContextCompactor` — sliding-window, truncating, summarizing
+    — against a 100-token budget the raw 9-message transcript can't fit.
+    The *compacted* result (not the raw transcript) is joined into a text
+    block and handed to the next routed `session.send()` call, decoded as
+    a `RAGAnswer` and metered like every other scenario. An
+    `InMemoryCompactionEventRecorder` captures the before/after token and
+    message counts and which strategies actually fired.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -132,7 +149,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all eleven tagged packages. (`RetryPolicyKit`'s own
+compiled code from all twelve tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -158,9 +175,9 @@ swift run LLMEcosystemDemo
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
-`GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`, and
-`RetryPolicyKit` straight from their `1.0.0` tags — no local checkouts or
-path overrides needed.
+`GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
+`RetryPolicyKit`, and `ContextCompactionKit` straight from their `1.0.0`
+tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -168,10 +185,10 @@ path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eleven
+- **Build:** `swift build` — clean, zero warnings, resolving all twelve
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eleven packages together; the output above is a genuine capture,
+  of all twelve packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -182,7 +199,7 @@ path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eleven real packages compose and run," which the sample output
+means "the twelve real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -264,6 +281,23 @@ computes the wait between attempts, an InMemoryRetryEventRecorder captures
 every attempt (including the two failures), and only the final, successful
 call is metered — matching how real LLM billing charges for completed
 responses, not failed ones.
+
+For the twelfth scenario, a routed LLMSession conversation grows across
+four real turns (LLMSession's own ContextBudgetManager is given a
+deliberately huge 100,000-token budget so it never trims anything here).
+session.currentTranscript() is bridged into
+[ContextCompactionKit.CompactableMessage] — the two role enums share the
+same case names, so mapping through rawValue is the whole seam — and run
+through ContextCompactor.compact(_:budget:) with all three tiers chained
+(SlidingWindowCompactionStrategy, TruncatingCompactionStrategy,
+SummarizingCompactionStrategy) against a 100-token budget the raw
+9-message transcript can't fit. The compacted CompactionResult.messages —
+not the raw transcript — are joined into a text block and handed to the
+next routed LLMSession.send() call, decoded as a RAGAnswer and metered
+exactly like every other scenario. An InMemoryCompactionEventRecorder
+captures the before/after token and message counts and which strategies
+fired. ContextCompactionKit has no compile-time dependency on
+ProviderGatewayKit either — the same seam every sibling kit uses.
 ```
 
 ## License
