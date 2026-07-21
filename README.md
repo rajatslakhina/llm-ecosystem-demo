@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twelve packages in this
+A single runnable demo that wires together all thirteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -11,8 +11,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`TraceKit`](https://github.com/rajatslakhina/trace-kit),
 [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit),
 [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit),
-[`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit), and
-[`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit)
+[`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit),
+[`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit), and
+[`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -23,9 +24,11 @@ and scored by an eval gate, grounded in context retrieved from a small
 indexed knowledge base before the model ever answers, rendered from a
 versioned, rollback-capable prompt template before that render's own
 output becomes the routed call's prompt text, retried with exponential
-backoff after the provider genuinely fails at the transport layer, or
+backoff after the provider genuinely fails at the transport layer,
 compacted down to a token budget before the compacted result — not the
-raw, ever-growing transcript — becomes the next routed call's context.
+raw, ever-growing transcript — becomes the next routed call's context, or
+recalled from a long-term memory store, ranked by more than raw
+similarity, before that recalled context grounds the final answer.
 
 | Package | Role in this demo |
 |---|---|
@@ -41,6 +44,7 @@ raw, ever-growing transcript — becomes the next routed call's context.
 | [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit) | Versions a prompt template, renders the active version, and feeds that rendered text into a routed call |
 | [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit) | Retries a routed call with exponential backoff after a genuine transport-layer failure |
 | [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit) | Compacts a growing transcript down to a token budget before the next routed call |
+| [`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit) | Recalls long-term memories, ranked by similarity/recency/importance/frequency, to ground a routed answer |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -141,6 +145,18 @@ raw, ever-growing transcript — becomes the next routed call's context.
     a `RAGAnswer` and metered like every other scenario. An
     `InMemoryCompactionEventRecorder` captures the before/after token and
     message counts and which strategies actually fired.
+13. **`AgentMemoryKit`** handles a thirteenth scenario: a `MemoryStore`
+    holds three memories written in an earlier "session" — a pinned persona
+    fact, a genuine preference, and a low-importance aside —
+    `recall(query:topK:)` ranks them by semantic similarity blended with
+    recency, importance, and access frequency (not raw vector distance
+    alone) and returns the two most relevant. Their content, not a
+    hand-picked string, is folded into the prompt for a routed
+    `LLMSession.send()` call, decoded as a `RAGAnswer` and metered like
+    every other scenario. A final `decay(pruneBelow:)` call then fades and
+    prunes the low-importance aside while the pinned persona fact survives
+    untouched — demonstrating the guarantee that pinning in this package
+    has no loophole.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -149,7 +165,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all twelve tagged packages. (`RetryPolicyKit`'s own
+compiled code from all thirteen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -176,8 +192,8 @@ swift run LLMEcosystemDemo
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
-`RetryPolicyKit`, and `ContextCompactionKit` straight from their `1.0.0`
-tags — no local checkouts or path overrides needed.
+`RetryPolicyKit`, `ContextCompactionKit`, and `AgentMemoryKit` straight from
+their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -185,10 +201,10 @@ tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twelve
+- **Build:** `swift build` — clean, zero warnings, resolving all thirteen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twelve packages together; the output above is a genuine capture,
+  of all thirteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -199,7 +215,7 @@ tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twelve real packages compose and run," which the sample output
+means "the thirteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -298,6 +314,19 @@ exactly like every other scenario. An InMemoryCompactionEventRecorder
 captures the before/after token and message counts and which strategies
 fired. ContextCompactionKit has no compile-time dependency on
 ProviderGatewayKit either — the same seam every sibling kit uses.
+
+For the thirteenth scenario, AgentMemoryKit.MemoryStore holds three
+memories written in an earlier "session" (a pinned persona fact, a
+preference, and a low-importance aside) and recall(query:topK:) ranks them
+via CompositeMemoryScorer — semantic similarity blended with recency,
+importance, and access frequency, not raw vector distance alone — and
+returns the two most relevant. Their content is folded into the prompt for
+a routed LLMSession.send() call, decoded as a RAGAnswer and metered exactly
+like every other scenario. A final decay(pruneBelow:) call fades and prunes
+the low-importance aside while the pinned persona fact survives untouched.
+AgentMemoryKit has no compile-time dependency on ProviderGatewayKit either
+— the same seam every sibling kit uses: recall, then fold into the prompt,
+then send.
 ```
 
 ## License

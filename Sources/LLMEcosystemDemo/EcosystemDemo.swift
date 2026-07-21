@@ -1,4 +1,5 @@
 import AgentLoopKit
+import AgentMemoryKit
 import ContextCompactionKit
 import Foundation
 import GuardrailKit
@@ -20,39 +21,15 @@ struct EcosystemDemo {
                 + "GuardrailKit (PII redaction & policy) + TraceKit (tracing & eval gates) + "
                 + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback) + "
                 + "RetryPolicyKit (rate limiting & retry policy) + "
-                + "ContextCompactionKit (conversation compaction under a token budget)\n"
+                + "ContextCompactionKit (conversation compaction under a token budget) + "
+                + "AgentMemoryKit (long-term write/recall memory across sessions)\n"
         )
 
         let meter = await buildMeter()
         let decoder = StructuredOutputDecoder()
         let instructions = PromptBuilder.instructions(for: WeatherReport.jsonSchema, typeName: "a WeatherReport")
 
-        await runSingleShotScenario(
-            ScenarioRequest(
-                label: "on-device provider, clean JSON",
-                providerID: .onDevice,
-                script: [#"{"city": "Bengaluru", "temperatureCelsius": 27.5, "conditions": "cloudy"}"#]
-            ),
-            instructions: instructions,
-            decoder: decoder,
-            meter: meter
-        )
-
-        await runSingleShotScenario(
-            ScenarioRequest(
-                label: "cloud provider, JSON fenced in prose",
-                providerID: .cloud,
-                script: [
-                    "Here is the current report:\n```json\n" +
-                        #"{"city": "Mumbai", "temperatureCelsius": 31.0, "conditions": "storm"}"# +
-                        "\n```\nLet me know if you need more detail."
-                ]
-            ),
-            instructions: instructions,
-            decoder: decoder,
-            meter: meter
-        )
-
+        await runSingleShotScenarios(instructions: instructions, decoder: decoder, meter: meter)
         await runSelfRepairingScenario(instructions: instructions, decoder: decoder, meter: meter)
         await runCachedScenario(instructions: instructions, decoder: decoder, meter: meter)
         await runToolCallingScenario(decoder: decoder, meter: meter)
@@ -63,11 +40,12 @@ struct EcosystemDemo {
         await runPromptTemplateScenario(decoder: decoder, meter: meter)
         await runRetryPolicyScenario(decoder: decoder, meter: meter)
         await runContextCompactionScenario(decoder: decoder, meter: meter)
+        await runAgentMemoryScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twelve scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all thirteen scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -84,48 +62,13 @@ struct EcosystemDemo {
             (.selfHosted, ModelPricing(inputPerMillion: 1, outputPerMillion: 4)),
             (.promptTemplateHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.retryHost, ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6)),
-            (.compactionHost, ModelPricing(inputPerMillion: 2.5, outputPerMillion: 10))
+            (.compactionHost, ModelPricing(inputPerMillion: 2.5, outputPerMillion: 10)),
+            (.memoryHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)
         }
         return TokenMeter(registry: registry)
-    }
-
-    /// Groups a single-shot scenario's fixed setup so `runSingleShotScenario`
-    /// stays under SwiftLint's parameter-count limit without hiding any of
-    /// the per-scenario configuration.
-    private struct ScenarioRequest {
-        let label: String
-        let providerID: ProviderIdentifier
-        let script: [String]
-    }
-
-    /// Routes one call through a real `ProviderRouter`/`LLMSession`, meters
-    /// it with `TokenMeter`, and decodes the reply with
-    /// `StructuredOutputDecoder` — the three packages' real code, wired
-    /// together exactly as a host app would.
-    private static func runSingleShotScenario(
-        _ scenario: ScenarioRequest,
-        instructions: String,
-        decoder: StructuredOutputDecoder,
-        meter: TokenMeter
-    ) async {
-        let router = ProviderRouter(providers: [
-            ScriptedProvider(identifier: scenario.providerID, script: scenario.script)
-        ])
-        let session = LLMSession(router: router)
-        do {
-            let response = try await session.send(instructions)
-            await meter.record(
-                TokenUsage(promptTokens: instructions.count / 4, completionTokens: response.text.count / 4),
-                for: scenario.providerID.rawValue
-            )
-            let value = try await decoder.decode(WeatherReport.self, from: response.text)
-            print("[\(scenario.label)] routed via \(response.providerID) \u{2192} decoded: \(value)")
-        } catch {
-            print("[\(scenario.label)] FAILED: \(error)")
-        }
     }
 
     /// The self-hosted provider's first answer omits a required field;

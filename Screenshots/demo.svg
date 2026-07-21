@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1980" font-family="'SF Mono', Menlo, Consolas, monospace">
-  <rect x="0" y="0" width="980" height="1980" rx="10" fill="#0d1117"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 2100" font-family="'SF Mono', Menlo, Consolas, monospace">
+  <rect x="0" y="0" width="980" height="2100" rx="10" fill="#0d1117"/>
   <rect x="0" y="0" width="980" height="34" rx="10" fill="#161b22"/>
   <rect x="0" y="24" width="980" height="10" fill="#161b22"/>
   <circle cx="20" cy="17" r="6" fill="#ff5f56"/>
@@ -15,94 +15,103 @@
     <text x="20" y="142" fill="#8b949e">GuardrailKit (PII redaction &amp; policy) + TraceKit (tracing &amp; eval gates) +</text>
     <text x="20" y="160" fill="#8b949e">RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating &amp; rollback) +</text>
     <text x="20" y="178" fill="#8b949e">RetryPolicyKit (rate limiting &amp; retry policy) +</text>
-    <text x="20" y="196" fill="#8b949e">ContextCompactionKit (conversation compaction under a token budget)</text>
+    <text x="20" y="196" fill="#8b949e">ContextCompactionKit (conversation compaction under a token budget) +</text>
+    <text x="20" y="214" fill="#8b949e">AgentMemoryKit (long-term write/recall memory across sessions)</text>
 
-    <text x="20" y="210"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
-    <text x="20" y="230">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
-    <text x="20" y="258"><tspan fill="#d2a8ff">[cloud provider, JSON fenced in prose]</tspan> routed via cloud &#8594; decoded:</text>
-    <text x="20" y="278">&#160;&#160;WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
-    <text x="20" y="306"><tspan fill="#d2a8ff">[self-hosted provider, self-repairing]</tspan> decoded after a repair round-trip:</text>
-    <text x="20" y="326">&#160;&#160;WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
+    <text x="20" y="246"><tspan fill="#d2a8ff">[on-device provider, clean JSON]</tspan> routed via on-device &#8594; decoded:</text>
+    <text x="20" y="266">&#160;&#160;WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
+    <text x="20" y="294"><tspan fill="#d2a8ff">[cloud provider, JSON fenced in prose]</tspan> routed via cloud &#8594; decoded:</text>
+    <text x="20" y="314">&#160;&#160;WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
+    <text x="20" y="342"><tspan fill="#d2a8ff">[self-hosted provider, self-repairing]</tspan> decoded after a repair round-trip:</text>
+    <text x="20" y="362">&#160;&#160;WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
 
-    <text x="20" y="354"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 1: <tspan fill="#f0883e">MISS</tspan> &#8212; routed via cloud, decoded:</text>
-    <text x="20" y="374">&#160;&#160;WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
-    <text x="20" y="394"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 2: <tspan fill="#7ee787">HIT</tspan> &#8212; no provider call, no additional cost</text>
-    <text x="20" y="414" fill="#8b949e">Cache: 1 hit / 1 miss, hit rate 50.0%, saved $0.001272</text>
+    <text x="20" y="390"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 1: <tspan fill="#f0883e">MISS</tspan> &#8212; routed via cloud, decoded:</text>
+    <text x="20" y="410">&#160;&#160;WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
+    <text x="20" y="430"><tspan fill="#d2a8ff">[cached scenario]</tspan> attempt 2: <tspan fill="#7ee787">HIT</tspan> &#8212; no provider call, no additional cost</text>
+    <text x="20" y="450" fill="#8b949e">Cache: 1 hit / 1 miss, hit rate 50.0%, saved $0.001272</text>
 
-    <text x="20" y="446"><tspan fill="#d2a8ff">[tool-calling round trip]</tspan> dispatched "get_weather", final answer:</text>
-    <text x="20" y="466">&#160;&#160;ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
-    <text x="20" y="486" fill="#8b949e">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
+    <text x="20" y="482"><tspan fill="#d2a8ff">[tool-calling round trip]</tspan> dispatched "get_weather", final answer:</text>
+    <text x="20" y="502">&#160;&#160;ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
+    <text x="20" y="522" fill="#8b949e">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
 
-    <text x="20" y="518"><tspan fill="#d2a8ff">[AgentLoopKit orchestrated loop]</tspan> 3 steps, halted: finalAnswer,</text>
-    <text x="20" y="538">&#160;&#160;answer: Austin is warmer than Boston right now.</text>
+    <text x="20" y="554"><tspan fill="#d2a8ff">[AgentLoopKit orchestrated loop]</tspan> 3 steps, halted: finalAnswer,</text>
+    <text x="20" y="574">&#160;&#160;answer: Austin is warmer than Boston right now.</text>
 
-    <text x="20" y="570"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> request redacted, sanitized prompt routed via</text>
-    <text x="20" y="590">&#160;&#160;on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
-    <text x="20" y="610"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> second prompt verdict: <tspan fill="#f0883e">BLOCKED</tspan> &#8212; no provider call made</text>
-    <text x="20" y="630" fill="#8b949e">3 trace events recorded by GuardrailEventRecorder</text>
+    <text x="20" y="606"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> request redacted, sanitized prompt routed via</text>
+    <text x="20" y="626">&#160;&#160;on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
+    <text x="20" y="646"><tspan fill="#d2a8ff">[guardrail scenario]</tspan> second prompt verdict: <tspan fill="#f0883e">BLOCKED</tspan> &#8212; no provider call made</text>
+    <text x="20" y="666" fill="#8b949e">3 trace events recorded by GuardrailEventRecorder</text>
 
-    <text x="20" y="662"><tspan fill="#d2a8ff">[trace scenario]</tspan> traced round trip &#8594; final answer:</text>
-    <text x="20" y="682">&#160;&#160;ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
-    <text x="20" y="702" fill="#8b949e">&#160;&#160;span: [agentStep] agent.weatherLookup &#8212; OK (0ms)</text>
-    <text x="20" y="720" fill="#8b949e">&#160;&#160;span: [llmCall] llm.decide &#8212; OK (0ms)</text>
-    <text x="20" y="738" fill="#8b949e">&#160;&#160;span: [toolCall] tool.get_weather &#8212; OK (0ms)</text>
-    <text x="20" y="756" fill="#8b949e">&#160;&#160;span: [llmCall] llm.finalAnswer &#8212; OK (0ms)</text>
-    <text x="20" y="776"><tspan fill="#d2a8ff">[trace scenario]</tspan> EvalGate passed: <tspan fill="#7ee787">true</tspan> (4 spans scored)</text>
+    <text x="20" y="698"><tspan fill="#d2a8ff">[trace scenario]</tspan> traced round trip &#8594; final answer:</text>
+    <text x="20" y="718">&#160;&#160;ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
+    <text x="20" y="738" fill="#8b949e">&#160;&#160;span: [agentStep] agent.weatherLookup &#8212; OK (0ms)</text>
+    <text x="20" y="756" fill="#8b949e">&#160;&#160;span: [llmCall] llm.decide &#8212; OK (0ms)</text>
+    <text x="20" y="774" fill="#8b949e">&#160;&#160;span: [toolCall] tool.get_weather &#8212; OK (0ms)</text>
+    <text x="20" y="792" fill="#8b949e">&#160;&#160;span: [llmCall] llm.finalAnswer &#8212; OK (0ms)</text>
+    <text x="20" y="812"><tspan fill="#d2a8ff">[trace scenario]</tspan> EvalGate passed: <tspan fill="#7ee787">true</tspan> (4 spans scored)</text>
 
-    <text x="20" y="808"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> query: "How does token metering and cost work in this ecosystem?"</text>
-    <text x="20" y="828"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> retrieved context:</text>
-    <text x="20" y="848">&#160;&#160;[1] (score: 0.416) TokenMeterKit provides actor-based token usage and cost metering for</text>
-    <text x="20" y="868">&#160;&#160;&#160;&#160;LLM apps in Swift, tracking cost per provider with Decimal-based pricing and a formatted</text>
-    <text x="20" y="888">&#160;&#160;&#160;&#160;cost report.</text>
-    <text x="20" y="908">&#160;&#160;[2] (score: 0.239) GuardrailKit provides actor-based guardrails for Swift LLM apps,</text>
-    <text x="20" y="928">&#160;&#160;&#160;&#160;screening prompts and responses for PII redaction and content policy violations before or</text>
-    <text x="20" y="948">&#160;&#160;&#160;&#160;after routing.</text>
+    <text x="20" y="844"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> query: "How does token metering and cost work in this ecosystem?"</text>
+    <text x="20" y="864"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> retrieved context:</text>
+    <text x="20" y="884">&#160;&#160;[1] (score: 0.416) TokenMeterKit provides actor-based token usage and cost metering for</text>
+    <text x="20" y="904">&#160;&#160;&#160;&#160;LLM apps in Swift, tracking cost per provider with Decimal-based pricing and a formatted</text>
+    <text x="20" y="924">&#160;&#160;&#160;&#160;cost report.</text>
+    <text x="20" y="944">&#160;&#160;[2] (score: 0.239) GuardrailKit provides actor-based guardrails for Swift LLM apps,</text>
+    <text x="20" y="964">&#160;&#160;&#160;&#160;screening prompts and responses for PII redaction and content policy violations before or</text>
+    <text x="20" y="984">&#160;&#160;&#160;&#160;after routing.</text>
 
-    <text x="20" y="980"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> routed via self-hosted &#8594; grounded answer:</text>
-    <text x="20" y="1000">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
-    <text x="20" y="1020">&#160;&#160;a cost report.", sourceCount: 2)</text>
+    <text x="20" y="1016"><tspan fill="#d2a8ff">[retrieval scenario]</tspan> routed via self-hosted &#8594; grounded answer:</text>
+    <text x="20" y="1036">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
+    <text x="20" y="1056">&#160;&#160;a cost report.", sourceCount: 2)</text>
 
-    <text x="20" y="1052"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rendered v2 (strict):</text>
-    <text x="20" y="1072">&#160;&#160;You are a grounded assistant. Using ONLY the context provided, answer concisely</text>
-    <text x="20" y="1092">&#160;&#160;and do not rely on anything outside it.</text>
-    <text x="20" y="1112">&#160;&#160;Context:</text>
-    <text x="20" y="1132">&#160;&#160;TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.</text>
-    <text x="20" y="1152">&#160;&#160;Question: How is cost tracked across providers?</text>
-    <text x="20" y="1180"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> routed via prompt-host &#8594; decoded:</text>
-    <text x="20" y="1200">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
-    <text x="20" y="1220">&#160;&#160;a cost report.", sourceCount: 1)</text>
-    <text x="20" y="1248"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rolled back to v1</text>
-    <text x="20" y="1276"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rendered v1 (lenient, question omitted):</text>
-    <text x="20" y="1296">&#160;&#160;Answer the question using only the context below.</text>
-    <text x="20" y="1316">&#160;&#160;Context: TokenMeterKit meters usage per provider with Decimal-based pricing.</text>
-    <text x="20" y="1336">&#160;&#160;Question: {{question}}</text>
-    <text x="20" y="1364"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> 2 version(s) in history, 5 audit events: registered, promoted,</text>
-    <text x="20" y="1384">&#160;&#160;rendered, rolledBack, rendered</text>
+    <text x="20" y="1088"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rendered v2 (strict):</text>
+    <text x="20" y="1108">&#160;&#160;You are a grounded assistant. Using ONLY the context provided, answer concisely</text>
+    <text x="20" y="1128">&#160;&#160;and do not rely on anything outside it.</text>
+    <text x="20" y="1148">&#160;&#160;Context:</text>
+    <text x="20" y="1168">&#160;&#160;TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.</text>
+    <text x="20" y="1188">&#160;&#160;Question: How is cost tracked across providers?</text>
+    <text x="20" y="1216"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> routed via prompt-host &#8594; decoded:</text>
+    <text x="20" y="1236">&#160;&#160;RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and</text>
+    <text x="20" y="1256">&#160;&#160;a cost report.", sourceCount: 1)</text>
+    <text x="20" y="1284"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rolled back to v1</text>
+    <text x="20" y="1312"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> rendered v1 (lenient, question omitted):</text>
+    <text x="20" y="1332">&#160;&#160;Answer the question using only the context below.</text>
+    <text x="20" y="1352">&#160;&#160;Context: TokenMeterKit meters usage per provider with Decimal-based pricing.</text>
+    <text x="20" y="1372">&#160;&#160;Question: {{question}}</text>
+    <text x="20" y="1400"><tspan fill="#d2a8ff">[prompt template scenario]</tspan> 2 version(s) in history, 5 audit events: registered, promoted,</text>
+    <text x="20" y="1420">&#160;&#160;rendered, rolledBack, rendered</text>
 
-    <text x="20" y="1416"><tspan fill="#d2a8ff">[retry policy scenario]</tspan> succeeded on attempt 3: decoded</text>
-    <text x="20" y="1436">&#160;&#160;WeatherReport(city: "Seattle", temperatureCelsius: 14.0, conditions: "rain")</text>
-    <text x="20" y="1456" fill="#8b949e">[retry policy scenario] attempt 1 failed (allProvidersFailed(...)) &#8594; retry(after: 0.01)</text>
-    <text x="20" y="1476" fill="#8b949e">[retry policy scenario] attempt 2 failed (allProvidersFailed(...)) &#8594; retry(after: 0.02)</text>
+    <text x="20" y="1452"><tspan fill="#d2a8ff">[retry policy scenario]</tspan> succeeded on attempt 3: decoded</text>
+    <text x="20" y="1472">&#160;&#160;WeatherReport(city: "Seattle", temperatureCelsius: 14.0, conditions: "rain")</text>
+    <text x="20" y="1492" fill="#8b949e">[retry policy scenario] attempt 1 failed (allProvidersFailed(...)) &#8594; retry(after: 0.01)</text>
+    <text x="20" y="1512" fill="#8b949e">[retry policy scenario] attempt 2 failed (allProvidersFailed(...)) &#8594; retry(after: 0.02)</text>
 
-    <text x="20" y="1508"><tspan fill="#d2a8ff">[context compaction scenario]</tspan> transcript before: 9 messages</text>
-    <text x="20" y="1528" fill="#8b949e">&#160;&#160;compacted to: 3 messages, ~75 tokens (budget: 100), via ["sliding-window"]</text>
-    <text x="20" y="1548" fill="#8b949e">&#160;&#160;recorded event: 9 &#8594; 3 messages, fits budget: true</text>
-    <text x="20" y="1580"><tspan fill="#d2a8ff">[context compaction scenario]</tspan> routed via compaction-host with compacted</text>
-    <text x="20" y="1600">&#160;&#160;context &#8594; RAGAnswer(answer: "Keep all mutable state behind actor isolation;</text>
-    <text x="20" y="1620">&#160;&#160;cross concurrency domains only with Sendable.", sourceCount: 4)</text>
+    <text x="20" y="1544"><tspan fill="#d2a8ff">[context compaction scenario]</tspan> transcript before: 9 messages</text>
+    <text x="20" y="1564" fill="#8b949e">&#160;&#160;compacted to: 3 messages, ~75 tokens (budget: 100), via ["sliding-window"]</text>
+    <text x="20" y="1584" fill="#8b949e">&#160;&#160;recorded event: 9 &#8594; 3 messages, fits budget: true</text>
+    <text x="20" y="1616"><tspan fill="#d2a8ff">[context compaction scenario]</tspan> routed via compaction-host with compacted</text>
+    <text x="20" y="1636">&#160;&#160;context &#8594; RAGAnswer(answer: "Keep all mutable state behind actor isolation;</text>
+    <text x="20" y="1656">&#160;&#160;cross concurrency domains only with Sendable.", sourceCount: 4)</text>
 
-    <text x="20" y="1652" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
-    <text x="20" y="1668" fill="#57606a">-------------------------------------------------------------------</text>
-    <text x="20" y="1688">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
-    <text x="20" y="1708">compaction-host&#160;&#160;171&#160;&#160;&#160;&#160;&#160;&#160;211&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;382&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002538</text>
-    <text x="20" y="1728">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
-    <text x="20" y="1748">prompt-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;65&#160;&#160;&#160;&#160;&#160;&#160;&#160;30&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;95&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.00037</text>
-    <text x="20" y="1768">retry-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;17&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;99&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000225</text>
-    <text x="20" y="1788">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;330&#160;&#160;&#160;&#160;&#160;&#160;121&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;451&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000814</text>
-    <text x="20" y="1804" fill="#57606a">-------------------------------------------------------------------</text>
-    <text x="20" y="1824" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1023&#160;&#160;&#160;&#160;&#160;492&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1515&#160;&#160;&#160;&#160;&#160;&#160;$0.005948</text>
+    <text x="20" y="1688"><tspan fill="#d2a8ff">[agent memory scenario]</tspan> recalled 2 memories: [preference] The user's favorite editor</text>
+    <text x="20" y="1708">&#160;&#160;theme is dark...; [fact] The user is a senior iOS engineer buildi...</text>
+    <text x="20" y="1728"><tspan fill="#d2a8ff">[agent memory scenario]</tspan> routed via memory-host with recalled memory &#8594;</text>
+    <text x="20" y="1748">&#160;&#160;RAGAnswer(answer: "A dark-themed, monospace-font editor fits this user's stated</text>
+    <text x="20" y="1768">&#160;&#160;preference.", sourceCount: 2)</text>
+    <text x="20" y="1788" fill="#8b949e">[agent memory scenario] decay pass pruned 1 low-importance, unpinned memories</text>
 
-    <text x="20" y="1860" fill="#7ee787">Total metered cost across all twelve scenarios: $0.0059475</text>
-    <text x="20" y="1888" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
+    <text x="20" y="1820" fill="#c9d1d9">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
+    <text x="20" y="1836" fill="#57606a">-------------------------------------------------------------------</text>
+    <text x="20" y="1856">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
+    <text x="20" y="1876">compaction-host&#160;&#160;171&#160;&#160;&#160;&#160;&#160;&#160;211&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;382&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002538</text>
+    <text x="20" y="1896">memory-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;129&#160;&#160;&#160;&#160;&#160;&#160;&#160;27&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;156&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000474</text>
+    <text x="20" y="1916">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
+    <text x="20" y="1936">prompt-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;65&#160;&#160;&#160;&#160;&#160;&#160;&#160;30&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;95&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.00037</text>
+    <text x="20" y="1956">retry-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;17&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;99&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000225</text>
+    <text x="20" y="1976">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;330&#160;&#160;&#160;&#160;&#160;&#160;121&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;451&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000814</text>
+    <text x="20" y="1992" fill="#57606a">-------------------------------------------------------------------</text>
+    <text x="20" y="2012" font-weight="bold" fill="#7ee787">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1152&#160;&#160;&#160;&#160;&#160;519&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1671&#160;&#160;&#160;&#160;&#160;&#160;$0.006422</text>
+
+    <text x="20" y="2048" fill="#7ee787">Total metered cost across all thirteen scenarios: $0.0064215</text>
+    <text x="20" y="2076" fill="#58a6ff">$<tspan fill="#c9d1d9"> </tspan><tspan fill="#8b949e">&#9615;</tspan></text>
   </g>
 </svg>

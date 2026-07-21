@@ -128,6 +128,14 @@ extension ProviderIdentifier {
     static let compactionHost = ProviderIdentifier("compaction-host")
 }
 
+/// A seventh provider identity, used only by the agent-memory scenario's
+/// recalled-context routed call — registered with its own explicit rate in
+/// `EcosystemDemo.buildMeter()` so this hop's cost is visible rather than
+/// silently defaulting to $0.
+extension ProviderIdentifier {
+    static let memoryHost = ProviderIdentifier("memory-host")
+}
+
 /// The response shape the retrieval scenario's routed call is asked to
 /// answer in — a plain question-answering shape rather than `WeatherReport`,
 /// since that scenario asks the model to ground its answer in retrieved
