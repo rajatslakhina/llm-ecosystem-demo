@@ -23,7 +23,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/prompt-template-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/retry-policy-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/context-compaction-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/agent-memory-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/agent-memory-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/semantic-router-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -41,7 +42,8 @@ let package = Package(
                 .product(name: "PromptTemplateKit", package: "prompt-template-kit"),
                 .product(name: "RetryPolicyKit", package: "retry-policy-kit"),
                 .product(name: "ContextCompactionKit", package: "context-compaction-kit"),
-                .product(name: "AgentMemoryKit", package: "agent-memory-kit")
+                .product(name: "AgentMemoryKit", package: "agent-memory-kit"),
+                .product(name: "SemanticRouterKit", package: "semantic-router-kit")
             ]
         )
     ]

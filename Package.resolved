@@ -1,5 +1,5 @@
 {
-  "originHash" : "45f861ea427914f695dc02c2d525ca5c3a0d97740a719338ae6071d4e673995b",
+  "originHash" : "0f1314b163bb7317dd54f3cbaf603facc179178a6f97b57548e93d96b8fad014",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -79,6 +79,15 @@
       "location" : "https://github.com/rajatslakhina/retry-policy-kit.git",
       "state" : {
         "revision" : "7532f7100c90d8acf2a1386690e6c0cab6519bc4",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "semantic-router-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/semantic-router-kit.git",
+      "state" : {
+        "revision" : "fdb33b94eb889d1fd810a150225ba44043fc2e94",
         "version" : "1.0.0"
       }
     },

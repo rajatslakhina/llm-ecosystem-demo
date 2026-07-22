@@ -6,6 +6,7 @@ import GuardrailKit
 import ProviderGatewayKit
 import ResponseCacheKit
 import RetrievalKit
+import SemanticRouterKit
 import StructuredOutputKit
 import TokenMeterKit
 import ToolRegistryKit
@@ -22,7 +23,8 @@ struct EcosystemDemo {
                 + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback) + "
                 + "RetryPolicyKit (rate limiting & retry policy) + "
                 + "ContextCompactionKit (conversation compaction under a token budget) + "
-                + "AgentMemoryKit (long-term write/recall memory across sessions)\n"
+                + "AgentMemoryKit (long-term write/recall memory across sessions) + "
+                + "SemanticRouterKit (semantic intent routing by embedding distance)\n"
         )
 
         let meter = await buildMeter()
@@ -41,11 +43,12 @@ struct EcosystemDemo {
         await runRetryPolicyScenario(decoder: decoder, meter: meter)
         await runContextCompactionScenario(decoder: decoder, meter: meter)
         await runAgentMemoryScenario(decoder: decoder, meter: meter)
+        await runSemanticRouterScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all thirteen scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all fourteen scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -63,7 +66,8 @@ struct EcosystemDemo {
             (.promptTemplateHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.retryHost, ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6)),
             (.compactionHost, ModelPricing(inputPerMillion: 2.5, outputPerMillion: 10)),
-            (.memoryHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
+            (.memoryHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
+            (.routerHost, ModelPricing(inputPerMillion: 1.8, outputPerMillion: 7))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirteen packages in this
+A single runnable demo that wires together all fourteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -12,8 +12,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`RetrievalKit`](https://github.com/rajatslakhina/retrieval-kit),
 [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit),
 [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit),
-[`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit), and
-[`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit)
+[`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit),
+[`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit), and
+[`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -28,7 +29,9 @@ backoff after the provider genuinely fails at the transport layer,
 compacted down to a token budget before the compacted result — not the
 raw, ever-growing transcript — becomes the next routed call's context, or
 recalled from a long-term memory store, ranked by more than raw
-similarity, before that recalled context grounds the final answer.
+similarity, before that recalled context grounds the final answer, or
+classified into a support intent by embedding distance so the matched
+route's own metadata — not a hard-coded branch — picks which model answers.
 
 | Package | Role in this demo |
 |---|---|
@@ -45,6 +48,7 @@ similarity, before that recalled context grounds the final answer.
 | [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit) | Retries a routed call with exponential backoff after a genuine transport-layer failure |
 | [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit) | Compacts a growing transcript down to a token budget before the next routed call |
 | [`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit) | Recalls long-term memories, ranked by similarity/recency/importance/frequency, to ground a routed answer |
+| [`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit) | Classifies a query into a support intent by embedding distance; the matched route's metadata picks which model the routed call targets |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -157,6 +161,16 @@ similarity, before that recalled context grounds the final answer.
     prunes the low-importance aside while the pinned persona fact survives
     untouched — demonstrating the guarantee that pinning in this package
     has no loophole.
+14. **`SemanticRouterKit`** handles a fourteenth scenario: a `SemanticRouter`
+    registers three support intents (weather, order status, small talk),
+    each described by seed utterances and carrying the model a match should
+    route to in its `metadata`. An incoming message is classified by
+    embedding distance to the closest intent above its threshold, and the
+    matched route's `metadata["model"]` — not a hard-coded branch — selects
+    which provider the real routed `LLMSession.send()` call targets. This is
+    semantic routing (by meaning) feeding provider routing (by capability):
+    the reply is then decoded as a `WeatherReport` and metered like every
+    other scenario.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -165,7 +179,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all thirteen tagged packages. (`RetryPolicyKit`'s own
+compiled code from all fourteen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -192,8 +206,9 @@ swift run LLMEcosystemDemo
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
-`RetryPolicyKit`, `ContextCompactionKit`, and `AgentMemoryKit` straight from
-their `1.0.0` tags — no local checkouts or path overrides needed.
+`RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`, and
+`SemanticRouterKit` straight from their `1.0.0` tags — no local checkouts or
+path overrides needed.
 
 ## Sample output
 
@@ -201,10 +216,10 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirteen
+- **Build:** `swift build` — clean, zero warnings, resolving all fourteen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirteen packages together; the output above is a genuine capture,
+  of all fourteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -215,7 +230,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirteen real packages compose and run," which the sample output
+means "the fourteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -327,6 +342,17 @@ the low-importance aside while the pinned persona fact survives untouched.
 AgentMemoryKit has no compile-time dependency on ProviderGatewayKit either
 — the same seam every sibling kit uses: recall, then fold into the prompt,
 then send.
+
+For the fourteenth scenario, SemanticRouterKit.SemanticRouter registers
+three support intents, each with seed utterances and a metadata["model"]
+pointing at the model a match should route to. route(query:) embeds the
+incoming message once and returns the closest intent above its threshold;
+the matched route's metadata — not a hard-coded branch — chooses which
+provider the real routed LLMSession.send() call targets, whose reply is
+decoded as a WeatherReport and metered exactly like every other scenario.
+This is the two-layer routing seam: SemanticRouterKit routes by meaning,
+ProviderGatewayKit routes by capability, and the two join only at the
+metadata value — neither depends on the other at compile time.
 ```
 
 ## License

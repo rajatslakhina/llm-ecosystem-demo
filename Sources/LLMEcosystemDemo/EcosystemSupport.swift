@@ -136,6 +136,14 @@ extension ProviderIdentifier {
     static let memoryHost = ProviderIdentifier("memory-host")
 }
 
+/// An eighth provider identity, used only by the semantic-router scenario's
+/// routed call — the model a matched intent's `Route.metadata` points at.
+/// Registered with its own explicit rate in `EcosystemDemo.buildMeter()` so
+/// this hop's cost is visible rather than silently defaulting to $0.
+extension ProviderIdentifier {
+    static let routerHost = ProviderIdentifier("router-host")
+}
+
 /// The response shape the retrieval scenario's routed call is asked to
 /// answer in — a plain question-answering shape rather than `WeatherReport`,
 /// since that scenario asks the model to ground its answer in retrieved
