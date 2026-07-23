@@ -1,5 +1,5 @@
 {
-  "originHash" : "0f1314b163bb7317dd54f3cbaf603facc179178a6f97b57548e93d96b8fad014",
+  "originHash" : "35cc0ad8ad7c4ad702569725d04d47725a8179829b4cb47b19bb87ca0358237e",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -43,6 +43,15 @@
       "location" : "https://github.com/rajatslakhina/guardrail-kit.git",
       "state" : {
         "revision" : "a27c8e98f482cb1032e5c73db5ee13098b098e3e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "output-repair-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/output-repair-kit.git",
+      "state" : {
+        "revision" : "e2a25fe1df01d0eabe4139a4b8e7dc7465ebd52d",
         "version" : "1.0.0"
       }
     },

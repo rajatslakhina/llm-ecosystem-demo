@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fourteen packages in this
+A single runnable demo that wires together all fifteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -13,8 +13,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`PromptTemplateKit`](https://github.com/rajatslakhina/prompt-template-kit),
 [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit),
 [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit),
-[`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit), and
-[`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit)
+[`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit),
+[`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit), and
+[`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -31,7 +32,10 @@ raw, ever-growing transcript — becomes the next routed call's context, or
 recalled from a long-term memory store, ranked by more than raw
 similarity, before that recalled context grounds the final answer, or
 classified into a support intent by embedding distance so the matched
-route's own metadata — not a hard-coded branch — picks which model answers.
+route's own metadata — not a hard-coded branch — picks which model answers,
+or driven through a bounded, self-healing repair loop that re-prompts the
+routed model with structured feedback until the reply satisfies its output
+contract.
 
 | Package | Role in this demo |
 |---|---|
@@ -49,6 +53,7 @@ route's own metadata — not a hard-coded branch — picks which model answers.
 | [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit) | Compacts a growing transcript down to a token budget before the next routed call |
 | [`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit) | Recalls long-term memories, ranked by similarity/recency/importance/frequency, to ground a routed answer |
 | [`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit) | Classifies a query into a support intent by embedding distance; the matched route's metadata picks which model the routed call targets |
+| [`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit) | Wraps a routed call in a bounded repair loop: rejects an invalid reply with structured issues, folds them into a correction prompt, and re-prompts until it validates or the budget is spent |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -171,6 +176,16 @@ route's own metadata — not a hard-coded branch — picks which model answers.
     semantic routing (by meaning) feeding provider routing (by capability):
     the reply is then decoded as a `WeatherReport` and metered like every
     other scenario.
+15. **`OutputRepairKit`** handles a fifteenth scenario, the loop layer that
+    sits *around* validation. An `OutputRepairLoop` drives a real routed
+    `LLMSession` as its `ResponseProducing`: the provider's first reply omits
+    a required field, so the loop's `WeatherRepairContract` rejects it with a
+    structured `RepairIssue`, `DefaultRepairPrompter` folds that reason into a
+    correction prompt, and the second routed call repairs it. Both hops — the
+    rejected one and the repaired one — are metered under `repair-host`.
+    Where `StructuredOutputKit`'s scenario shows *its own* internal retry,
+    this shows a reusable repair loop wrapping *any* routed model, with a hard
+    attempt budget and an auditable `RepairEvent` trail.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -179,7 +194,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all fourteen tagged packages. (`RetryPolicyKit`'s own
+compiled code from all fifteen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -206,9 +221,9 @@ swift run LLMEcosystemDemo
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
-`RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`, and
-`SemanticRouterKit` straight from their `1.0.0` tags — no local checkouts or
-path overrides needed.
+`RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
+`SemanticRouterKit`, and `OutputRepairKit` straight from their `1.0.0` tags —
+no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -216,10 +231,10 @@ path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fourteen
+- **Build:** `swift build` — clean, zero warnings, resolving all fifteen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fourteen packages together; the output above is a genuine capture,
+  of all fifteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -230,7 +245,7 @@ path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fourteen real packages compose and run," which the sample output
+means "the fifteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -353,6 +368,18 @@ decoded as a WeatherReport and metered exactly like every other scenario.
 This is the two-layer routing seam: SemanticRouterKit routes by meaning,
 ProviderGatewayKit routes by capability, and the two join only at the
 metadata value — neither depends on the other at compile time.
+
+For the fifteenth scenario, OutputRepairKit.OutputRepairLoop.run(initialPrompt:
+producer:) wraps a routed LLMSession as its ResponseProducing seam. The
+scripted provider's first reply omits the required conditions field, so the
+loop's WeatherRepairContract.validate(_:) returns .invalid with a structured
+RepairIssue; DefaultRepairPrompter folds that issue into a correction prompt,
+the loop re-prompts the same LLMSession, and the second routed reply validates.
+Both hops are metered under repair-host (registered with its own rate so the
+cost isn't a silent $0), and an InMemoryRepairEventRecorder captures the five
+RepairEvents. OutputRepairKit has no compile-time dependency on
+ProviderGatewayKit or StructuredOutputKit — the producer and the contract are
+the only seams: produce, validate, feed the reasons back, then re-produce.
 ```
 
 ## License
