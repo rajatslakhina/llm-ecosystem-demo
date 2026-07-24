@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifteen packages in this
+A single runnable demo that wires together all sixteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -14,8 +14,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`RetryPolicyKit`](https://github.com/rajatslakhina/retry-policy-kit),
 [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit),
 [`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit),
-[`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit), and
-[`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit)
+[`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit),
+[`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit), and
+[`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -54,6 +55,7 @@ contract.
 | [`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit) | Recalls long-term memories, ranked by similarity/recency/importance/frequency, to ground a routed answer |
 | [`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit) | Classifies a query into a support intent by embedding distance; the matched route's metadata picks which model the routed call targets |
 | [`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit) | Wraps a routed call in a bounded repair loop: rejects an invalid reply with structured issues, folds them into a correction prompt, and re-prompts until it validates or the budget is spent |
+| [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit) | Reassembles a streamed reply — content fragments and index-keyed tool-call argument fragments — into one message, then dispatches the reassembled tool call and bills the exact streamed usage under `stream-host` |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -186,6 +188,16 @@ contract.
     Where `StructuredOutputKit`'s scenario shows *its own* internal retry,
     this shows a reusable repair loop wrapping *any* routed model, with a hard
     attempt budget and an auditable `RepairEvent` trail.
+16. **`StreamAggregatorKit`** handles a sixteenth scenario, the front of the
+    pipeline. A streaming provider never returns a finished reply — it emits a
+    sequence of deltas, and its tool-call arguments arrive as JSON fragments
+    keyed by index. A `StreamAggregator` reassembles that stream (a content
+    preamble plus a `get_weather` call whose arguments dribble out across two
+    fragments) into one `AssembledMessage`; the reassembled tool call is then
+    dispatched through `ToolRegistryKit`, and the `usage` the stream carried is
+    billed by `TokenMeter` at its exact counts under `stream-host` rather than
+    re-estimated from text. `StreamAggregatorKit` has no compile-time
+    dependency on the gateway — the `DeltaSource` is its only seam.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -194,7 +206,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all fifteen tagged packages. (`RetryPolicyKit`'s own
+compiled code from all sixteen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -222,7 +234,7 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
-`SemanticRouterKit`, and `OutputRepairKit` straight from their `1.0.0` tags —
+`SemanticRouterKit`, `OutputRepairKit`, and `StreamAggregatorKit` straight from their `1.0.0` tags —
 no local checkouts or path overrides needed.
 
 ## Sample output
@@ -231,10 +243,10 @@ no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifteen
+- **Build:** `swift build` — clean, zero warnings, resolving all sixteen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifteen packages together; the output above is a genuine capture,
+  of all sixteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -245,7 +257,7 @@ no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifteen real packages compose and run," which the sample output
+means "the sixteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
