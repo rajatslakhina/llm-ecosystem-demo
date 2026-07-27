@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixteen packages in this
+A single runnable demo that wires together all seventeen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -15,8 +15,9 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`ContextCompactionKit`](https://github.com/rajatslakhina/context-compaction-kit),
 [`AgentMemoryKit`](https://github.com/rajatslakhina/agent-memory-kit),
 [`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit),
-[`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit), and
-[`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit)
+[`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit),
+[`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit), and
+[`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -36,7 +37,9 @@ classified into a support intent by embedding distance so the matched
 route's own metadata — not a hard-coded branch — picks which model answers,
 or driven through a bounded, self-healing repair loop that re-prompts the
 routed model with structured feedback until the reply satisfies its output
-contract.
+contract, or fanned out as a whole batch of prompts through one executor
+with a hard cap on how many are in flight, coming back in input order with
+one bad reply isolated to its own item instead of taking the job down.
 
 | Package | Role in this demo |
 |---|---|
@@ -56,6 +59,7 @@ contract.
 | [`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit) | Classifies a query into a support intent by embedding distance; the matched route's metadata picks which model the routed call targets |
 | [`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit) | Wraps a routed call in a bounded repair loop: rejects an invalid reply with structured issues, folds them into a correction prompt, and re-prompts until it validates or the budget is spent |
 | [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit) | Reassembles a streamed reply — content fragments and index-keyed tool-call argument fragments — into one message, then dispatches the reassembled tool call and bills the exact streamed usage under `stream-host` |
+| [`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit) | Runs a batch of prompts through one bounded-concurrency executor that forwards each item to the gateway, returns outcomes in input order, isolates the one off-contract reply, and hands its summed successful usage to `TokenMeter` under `batch-host` |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -198,6 +202,25 @@ contract.
     billed by `TokenMeter` at its exact counts under `stream-host` rather than
     re-estimated from text. `StreamAggregatorKit` has no compile-time
     dependency on the gateway — the `DeltaSource` is its only seam.
+17. **`BatchInferenceKit`** handles a seventeenth scenario, the one that stops
+    treating a routed call as a single event. Five prompts go into one
+    `BatchProcessor` with `ConcurrencyLimit(2)`, and every item is a real
+    `ProviderRouter`/`LLMSession` round trip: a `GatewayBatchExecutor` adapter
+    is the `BatchExecuting` seam, so the batch genuinely fans out through
+    `ProviderGatewayKit` rather than answering from canned strings. The output
+    shows all three of the package's guarantees at once — `stats.peakActive`
+    comes back as 2, proving the bound held rather than being merely requested;
+    `report.outcomes` is in submission order regardless of which item finished
+    first; and the third reply, which arrives missing the required `conditions`
+    field, is rejected by `StructuredOutputKit` inside the adapter and isolated
+    as a single `BatchItemError` under `.continueOnFailure` while the other four
+    still complete. Billing is the closing seam: `BatchProcessor` sums
+    `BatchTokenUsage` over *successful* items only, so the batch settles with
+    one `TokenMeter.record` against `stats.usage` under `batch-host` and the
+    failed item costs nothing — the same principle the retry scenario applies to
+    failed attempts. `BatchInferenceKit` carries no retry or cost logic of its
+    own by design, which is exactly why those two jobs stay with
+    `RetryPolicyKit` and `TokenMeterKit` here instead of being duplicated.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -206,7 +229,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all sixteen tagged packages. (`RetryPolicyKit`'s own
+compiled code from all seventeen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -234,7 +257,8 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
-`SemanticRouterKit`, `OutputRepairKit`, and `StreamAggregatorKit` straight from their `1.0.0` tags —
+`SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`, and
+`BatchInferenceKit` straight from their `1.0.0` tags —
 no local checkouts or path overrides needed.
 
 ## Sample output
@@ -243,10 +267,10 @@ no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all sixteen
+- **Build:** `swift build` — clean, zero warnings, resolving all seventeen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all sixteen packages together; the output above is a genuine capture,
+  of all seventeen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -257,7 +281,7 @@ no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the sixteen real packages compose and run," which the sample output
+means "the seventeen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -392,6 +416,23 @@ cost isn't a silent $0), and an InMemoryRepairEventRecorder captures the five
 RepairEvents. OutputRepairKit has no compile-time dependency on
 ProviderGatewayKit or StructuredOutputKit — the producer and the contract are
 the only seams: produce, validate, feed the reasons back, then re-produce.
+
+For the seventeenth scenario, BatchInferenceKit.BatchProcessor.process(_:) runs
+five BatchRequests with ConcurrencyLimit(2) against a GatewayBatchExecutor — the
+BatchExecuting seam — which builds a ProviderRouter/LLMSession per item and
+validates each routed reply with StructuredOutputDecoder. One session per item
+rather than one shared across the batch: LLMSession serializes the turns of a
+conversation, and a batch's items are independent requests, not turns. The
+adapter's throw on the one reply missing conditions becomes a single
+BatchItemError of kind .executorFailure, and .continueOnFailure keeps the other
+four running; BatchReport.outcomes still comes back in submission order, and
+BatchStats.peakActive reports 2 — measured at admission, so it is proof the bound
+held rather than a sample that happened to look right. BatchProcessor sums
+BatchTokenUsage across successful items only, and that single total is what
+TokenMeter.record bills under batch-host, so the failed item costs nothing.
+BatchInferenceKit has no compile-time dependency on ProviderGatewayKit,
+TokenMeterKit, or RetryPolicyKit — it deliberately ships no retry or cost logic,
+which is what leaves those two jobs where they already belong.
 ```
 
 ## License

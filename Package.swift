@@ -26,7 +26,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/agent-memory-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/semantic-router-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/output-repair-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/stream-aggregator-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/stream-aggregator-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/batch-inference-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -47,7 +48,8 @@ let package = Package(
                 .product(name: "AgentMemoryKit", package: "agent-memory-kit"),
                 .product(name: "SemanticRouterKit", package: "semantic-router-kit"),
                 .product(name: "OutputRepairKit", package: "output-repair-kit"),
-                .product(name: "StreamAggregatorKit", package: "stream-aggregator-kit")
+                .product(name: "StreamAggregatorKit", package: "stream-aggregator-kit"),
+                .product(name: "BatchInferenceKit", package: "batch-inference-kit")
             ]
         )
     ]

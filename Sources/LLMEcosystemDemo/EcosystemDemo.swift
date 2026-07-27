@@ -1,5 +1,6 @@
 import AgentLoopKit
 import AgentMemoryKit
+import BatchInferenceKit
 import ContextCompactionKit
 import Foundation
 import GuardrailKit
@@ -28,7 +29,8 @@ struct EcosystemDemo {
                 + "AgentMemoryKit (long-term write/recall memory across sessions) + "
                 + "SemanticRouterKit (semantic intent routing by embedding distance) + "
                 + "OutputRepairKit (bounded self-healing structured-output repair loop) + "
-                + "StreamAggregatorKit (streamed delta + tool-call fragment reassembly)\n"
+                + "StreamAggregatorKit (streamed delta + tool-call fragment reassembly) + "
+                + "BatchInferenceKit (bounded-concurrency batch fan-out with per-item failure isolation)\n"
         )
 
         let meter = await buildMeter()
@@ -50,11 +52,12 @@ struct EcosystemDemo {
         await runSemanticRouterScenario(decoder: decoder, meter: meter)
         await runOutputRepairScenario(decoder: decoder, meter: meter)
         await runStreamAggregatorScenario(meter: meter)
+        await runBatchInferenceScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all sixteen scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all seventeen scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -75,7 +78,8 @@ struct EcosystemDemo {
             (.memoryHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.routerHost, ModelPricing(inputPerMillion: 1.8, outputPerMillion: 7)),
             (.repairHost, ModelPricing(inputPerMillion: 2.2, outputPerMillion: 9)),
-            (.streamHost, ModelPricing(inputPerMillion: 1.6, outputPerMillion: 6.5))
+            (.streamHost, ModelPricing(inputPerMillion: 1.6, outputPerMillion: 6.5)),
+            (.batchHost, ModelPricing(inputPerMillion: 2.6, outputPerMillion: 10.5))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)

@@ -1,5 +1,5 @@
 {
-  "originHash" : "67261a6fc1621dfcd8aa463ab61a8a86f0e1981b8250254f0c482387d296b6ae",
+  "originHash" : "184a1ea9b7144639af015bb1b44121ce6b0da1eb9ed52d1d31faf64268437ce3",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -16,6 +16,15 @@
       "location" : "https://github.com/rajatslakhina/agent-memory-kit.git",
       "state" : {
         "revision" : "b3a6bd3edb06e193d0dd42582ac1910432a7477c",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "batch-inference-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/batch-inference-kit.git",
+      "state" : {
+        "revision" : "18b73c53857719e23f646c904151e11f4d0f0fa2",
         "version" : "1.0.0"
       }
     },
