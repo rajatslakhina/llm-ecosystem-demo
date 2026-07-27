@@ -1,5 +1,5 @@
 {
-  "originHash" : "bc94b8872ee4aa396801e46f345ff571ec27c0e433b1ebcae8740dc40e93b55c",
+  "originHash" : "923806b4b40b277d08e603396197ed96ac36fa0c5bf1f4118c9c1e2b41203057",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -52,6 +52,15 @@
       "location" : "https://github.com/rajatslakhina/guardrail-kit.git",
       "state" : {
         "revision" : "a27c8e98f482cb1032e5c73db5ee13098b098e3e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "idempotency-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/idempotency-kit.git",
+      "state" : {
+        "revision" : "58e429cdd41a6e96611092d93acd93661eba263d",
         "version" : "1.0.0"
       }
     },

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighteen packages in this
+A single runnable demo that wires together all nineteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -18,7 +18,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit),
 [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit), and
 [`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit), and
-[`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit)
+[`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit), and
+[`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -62,6 +63,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit) | Reassembles a streamed reply — content fragments and index-keyed tool-call argument fragments — into one message, then dispatches the reassembled tool call and bills the exact streamed usage under `stream-host` |
 | [`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit) | Runs a batch of prompts through one bounded-concurrency executor that forwards each item to the gateway, returns outcomes in input order, isolates the one off-contract reply, and hands its summed successful usage to `TokenMeter` under `batch-host` |
 | [`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit) | Holds a live session together across a socket drop: an at-least-once outbox replays the turn the server never acknowledged (a second real gateway hop), the resume continues from the client's own cursor, a redelivered server event is caught by the id window, and every hop bills under `realtime-host` |
+| [`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit) | Guards a side-effecting routed call so it runs at most once: three attempts under one derived key cost a single gateway hop, the same key with a changed payload is refused, an indeterminate timeout freezes the key until a reconciler settles it, and only the hops that really ran bill under `idem-host` |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -241,6 +243,26 @@ one bad reply isolated to its own item instead of taking the job down.
     `StreamAggregatorKit`: that package reassembles the deltas of one response,
     this one owns the session those responses arrive on, and neither depends on
     the other at compile time.
+19. **`IdempotencyKit`** closes a nineteenth scenario, and it is the exact
+    counterpart of the eighteenth. There, a replay after a reconnect genuinely
+    cost a second gateway hop, because at-least-once delivery means the effect
+    really is re-sent. Here the duplicate never reaches a provider at all. A
+    weather alert for Shimla is filed three times under one key derived from the
+    payload — `k-25b33bd81297ca7c`, the same key either way round because the
+    fields are canonicalised in sorted order before hashing — and the
+    `GatewayEffectExecutor` behind the `EffectExecuting` seam records **one**
+    gateway hop for those three requests, which is evidence rather than a claim,
+    since a replay cannot reach the type that counts. Reusing that key with the
+    severity changed from `high` to `low` is refused instead of answered with the
+    earlier alert. A second alert, for Kochi, fails with an indeterminate gateway
+    timeout — the failure mode that costs money — so the key is frozen: the retry
+    is blocked, the hop count stays at one, and only after
+    `resolve(key:as: .notApplied)` does the alert actually get filed. Two executed
+    hops bill under `idem-host` at 15+33 tokens; the two replays bill nothing, by
+    construction rather than by subtraction. `IdempotencyKit` deliberately does no
+    retrying of its own — `RetryPolicyKit` decides *when* to try again, this
+    decides *whether trying again is safe* — and has no compile-time dependency on
+    any other package here.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -249,7 +271,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all eighteen tagged packages. (`RetryPolicyKit`'s own
+compiled code from all nineteen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -277,9 +299,9 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `StructuredOutputKit`, `ResponseCacheKit`, `ToolRegistryKit`, `AgentLoopKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
-`SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`, and
-`BatchInferenceKit`, and `RealtimeSessionKit` straight from their `1.0.0` tags —
-no local checkouts or path overrides needed.
+`SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
+`BatchInferenceKit`, `RealtimeSessionKit`, and `IdempotencyKit` straight from
+their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
@@ -287,10 +309,10 @@ no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighteen
+- **Build:** `swift build` — clean, zero warnings, resolving all nineteen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighteen packages together; the output above is a genuine capture,
+  of all nineteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -301,7 +323,7 @@ no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighteen real packages compose and run," which the sample output
+means "the nineteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -472,6 +494,23 @@ the retry is visible instead of hidden. RealtimeSessionKit has no compile-time
 dependency on ProviderGatewayKit or StreamAggregatorKit: it sits underneath the
 aggregator, owning the session that streamed responses arrive on rather than the
 reassembly of any one of them.
+
+For the nineteenth scenario, IdempotencyKit.IdempotencyGuard wraps the same kind
+of routed call in an at-most-once guarantee. GatewayEffectExecutor is the
+EffectExecuting seam: it builds a ProviderRouter/LLMSession per effect and
+validates the reply with StructuredOutputDecoder, and it appends to its hop list
+only when it actually runs — so "the duplicate was free" is measurable rather
+than asserted. Three attempts at filing the Shimla alert under the derived key
+k-25b33bd81297ca7c produce executed, replayed, replayed and exactly one gateway
+hop. The same key with severity changed is rejected as keyReuseConflict, because
+replaying the stored alert would answer a question nobody asked. The Kochi alert
+fails indeterminate — a timeout after the request was sent, so the alert may
+already be filed — and the guard freezes the key rather than let an optimistic
+retry file it twice; the hop count stays at one until a reconciler calls
+resolve(key:as: .notApplied), after which it executes for real. Only the two
+executed hops (15+33 tokens) bill under idem-host. Where RealtimeSessionKit made
+the cost of a replay visible, IdempotencyKit removes it: this is the guard that
+makes the rest of the toolkit's retrying safe to point at a side effect.
 ```
 
 ## License
