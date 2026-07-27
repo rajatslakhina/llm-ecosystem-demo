@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventeen packages in this
+A single runnable demo that wires together all eighteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -17,7 +17,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`SemanticRouterKit`](https://github.com/rajatslakhina/semantic-router-kit),
 [`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit),
 [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit), and
-[`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit)
+[`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit), and
+[`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -60,6 +61,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`OutputRepairKit`](https://github.com/rajatslakhina/output-repair-kit) | Wraps a routed call in a bounded repair loop: rejects an invalid reply with structured issues, folds them into a correction prompt, and re-prompts until it validates or the budget is spent |
 | [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit) | Reassembles a streamed reply — content fragments and index-keyed tool-call argument fragments — into one message, then dispatches the reassembled tool call and bills the exact streamed usage under `stream-host` |
 | [`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit) | Runs a batch of prompts through one bounded-concurrency executor that forwards each item to the gateway, returns outcomes in input order, isolates the one off-contract reply, and hands its summed successful usage to `TokenMeter` under `batch-host` |
+| [`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit) | Holds a live session together across a socket drop: an at-least-once outbox replays the turn the server never acknowledged (a second real gateway hop), the resume continues from the client's own cursor, a redelivered server event is caught by the id window, and every hop bills under `realtime-host` |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -221,6 +223,24 @@ one bad reply isolated to its own item instead of taking the job down.
     failed attempts. `BatchInferenceKit` carries no retry or cost logic of its
     own by design, which is exactly why those two jobs stay with
     `RetryPolicyKit` and `TokenMeterKit` here instead of being duplicated.
+18. **`RealtimeSessionKit`** handles an eighteenth scenario, the one that stops
+    assuming the connection lasts. A live session sends two turns through a
+    `GatewayRealtimeTransport` — the `RealtimeTransport` seam, so each turn is a
+    real `ProviderRouter`/`LLMSession` round trip — and the socket drops with the
+    second turn still unacknowledged. `handleDisconnect()` answers
+    `retry(attempt: 1, delayTicks: 125)`: a full-jitter ceiling of 250 ticks with
+    the jitter source pinned to its midpoint, which is the only reason a backoff
+    number is assertable at all. The reconnect lands inside the 30-tick resume
+    window, so the server is asked to continue from the client's *own* cursor
+    rather than start over, and the unacknowledged turn is replayed — two turns
+    costing three gateway hops, which is what at-least-once actually means rather
+    than what it promises. The buffered server event is then accepted once and its
+    immediate redelivery caught as `duplicate(repeatedID)`. All three hops, replay
+    included, bill under `realtime-host`, so the cost of the retry is visible
+    instead of hidden. This scenario sits *underneath*
+    `StreamAggregatorKit`: that package reassembles the deltas of one response,
+    this one owns the session those responses arrive on, and neither depends on
+    the other at compile time.
 
 Each scenario uses a `ScriptedProvider` — a demo-only conformer to
 `ProviderGatewayKit`'s real `LLMProvider` protocol that answers from a
@@ -229,7 +249,7 @@ same pattern `ProviderGatewayKit` uses internally for its own
 `SimulatedCloudProvider`. Everything *around* that one scripted seam —
 routing, session turn-serialization, schema validation, extraction, the
 retry loop, caching, tool dispatch, and cost accounting — is the real,
-compiled code from all seventeen tagged packages. (`RetryPolicyKit`'s own
+compiled code from all eighteen tagged packages. (`RetryPolicyKit`'s own
 scenario additionally uses a `FlakyProvider` — a demo-only conformer that
 genuinely throws for its first two calls, since retrying only makes sense
 against a real transport-layer failure, not a scripted success.)
@@ -258,7 +278,7 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`, and
-`BatchInferenceKit` straight from their `1.0.0` tags —
+`BatchInferenceKit`, and `RealtimeSessionKit` straight from their `1.0.0` tags —
 no local checkouts or path overrides needed.
 
 ## Sample output
@@ -267,10 +287,10 @@ no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventeen
+- **Build:** `swift build` — clean, zero warnings, resolving all eighteen
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventeen packages together; the output above is a genuine capture,
+  of all eighteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -281,7 +301,7 @@ no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventeen real packages compose and run," which the sample output
+means "the eighteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -433,6 +453,25 @@ TokenMeter.record bills under batch-host, so the failed item costs nothing.
 BatchInferenceKit has no compile-time dependency on ProviderGatewayKit,
 TokenMeterKit, or RetryPolicyKit — it deliberately ships no retry or cost logic,
 which is what leaves those two jobs where they already belong.
+
+For the eighteenth scenario, RealtimeSessionKit.RealtimeSession drives a full
+drop-and-resume cycle over a GatewayRealtimeTransport — the RealtimeTransport
+seam — which routes each turn through its own ProviderRouter/LLMSession and
+validates the reply with StructuredOutputDecoder. Turn c1 is acknowledged and
+leaves the outbox; turn c2's ack never arrives before the socket drops, so
+handleDisconnect() returns retry(attempt: 1, delayTicks: 125) — a full-jitter
+ceiling of 250 ticks with the jitter source pinned to its midpoint, which is why
+the number is assertable at all. reconnect(elapsedTicks: 4) is inside the 30-tick
+resume window, so the transport is asked to continue from the client's own cursor
+(lastServerSequence: 1) rather than start over, and the unacknowledged c2 is
+replayed: two turns cost three gateway hops, which is what at-least-once actually
+means rather than what it promises. The buffered srv-2 is then accepted and its
+immediate redelivery is caught as duplicate(repeatedID) by the id window. All
+three hops — the replay included — are billed under realtime-host, so the cost of
+the retry is visible instead of hidden. RealtimeSessionKit has no compile-time
+dependency on ProviderGatewayKit or StreamAggregatorKit: it sits underneath the
+aggregator, owning the session that streamed responses arrive on rather than the
+reassembly of any one of them.
 ```
 
 ## License

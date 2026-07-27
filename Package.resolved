@@ -1,5 +1,5 @@
 {
-  "originHash" : "184a1ea9b7144639af015bb1b44121ce6b0da1eb9ed52d1d31faf64268437ce3",
+  "originHash" : "bc94b8872ee4aa396801e46f345ff571ec27c0e433b1ebcae8740dc40e93b55c",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -70,6 +70,15 @@
       "location" : "https://github.com/rajatslakhina/prompt-template-kit.git",
       "state" : {
         "revision" : "eea4b794a1ea5e9e78343003265ca12c818b9ba7",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "realtime-session-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/realtime-session-kit.git",
+      "state" : {
+        "revision" : "d924a6f210d40222154d28f52388a0d8a66e0ab7",
         "version" : "1.0.0"
       }
     },

@@ -6,6 +6,7 @@ import Foundation
 import GuardrailKit
 import OutputRepairKit
 import ProviderGatewayKit
+import RealtimeSessionKit
 import ResponseCacheKit
 import RetrievalKit
 import SemanticRouterKit
@@ -30,7 +31,9 @@ struct EcosystemDemo {
                 + "SemanticRouterKit (semantic intent routing by embedding distance) + "
                 + "OutputRepairKit (bounded self-healing structured-output repair loop) + "
                 + "StreamAggregatorKit (streamed delta + tool-call fragment reassembly) + "
-                + "BatchInferenceKit (bounded-concurrency batch fan-out with per-item failure isolation)\n"
+                + "BatchInferenceKit (bounded-concurrency batch fan-out with per-item failure isolation) + "
+                + "RealtimeSessionKit (a realtime session that survives a reconnect: at-least-once "
+                + "outbox, strict inbound ordering, two-layer dedup)\n"
         )
 
         let meter = await buildMeter()
@@ -53,11 +56,12 @@ struct EcosystemDemo {
         await runOutputRepairScenario(decoder: decoder, meter: meter)
         await runStreamAggregatorScenario(meter: meter)
         await runBatchInferenceScenario(decoder: decoder, meter: meter)
+        await runRealtimeSessionScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all seventeen scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all eighteen scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -79,7 +83,8 @@ struct EcosystemDemo {
             (.routerHost, ModelPricing(inputPerMillion: 1.8, outputPerMillion: 7)),
             (.repairHost, ModelPricing(inputPerMillion: 2.2, outputPerMillion: 9)),
             (.streamHost, ModelPricing(inputPerMillion: 1.6, outputPerMillion: 6.5)),
-            (.batchHost, ModelPricing(inputPerMillion: 2.6, outputPerMillion: 10.5))
+            (.batchHost, ModelPricing(inputPerMillion: 2.6, outputPerMillion: 10.5)),
+            (.realtimeHost, ModelPricing(inputPerMillion: 1.9, outputPerMillion: 7.5))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)
