@@ -15,6 +15,7 @@ import SemanticRouterKit
 import StreamAggregatorKit
 import StructuredOutputKit
 import TokenMeterKit
+import ToolAuthorityKit
 import ToolRegistryKit
 import TraceKit
 
@@ -38,7 +39,9 @@ struct EcosystemDemo {
                 + "outbox, strict inbound ordering, two-layer dedup) + "
                 + "IdempotencyKit (at-most-once side effects under at-least-once delivery) + "
                 + "SchemaMigrationKit (versioned contracts: migrate a payload across schema versions, "
-                + "validated at every hop)\n"
+                + "validated at every hop) + "
+                + "ToolAuthorityKit (deny-by-default authority for agent tool calls: capability scoping, "
+                + "a provenance ceiling, and approvals bound to one exact call)\n"
         )
 
         let meter = await buildMeter()
@@ -64,11 +67,12 @@ struct EcosystemDemo {
         await runRealtimeSessionScenario(decoder: decoder, meter: meter)
         await runIdempotencyScenario(decoder: decoder, meter: meter)
         await runSchemaMigrationScenario(decoder: decoder, meter: meter)
+        await runToolAuthorityScenario(meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twenty scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all twenty-one scenarios: $\(await meter.totalCost())")
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -93,7 +97,8 @@ struct EcosystemDemo {
             (.batchHost, ModelPricing(inputPerMillion: 2.6, outputPerMillion: 10.5)),
             (.realtimeHost, ModelPricing(inputPerMillion: 1.9, outputPerMillion: 7.5)),
             (.idempotencyHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.5)),
-            (.schemaHost, ModelPricing(inputPerMillion: 2.1, outputPerMillion: 8.5))
+            (.schemaHost, ModelPricing(inputPerMillion: 2.1, outputPerMillion: 8.5)),
+            (.authorityHost, ModelPricing(inputPerMillion: 2.3, outputPerMillion: 9.2))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)

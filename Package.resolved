@@ -1,5 +1,5 @@
 {
-  "originHash" : "1e35d711b666fbe9a6ee279e6df6500d6979897251bea22283da019967d319d5",
+  "originHash" : "1c76bc55bb2c08095fda9ad83b1e4a0cec9480ab630799999374c9be8c86ff2d",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -160,6 +160,15 @@
       "location" : "https://github.com/rajatslakhina/token-meter-kit.git",
       "state" : {
         "revision" : "d817dc67b5ea688c556dde40067cc1dd782631ac",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "tool-authority-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/tool-authority-kit.git",
+      "state" : {
+        "revision" : "3d35e69a3b227138c3558243adf0e4cba363b96a",
         "version" : "1.0.0"
       }
     },

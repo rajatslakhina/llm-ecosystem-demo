@@ -1,124 +1,135 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1930" viewBox="0 0 1240 1930" font-family="SF Mono, Menlo, monospace" font-size="11.5">
-<rect width="1240" height="1930" rx="10" fill="#12161c"/>
-<rect x="0" y="0" width="1240" height="34" rx="10" fill="#1b212a"/>
-<rect x="0" y="24" width="1240" height="10" fill="#1b212a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1463" height="2029" viewBox="0 0 1463 2029" font-family="SF Mono, Menlo, monospace" font-size="11.5">
+<rect width="1463" height="2029" rx="10" fill="#12161c"/>
+<rect x="0" y="0" width="1463" height="34" rx="10" fill="#1b212a"/>
+<rect x="0" y="24" width="1463" height="10" fill="#1b212a"/>
 <circle cx="20" cy="17" r="6" fill="#ff5f57"/>
 <circle cx="38" cy="17" r="6" fill="#febc2e"/>
 <circle cx="56" cy="17" r="6" fill="#28c840"/>
 <text x="86" y="21" fill="#7d8794" font-size="11">swift run LLMEcosystemDemo</text>
 <text x="26" y="54" fill="#7ee2b8" xml:space="preserve">== LLM Ecosystem Integration Demo ==</text>
-<text x="26" y="70" fill="#c8d1dc" xml:space="preserve">ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + GuardrailKit (PII redaction &amp; policy) + TraceKit (tracing &amp; eval gates) + RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating &amp; rollback) + RetryPolicyKit (rate limiting &amp; retry policy) + ContextCompactionKit (conversation compaction under a token budget) + AgentMemoryKit (long-term write/recall memory across sessions) + SemanticRouterKit (semantic intent routing by embedding distance) + OutputRepairKit (bounded self-healing structured-output repair loop) + StreamAggregatorKit (streamed delta + tool-call fragment reassembly) + BatchInferenceKit (bounded-concurrency batch fan-out with per-item failure isolation) + RealtimeSessionKit (a realtime session that survives a reconnect: at-least-once outbox, strict inbound ordering, two-layer dedup) + IdempotencyKit (at-most-once side effects under at-least-once delivery) + SchemaMigrationKit (versioned contracts: migrate a payload across schema versions, validated at every hop)</text>
-<text x="26" y="86" fill="#c8d1dc" xml:space="preserve"></text>
-<text x="26" y="102" fill="#c8d1dc" xml:space="preserve">[on-device provider, clean JSON] routed via on-device → decoded: WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
-<text x="26" y="118" fill="#c8d1dc" xml:space="preserve">[cloud provider, JSON fenced in prose] routed via cloud → decoded: WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
-<text x="26" y="134" fill="#c8d1dc" xml:space="preserve">[self-hosted provider, self-repairing] decoded after a repair round-trip: WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
-<text x="26" y="150" fill="#c8d1dc" xml:space="preserve">[cached scenario] attempt 1: MISS — routed via cloud, decoded: WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
-<text x="26" y="166" fill="#c8d1dc" xml:space="preserve">[cached scenario] attempt 2: HIT — no provider call, no additional cost</text>
-<text x="26" y="182" fill="#c8d1dc" xml:space="preserve">Cache Statistics</text>
-<text x="26" y="198" fill="#5b6675" xml:space="preserve">-----------------</text>
-<text x="26" y="214" fill="#c8d1dc" xml:space="preserve">Hits:        1</text>
-<text x="26" y="230" fill="#c8d1dc" xml:space="preserve">Misses:      1</text>
-<text x="26" y="246" fill="#c8d1dc" xml:space="preserve">Evictions:   0</text>
-<text x="26" y="262" fill="#c8d1dc" xml:space="preserve">Expirations: 0</text>
-<text x="26" y="278" fill="#c8d1dc" xml:space="preserve">Hit rate:    50.0%</text>
-<text x="26" y="294" fill="#c8d1dc" xml:space="preserve">Saved:       $0.001272</text>
-<text x="26" y="310" fill="#c8d1dc" xml:space="preserve">[tool-calling round trip] dispatched "get_weather", final answer: ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
-<text x="26" y="326" fill="#c8d1dc" xml:space="preserve">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
-<text x="26" y="342" fill="#c8d1dc" xml:space="preserve">[AgentLoopKit orchestrated loop] 3 steps, halted: finalAnswer, answer: Austin is warmer than Boston right now.</text>
-<text x="26" y="358" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] request redacted, sanitized prompt routed via on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
-<text x="26" y="374" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] second prompt verdict: blocked(reason: "matched banned phrase \"unreleased pricing\"") — no provider call made</text>
-<text x="26" y="390" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] 3 trace events recorded by GuardrailEventRecorder</text>
-<text x="26" y="406" fill="#c8d1dc" xml:space="preserve">[trace scenario] traced round trip → final answer: ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
-<text x="26" y="422" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [agentStep] agent.weatherLookup — OK (0ms)</text>
-<text x="26" y="438" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [llmCall] llm.decide — OK (0ms)</text>
-<text x="26" y="454" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [toolCall] tool.get_weather — OK (0ms)</text>
-<text x="26" y="470" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [llmCall] llm.finalAnswer — OK (0ms)</text>
-<text x="26" y="486" fill="#c8d1dc" xml:space="preserve">[trace scenario] EvalGate passed: true (4 spans scored)</text>
-<text x="26" y="502" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] query: "How does token metering and cost work in this ecosystem?"</text>
-<text x="26" y="518" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] retrieved context:</text>
-<text x="26" y="534" fill="#c8d1dc" xml:space="preserve">[1] (score: 0.416) TokenMeterKit provides actor-based token usage and cost metering for LLM apps in Swift, tracking cost per provider with Decimal-based pricing and a formatted cost report.</text>
-<text x="26" y="550" fill="#c8d1dc" xml:space="preserve">[2] (score: 0.239) GuardrailKit provides actor-based guardrails for Swift LLM apps, screening prompts and responses for PII redaction and content policy violations before or after routing.</text>
-<text x="26" y="566" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] routed via self-hosted → grounded answer: RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.", sourceCount: 2)</text>
-<text x="26" y="582" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rendered v2 (strict):</text>
-<text x="26" y="598" fill="#c8d1dc" xml:space="preserve">You are a grounded assistant. Using ONLY the context provided, answer concisely and do not rely on anything outside it.</text>
-<text x="26" y="614" fill="#c8d1dc" xml:space="preserve">Context:</text>
-<text x="26" y="630" fill="#c8d1dc" xml:space="preserve">TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.</text>
-<text x="26" y="646" fill="#c8d1dc" xml:space="preserve">Question: How is cost tracked across providers?</text>
-<text x="26" y="662" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] routed via prompt-host → decoded: RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.", sourceCount: 1)</text>
-<text x="26" y="678" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rolled back to v1</text>
-<text x="26" y="694" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rendered v1 (lenient, question omitted):</text>
-<text x="26" y="710" fill="#c8d1dc" xml:space="preserve">Answer the question using only the context below.</text>
-<text x="26" y="726" fill="#c8d1dc" xml:space="preserve">Context: TokenMeterKit meters usage per provider with Decimal-based pricing.</text>
-<text x="26" y="742" fill="#c8d1dc" xml:space="preserve">Question: {{question}}</text>
-<text x="26" y="758" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] 2 version(s) in history, 5 audit events: registered, promoted, rendered, rolledBack, rendered</text>
-<text x="26" y="774" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] succeeded on attempt 3: decoded WeatherReport(city: "Seattle", temperatureCelsius: 14.0, conditions: "rain")</text>
-<text x="26" y="790" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] attempt 1 failed (allProvidersFailed([retry-host: "simulated transport failure on attempt 1"])) → retry(after: 0.01)</text>
-<text x="26" y="806" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] attempt 2 failed (allProvidersFailed([retry-host: "simulated transport failure on attempt 2"])) → retry(after: 0.02)</text>
-<text x="26" y="822" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] transcript before: 9 messages</text>
-<text x="26" y="838" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] compacted to: 3 messages, ~75 tokens (budget: 100), via ["sliding-window"]</text>
-<text x="26" y="854" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] recorded event: 9 → 3 messages, fits budget: true</text>
-<text x="26" y="870" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] routed via compaction-host with compacted context → RAGAnswer(answer: "Keep all mutable state behind actor isolation; cross concurrency domains only with Sendable.", sourceCount: 4)</text>
-<text x="26" y="886" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] recalled 2 memories: [preference] The user's favorite editor theme is dark...; [fact] The user is a senior iOS engineer buildi...</text>
-<text x="26" y="902" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] routed via memory-host with recalled memory → RAGAnswer(answer: "A dark-themed, monospace-font editor fits this user\'s stated preference.", sourceCount: 2)</text>
-<text x="26" y="918" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] decay pass pruned 1 low-importance, unpinned memories</text>
-<text x="26" y="934" fill="#c8d1dc" xml:space="preserve">[semantic router scenario] "what is the weather like in Denver rig..." → intent 'weather' (score 0.680), routing to model router-host</text>
-<text x="26" y="950" fill="#c8d1dc" xml:space="preserve">[semantic router scenario] routed via router-host, decoded: WeatherReport(city: "Denver", temperatureCelsius: 21.5, conditions: "clear")</text>
-<text x="26" y="966" fill="#c8d1dc" xml:space="preserve">[output-repair scenario] attempt 1 rejected [conditions], converged after 2 attempts (1 repair): WeatherReport(city: "Delhi", temperatureCelsius: 41.0, conditions: "clear")</text>
-<text x="26" y="982" fill="#c8d1dc" xml:space="preserve">[output-repair scenario] 5 repair events recorded; both routed hops metered under repair-host (succeeded: 1, totalRepairs: 1)</text>
-<text x="26" y="998" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] reassembled 1 tool call from 7 streamed deltas: get_weather({"city": "Denver"}), preamble "Looking that up for you."</text>
-<text x="26" y="1014" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] dispatched get_weather -&gt; {"city":"Denver","tempF":68,"conditions":"Clear"}</text>
-<text x="26" y="1030" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] streamed usage 30+14 tokens billed under stream-host: $0.000139</text>
-<text x="26" y="1046" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] 10 aggregation events recorded (finish toolCalls)</text>
-<text x="26" y="1062" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 5 prompts, limit 2 → peakActive 2 (bound held), 4 succeeded, 1 failed, 0 cancelled</text>
-<text x="26" y="1078" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] outcomes in input order: kochi=ok, jaipur=ok, shimla=failed, nagpur=ok, bhopal=ok</text>
-<text x="26" y="1094" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] shimla isolated (executorFailure): Response JSON did not match the expected schema: $.conditions is required but missing</text>
-<text x="26" y="1110" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 4 successful items summed to 367+68 tokens (435 total), billed under batch-host: $0.0016682</text>
-<text x="26" y="1126" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 12 batch events recorded, last: #12 batchFinished(ok: 4, failed: 1, cancelled: 0)</text>
-<text x="26" y="1142" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] connect -&gt; coldStart(ColdStartReason.noPriorSession), token sess-live-1</text>
-<text x="26" y="1158" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] turn c1 routed through the gateway; srv-1 accepted, ack true</text>
-<text x="26" y="1174" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] socket dropped with c2 unacked -&gt; retry(attempt: 1, delayTicks: 125)</text>
-<text x="26" y="1190" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] reconnect(4 ticks) -&gt; resumed(SessionCursor(token: "sess-live-1", lastServerSequence: 1)); c2 replayed, so 2 turns cost 3 gateway hops</text>
-<text x="26" y="1206" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] buffered srv-2 accepted, redelivery duplicate(RealtimeSessionKit.DuplicateReason.repeatedID)</text>
-<text x="26" y="1222" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] outbox drained: pending 0, acked 2, retransmitted 1, resumes 1</text>
-<text x="26" y="1238" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] 3 hops billed under realtime-host: 13+51 tokens, $0.0004072</text>
-<text x="26" y="1254" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] 15 session events recorded, trail is timestamp-free</text>
-<text x="26" y="1270" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] key k-25b33bd81297ca7c</text>
-<text x="26" y="1286" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] 3 attempts -&gt; executed, replayed, replayed; 1 gateway hop for 3 requests</text>
-<text x="26" y="1302" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] same key, severity high -&gt; low: key k-25b33bd81297ca7c was already used for a different payload</text>
-<text x="26" y="1318" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] Kochi attempt 1 -&gt; failed (indeterminate): gateway timeout after send</text>
-<text x="26" y="1334" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] Kochi attempt 2 -&gt; key k-14a0b2cda2a8467b has an indeterminate outcome and must be resolved before retrying (still 1 hop, no duplicate filing)</text>
-<text x="26" y="1350" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] reconciler says it never landed -&gt; executed alert-kochi</text>
-<text x="26" y="1366" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] 2 executed hops billed under idem-host: 15+33 tokens, $0.0003495</text>
-<text x="26" y="1382" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] executed 2, replayed 2, conflicts 1, blocked 1, resolutions 1; 11 events recorded, trail is timestamp-free</text>
-<text x="26" y="1398" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] v1 -&gt; v2 is BREAKING — field 'conditionCode' removed; field 'stationId' removed; required field 'conditions' added</text>
-<text x="26" y="1414" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] cached v1 reply: {"city": "Shimla", "temperatureCelsius": 8.5, "conditionCode": 3, "stationId": "IN-SML-04"}</text>
-<text x="26" y="1430" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] today's decoder on the v1 text: rejected</text>
-<text x="26" y="1446" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] upgrade refused — lossyMigrationRefused(contract: weather.report, from: v1, to: v2, drops: ["stationId"])</text>
-<text x="26" y="1462" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] migrated v1 -&gt; v2 (1 step), 0 gateway hops, dropped stationId — {"city": "Shimla", "conditions": "storm", "temperatureCelsius": 8.5}</text>
-<text x="26" y="1478" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] decoded after migration: WeatherReport(city: "Shimla", temperatureCelsius: 8.5, conditions: "storm")</text>
-<text x="26" y="1494" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] live turn via schema-host -&gt; storm; negotiate(v2, v2) = exact v2</text>
-<text x="26" y="1510" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] 1 gateway hop billed under schema-host: 9+17 tokens, $0.0001634</text>
-<text x="26" y="1526" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] serving a v1 client: {"city": "Shimla", "conditionCode": 3, "temperatureCelsius": 8.5} (downgrade, dropped nothing)</text>
-<text x="26" y="1542" fill="#8ec6ff" xml:space="preserve">[schema-migration scenario] contracts 1, steps 2, migrations 2, reused 0, refusals 1, fields dropped 1</text>
-<text x="26" y="1558" fill="#c8d1dc" xml:space="preserve"></text>
-<text x="26" y="1574" fill="#5b6675" xml:space="preserve">Model                Prompt   Completion   Total     Cost(USD)</text>
-<text x="26" y="1590" fill="#5b6675" xml:space="preserve">-------------------------------------------------------------------</text>
-<text x="26" y="1606" fill="#c8d1dc" xml:space="preserve">batch-host          367      68           435       $0.001668</text>
-<text x="26" y="1622" fill="#c8d1dc" xml:space="preserve">cloud               277      78           355       $0.002001</text>
-<text x="26" y="1638" fill="#c8d1dc" xml:space="preserve">compaction-host     171      211          382       $0.002538</text>
-<text x="26" y="1654" fill="#c8d1dc" xml:space="preserve">idem-host           15       33           48        $0.00035</text>
-<text x="26" y="1670" fill="#c8d1dc" xml:space="preserve">memory-host         129      27           156       $0.000474</text>
-<text x="26" y="1686" fill="#c8d1dc" xml:space="preserve">on-device           98       35           133       $0</text>
-<text x="26" y="1702" fill="#c8d1dc" xml:space="preserve">prompt-host         65       30           95        $0.00037</text>
-<text x="26" y="1718" fill="#c8d1dc" xml:space="preserve">realtime-host       13       51           64        $0.000407</text>
-<text x="26" y="1734" fill="#c8d1dc" xml:space="preserve">repair-host         223      28           251       $0.000743</text>
-<text x="26" y="1750" fill="#c8d1dc" xml:space="preserve">retry-host          82       17           99        $0.000225</text>
-<text x="26" y="1766" fill="#c8d1dc" xml:space="preserve">router-host         96       17           113       $0.000292</text>
-<text x="26" y="1782" fill="#c8d1dc" xml:space="preserve">schema-host         9        17           26        $0.000163</text>
-<text x="26" y="1798" fill="#c8d1dc" xml:space="preserve">self-hosted         330      121          451       $0.000814</text>
-<text x="26" y="1814" fill="#c8d1dc" xml:space="preserve">stream-host         30       14           44        $0.000139</text>
-<text x="26" y="1830" fill="#5b6675" xml:space="preserve">-------------------------------------------------------------------</text>
-<text x="26" y="1846" fill="#7ee2b8" xml:space="preserve">TOTAL               1905     747          2652      $0.010183</text>
-<text x="26" y="1862" fill="#c8d1dc" xml:space="preserve"></text>
-<text x="26" y="1878" fill="#7ee2b8" xml:space="preserve">Total metered cost across all twenty scenarios: $0.0101832</text>
+<text x="26" y="70" fill="#c8d1dc" xml:space="preserve"></text>
+<text x="26" y="85" fill="#c8d1dc" xml:space="preserve">[on-device provider, clean JSON] routed via on-device → decoded: WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
+<text x="26" y="100" fill="#c8d1dc" xml:space="preserve">[cloud provider, JSON fenced in prose] routed via cloud → decoded: WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
+<text x="26" y="116" fill="#c8d1dc" xml:space="preserve">[self-hosted provider, self-repairing] decoded after a repair round-trip: WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
+<text x="26" y="132" fill="#c8d1dc" xml:space="preserve">[cached scenario] attempt 1: MISS — routed via cloud, decoded: WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
+<text x="26" y="147" fill="#c8d1dc" xml:space="preserve">[cached scenario] attempt 2: HIT — no provider call, no additional cost</text>
+<text x="26" y="162" fill="#c8d1dc" xml:space="preserve">Cache Statistics</text>
+<text x="26" y="178" fill="#3f4855" xml:space="preserve">-----------------</text>
+<text x="26" y="194" fill="#c8d1dc" xml:space="preserve">Hits:        1</text>
+<text x="26" y="209" fill="#c8d1dc" xml:space="preserve">Misses:      1</text>
+<text x="26" y="224" fill="#c8d1dc" xml:space="preserve">Evictions:   0</text>
+<text x="26" y="240" fill="#c8d1dc" xml:space="preserve">Expirations: 0</text>
+<text x="26" y="256" fill="#c8d1dc" xml:space="preserve">Hit rate:    50.0%</text>
+<text x="26" y="271" fill="#c8d1dc" xml:space="preserve">Saved:       $0.001272</text>
+<text x="26" y="286" fill="#c8d1dc" xml:space="preserve">[tool-calling round trip] dispatched "get_weather", final answer: ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
+<text x="26" y="302" fill="#c8d1dc" xml:space="preserve">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
+<text x="26" y="318" fill="#c8d1dc" xml:space="preserve">[AgentLoopKit orchestrated loop] 3 steps, halted: finalAnswer, answer: Austin is warmer than Boston right now.</text>
+<text x="26" y="333" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] request redacted, sanitized prompt routed via on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
+<text x="26" y="348" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] second prompt verdict: blocked(reason: "matched banned phrase \"unreleased pricing\"") — no provider call made</text>
+<text x="26" y="364" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] 3 trace events recorded by GuardrailEventRecorder</text>
+<text x="26" y="380" fill="#c8d1dc" xml:space="preserve">[trace scenario] traced round trip → final answer: ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
+<text x="26" y="395" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [agentStep] agent.weatherLookup — OK (0ms)</text>
+<text x="26" y="410" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [llmCall] llm.decide — OK (0ms)</text>
+<text x="26" y="426" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [toolCall] tool.get_weather — OK (0ms)</text>
+<text x="26" y="442" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [llmCall] llm.finalAnswer — OK (0ms)</text>
+<text x="26" y="457" fill="#c8d1dc" xml:space="preserve">[trace scenario] EvalGate passed: true (4 spans scored)</text>
+<text x="26" y="472" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] query: "How does token metering and cost work in this ecosystem?"</text>
+<text x="26" y="488" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] retrieved context:</text>
+<text x="26" y="504" fill="#c8d1dc" xml:space="preserve">[1] (score: 0.416) TokenMeterKit provides actor-based token usage and cost metering for LLM apps in Swift, tracking cost per provider with Decimal-based pricing and a formatted cost report.</text>
+<text x="26" y="519" fill="#c8d1dc" xml:space="preserve">[2] (score: 0.239) GuardrailKit provides actor-based guardrails for Swift LLM apps, screening prompts and responses for PII redaction and content policy violations before or after routing.</text>
+<text x="26" y="534" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] routed via self-hosted → grounded answer: RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.", sourceCount: 2)</text>
+<text x="26" y="550" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rendered v2 (strict):</text>
+<text x="26" y="566" fill="#c8d1dc" xml:space="preserve">You are a grounded assistant. Using ONLY the context provided, answer concisely and do not rely on anything outside it.</text>
+<text x="26" y="581" fill="#c8d1dc" xml:space="preserve">Context:</text>
+<text x="26" y="596" fill="#c8d1dc" xml:space="preserve">TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.</text>
+<text x="26" y="612" fill="#c8d1dc" xml:space="preserve">Question: How is cost tracked across providers?</text>
+<text x="26" y="628" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] routed via prompt-host → decoded: RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.", sourceCount: 1)</text>
+<text x="26" y="643" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rolled back to v1</text>
+<text x="26" y="658" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rendered v1 (lenient, question omitted):</text>
+<text x="26" y="674" fill="#c8d1dc" xml:space="preserve">Answer the question using only the context below.</text>
+<text x="26" y="690" fill="#c8d1dc" xml:space="preserve">Context: TokenMeterKit meters usage per provider with Decimal-based pricing.</text>
+<text x="26" y="705" fill="#c8d1dc" xml:space="preserve">Question: {{question}}</text>
+<text x="26" y="720" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] 2 version(s) in history, 5 audit events: registered, promoted, rendered, rolledBack, rendered</text>
+<text x="26" y="736" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] succeeded on attempt 3: decoded WeatherReport(city: "Seattle", temperatureCelsius: 14.0, conditions: "rain")</text>
+<text x="26" y="752" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] attempt 1 failed (allProvidersFailed([retry-host: "simulated transport failure on attempt 1"])) → retry(after: 0.01)</text>
+<text x="26" y="767" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] attempt 2 failed (allProvidersFailed([retry-host: "simulated transport failure on attempt 2"])) → retry(after: 0.02)</text>
+<text x="26" y="782" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] transcript before: 9 messages</text>
+<text x="26" y="798" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] compacted to: 3 messages, ~75 tokens (budget: 100), via ["sliding-window"]</text>
+<text x="26" y="814" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] recorded event: 9 → 3 messages, fits budget: true</text>
+<text x="26" y="829" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] routed via compaction-host with compacted context → RAGAnswer(answer: "Keep all mutable state behind actor isolation; cross concurrency domains only with Sendable.", sourceCount: 4)</text>
+<text x="26" y="844" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] recalled 2 memories: [preference] The user's favorite editor theme is dark...; [fact] The user is a senior iOS engineer buildi...</text>
+<text x="26" y="860" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] routed via memory-host with recalled memory → RAGAnswer(answer: "A dark-themed, monospace-font editor fits this user\'s stated preference.", sourceCount: 2)</text>
+<text x="26" y="876" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] decay pass pruned 1 low-importance, unpinned memories</text>
+<text x="26" y="891" fill="#c8d1dc" xml:space="preserve">[semantic router scenario] "what is the weather like in Denver rig..." → intent 'weather' (score 0.680), routing to model router-host</text>
+<text x="26" y="906" fill="#c8d1dc" xml:space="preserve">[semantic router scenario] routed via router-host, decoded: WeatherReport(city: "Denver", temperatureCelsius: 21.5, conditions: "clear")</text>
+<text x="26" y="922" fill="#c8d1dc" xml:space="preserve">[output-repair scenario] attempt 1 rejected [conditions], converged after 2 attempts (1 repair): WeatherReport(city: "Delhi", temperatureCelsius: 41.0, conditions: "clear")</text>
+<text x="26" y="938" fill="#c8d1dc" xml:space="preserve">[output-repair scenario] 5 repair events recorded; both routed hops metered under repair-host (succeeded: 1, totalRepairs: 1)</text>
+<text x="26" y="953" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] reassembled 1 tool call from 7 streamed deltas: get_weather({"city": "Denver"}), preamble "Looking that up for you."</text>
+<text x="26" y="968" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] dispatched get_weather -&gt; {"conditions":"Clear","tempF":68,"city":"Denver"}</text>
+<text x="26" y="984" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] streamed usage 30+14 tokens billed under stream-host: $0.000139</text>
+<text x="26" y="1000" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] 10 aggregation events recorded (finish toolCalls)</text>
+<text x="26" y="1015" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 5 prompts, limit 2 → peakActive 2 (bound held), 4 succeeded, 1 failed, 0 cancelled</text>
+<text x="26" y="1030" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] outcomes in input order: kochi=ok, jaipur=ok, shimla=failed, nagpur=ok, bhopal=ok</text>
+<text x="26" y="1046" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] shimla isolated (executorFailure): Response JSON did not match the expected schema: $.conditions is required but missing</text>
+<text x="26" y="1062" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 4 successful items summed to 367+68 tokens (435 total), billed under batch-host: $0.0016682</text>
+<text x="26" y="1077" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 12 batch events recorded, last: #12 batchFinished(ok: 4, failed: 1, cancelled: 0)</text>
+<text x="26" y="1092" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] connect -&gt; coldStart(ColdStartReason.noPriorSession), token sess-live-1</text>
+<text x="26" y="1108" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] turn c1 routed through the gateway; srv-1 accepted, ack true</text>
+<text x="26" y="1124" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] socket dropped with c2 unacked -&gt; retry(attempt: 1, delayTicks: 125)</text>
+<text x="26" y="1139" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] reconnect(4 ticks) -&gt; resumed(SessionCursor(token: "sess-live-1", lastServerSequence: 1)); c2 replayed, so 2 turns cost 3 gateway hops</text>
+<text x="26" y="1154" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] buffered srv-2 accepted, redelivery duplicate(RealtimeSessionKit.DuplicateReason.repeatedID)</text>
+<text x="26" y="1170" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] outbox drained: pending 0, acked 2, retransmitted 1, resumes 1</text>
+<text x="26" y="1186" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] 3 hops billed under realtime-host: 13+51 tokens, $0.0004072</text>
+<text x="26" y="1201" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] 15 session events recorded, trail is timestamp-free</text>
+<text x="26" y="1216" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] key k-25b33bd81297ca7c</text>
+<text x="26" y="1232" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] 3 attempts -&gt; executed, replayed, replayed; 1 gateway hop for 3 requests</text>
+<text x="26" y="1248" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] same key, severity high -&gt; low: key k-25b33bd81297ca7c was already used for a different payload</text>
+<text x="26" y="1263" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] Kochi attempt 1 -&gt; failed (indeterminate): gateway timeout after send</text>
+<text x="26" y="1278" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] Kochi attempt 2 -&gt; key k-14a0b2cda2a8467b has an indeterminate outcome and must be resolved before retrying (still 1 hop, no duplicate filing)</text>
+<text x="26" y="1294" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] reconciler says it never landed -&gt; executed alert-kochi</text>
+<text x="26" y="1310" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] 2 executed hops billed under idem-host: 15+33 tokens, $0.0003495</text>
+<text x="26" y="1325" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] executed 2, replayed 2, conflicts 1, blocked 1, resolutions 1; 11 events recorded, trail is timestamp-free</text>
+<text x="26" y="1340" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] v1 -&gt; v2 is BREAKING — field 'conditionCode' removed; field 'stationId' removed; required field 'conditions' added</text>
+<text x="26" y="1356" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] cached v1 reply: {"city": "Shimla", "temperatureCelsius": 8.5, "conditionCode": 3, "stationId": "IN-SML-04"}</text>
+<text x="26" y="1372" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] today's decoder on the v1 text: rejected</text>
+<text x="26" y="1387" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] upgrade refused — lossyMigrationRefused(contract: weather.report, from: v1, to: v2, drops: ["stationId"])</text>
+<text x="26" y="1402" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] migrated v1 -&gt; v2 (1 step), 0 gateway hops, dropped stationId — {"city": "Shimla", "conditions": "storm", "temperatureCelsius": 8.5}</text>
+<text x="26" y="1418" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] decoded after migration: WeatherReport(city: "Shimla", temperatureCelsius: 8.5, conditions: "storm")</text>
+<text x="26" y="1434" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] live turn via schema-host -&gt; storm; negotiate(v2, v2) = exact v2</text>
+<text x="26" y="1449" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] 1 gateway hop billed under schema-host: 9+17 tokens, $0.0001634</text>
+<text x="26" y="1464" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] serving a v1 client: {"city": "Shimla", "conditionCode": 3, "temperatureCelsius": 8.5} (downgrade, dropped nothing)</text>
+<text x="26" y="1480" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] contracts 1, steps 2, migrations 2, reused 0, refusals 1, fields dropped 1</text>
+<text x="26" y="1496" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] retrieved passage carried an injected instruction</text>
+<text x="26" y="1511" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] routed via authority-host, model proposed: {"tool":"mailer","action":"externalSend","resource":"orders/1234"}</text>
+<text x="26" y="1526" fill="#ffb454" xml:space="preserve">[tool-authority scenario] externalSend orders/1234 (arguments from kb-refund-policy): DENIED - arguments are untrusted(kb-refund-policy), capability admits at most operator</text>
+<text x="26" y="1542" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] read orders/1234 (same untrusted source): ALLOWED via g-support</text>
+<text x="26" y="1558" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] dispatched read_order under digest c34df5f39285a19e: {orderId: "1234", status: "delivered late", total: 40.0}</text>
+<text x="26" y="1573" fill="#8ec6ff" xml:space="preserve">[tool-authority scenario] refund orders/1234 $40: APPROVAL REQUIRED - write on orders/1234, digest 6ba27e684094b21c</text>
+<text x="26" y="1588" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] refund orders/1234 $40 + dana@support signature: ALLOWED via g-support</text>
+<text x="26" y="1604" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] dispatched issue_refund under digest 6ba27e684094b21c: {refunded: true}</text>
+<text x="26" y="1620" fill="#ffb454" xml:space="preserve">[tool-authority scenario] same signature, $4000 instead of $40: THROWN approvalDigestMismatch(expected: "a65f3b1e74ad9cc4", presented: "6ba27e684094b21c")</text>
+<text x="26" y="1635" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] broker: allowed 2, denied 1, approvals required 1, consumed 1</text>
+<text x="26" y="1650" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] ToolRegistry dispatched 2 call(s), 2 succeeded — the refused calls never reached it</text>
+<text x="26" y="1666" fill="#c8d1dc" xml:space="preserve"></text>
+<text x="26" y="1682" fill="#c8d1dc" xml:space="preserve">Model                Prompt   Completion   Total     Cost(USD)</text>
+<text x="26" y="1697" fill="#3f4855" xml:space="preserve">-------------------------------------------------------------------</text>
+<text x="26" y="1712" fill="#c8d1dc" xml:space="preserve">authority-host      85       16           101       $0.000343</text>
+<text x="26" y="1728" fill="#c8d1dc" xml:space="preserve">batch-host          367      68           435       $0.001668</text>
+<text x="26" y="1744" fill="#c8d1dc" xml:space="preserve">cloud               277      78           355       $0.002001</text>
+<text x="26" y="1759" fill="#c8d1dc" xml:space="preserve">compaction-host     171      211          382       $0.002538</text>
+<text x="26" y="1774" fill="#c8d1dc" xml:space="preserve">idem-host           15       33           48        $0.00035</text>
+<text x="26" y="1790" fill="#c8d1dc" xml:space="preserve">memory-host         129      27           156       $0.000474</text>
+<text x="26" y="1806" fill="#c8d1dc" xml:space="preserve">on-device           98       35           133       $0</text>
+<text x="26" y="1821" fill="#c8d1dc" xml:space="preserve">prompt-host         65       30           95        $0.00037</text>
+<text x="26" y="1836" fill="#c8d1dc" xml:space="preserve">realtime-host       13       51           64        $0.000407</text>
+<text x="26" y="1852" fill="#c8d1dc" xml:space="preserve">repair-host         223      28           251       $0.000743</text>
+<text x="26" y="1868" fill="#c8d1dc" xml:space="preserve">retry-host          82       17           99        $0.000225</text>
+<text x="26" y="1883" fill="#c8d1dc" xml:space="preserve">router-host         96       17           113       $0.000292</text>
+<text x="26" y="1898" fill="#c8d1dc" xml:space="preserve">schema-host         9        17           26        $0.000163</text>
+<text x="26" y="1914" fill="#c8d1dc" xml:space="preserve">self-hosted         330      121          451       $0.000814</text>
+<text x="26" y="1930" fill="#c8d1dc" xml:space="preserve">stream-host         30       14           44        $0.000139</text>
+<text x="26" y="1945" fill="#3f4855" xml:space="preserve">-------------------------------------------------------------------</text>
+<text x="26" y="1960" fill="#c8d1dc" xml:space="preserve">TOTAL               1990     763          2753      $0.010526</text>
+<text x="26" y="1976" fill="#c8d1dc" xml:space="preserve"></text>
+<text x="26" y="1992" fill="#7ee2b8" xml:space="preserve">Total metered cost across all twenty-one scenarios: $0.0105259</text>
 </svg>

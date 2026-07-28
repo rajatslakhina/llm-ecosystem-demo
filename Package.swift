@@ -30,7 +30,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/batch-inference-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/realtime-session-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/idempotency-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/schema-migration-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/schema-migration-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/tool-authority-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -55,7 +56,8 @@ let package = Package(
                 .product(name: "BatchInferenceKit", package: "batch-inference-kit"),
                 .product(name: "RealtimeSessionKit", package: "realtime-session-kit"),
                 .product(name: "IdempotencyKit", package: "idempotency-kit"),
-                .product(name: "SchemaMigrationKit", package: "schema-migration-kit")
+                .product(name: "SchemaMigrationKit", package: "schema-migration-kit"),
+                .product(name: "ToolAuthorityKit", package: "tool-authority-kit")
             ]
         )
     ]
