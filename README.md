@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all nineteen packages in this
+A single runnable demo that wires together all twenty packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -19,7 +19,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`StreamAggregatorKit`](https://github.com/rajatslakhina/stream-aggregator-kit), and
 [`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit), and
 [`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit), and
-[`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit)
+[`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit), and
+[`SchemaMigrationKit`](https://github.com/rajatslakhina/schema-migration-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -64,6 +65,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`BatchInferenceKit`](https://github.com/rajatslakhina/batch-inference-kit) | Runs a batch of prompts through one bounded-concurrency executor that forwards each item to the gateway, returns outcomes in input order, isolates the one off-contract reply, and hands its summed successful usage to `TokenMeter` under `batch-host` |
 | [`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit) | Holds a live session together across a socket drop: an at-least-once outbox replays the turn the server never acknowledged (a second real gateway hop), the resume continues from the client's own cursor, a redelivered server event is caught by the id window, and every hop bills under `realtime-host` |
 | [`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit) | Guards a side-effecting routed call so it runs at most once: three attempts under one derived key cost a single gateway hop, the same key with a changed payload is refused, an indeterminate timeout freezes the key until a reconciler settles it, and only the hops that really ran bill under `idem-host` |
+| [`SchemaMigrationKit`](https://github.com/rajatslakhina/schema-migration-kit) | Migrates a payload written under an older contract into the shape today's decoder wants, with every hop validated against the schema it promised: a cached v1 reply is classified as a breaking change, refused while it would silently drop a field, then migrated with the loss opted into and decoded by the real `StructuredOutputDecoder` — all at zero gateway hops |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -293,6 +295,28 @@ to your own `Package.swift`. To build it yourself:
 git clone https://github.com/rajatslakhina/llm-ecosystem-demo.git
 cd llm-ecosystem-demo
 swift run LLMEcosystemDemo
+20. **`SchemaMigrationKit`** adds a twentieth scenario, and it is the third
+    distinct answer this toolkit gives to "don't pay for the same work twice."
+    `ResponseCacheKit` avoids a second hop for an identical question.
+    `IdempotencyKit` avoids a second hop for a retried side effect. Here the
+    cached answer is neither identical nor retried — it is *stale in shape*, a
+    reply stored under last year's contract, carrying a numeric `conditionCode`
+    and a `stationId` that today's `WeatherReport` has no slot for. The registry
+    classifies v1 -> v2 as BREAKING and says exactly why (`conditionCode`
+    removed, `stationId` removed, `conditions` added), then **refuses** the
+    migration, because the step admits it cannot carry `stationId` across.
+    Passing `allowingLoss: true` runs it: the condition code is folded into the
+    `conditions` band, the station id is dropped and named in the result, and
+    the migrated payload is handed to the real `StructuredOutputDecoder`, which
+    accepts it. All of that costs **zero gateway hops** — a schema migration is
+    local computation, not a re-generation. The one hop the scenario does spend
+    is a live routed turn whose reply already satisfies v2, so
+    `negotiate(v2, v2)` returns `exact v2` and nothing migrates; it bills 9+17
+    tokens under `schema-host`. Going the other way — serving a client still on
+    v1 — needs no opt-in at all, because the band maps cleanly back onto a code
+    and nothing is lost; that contrast is what makes the earlier refusal mean
+    something.
+
 ```
 
 Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
@@ -300,7 +324,8 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
 `GuardrailKit`, `TraceKit`, `RetrievalKit`, `PromptTemplateKit`,
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
-`BatchInferenceKit`, `RealtimeSessionKit`, and `IdempotencyKit` straight from
+`BatchInferenceKit`, `RealtimeSessionKit`, `IdempotencyKit`, and
+`SchemaMigrationKit` straight from
 their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
@@ -309,10 +334,10 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all nineteen
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all nineteen packages together; the output above is a genuine capture,
+  of all twenty packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -323,7 +348,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the nineteen real packages compose and run," which the sample output
+means "the twenty real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -511,6 +536,24 @@ resolve(key:as: .notApplied), after which it executes for real. Only the two
 executed hops (15+33 tokens) bill under idem-host. Where RealtimeSessionKit made
 the cost of a replay visible, IdempotencyKit removes it: this is the guard that
 makes the rest of the toolkit's retrying safe to point at a side effect.
+For the twentieth scenario, SchemaMigrationKit.SchemaRegistry owns the one thing
+none of the other nineteen packages does: a payload's shape changing over time.
+StructuredOutputKit validates one payload against one schema and PromptTemplateKit
+versions prompt text, but neither can take an object written under v1 and produce
+a valid v2. The registry walks adjacent registered versions only — a v1 -> v3
+shortcut step is refused at registration, because it would let a payload reach v3
+without ever being checked against v2 — and it validates the result of every hop
+against the schema that hop promised, so a step that claims v2 and does not
+deliver it fails at that step rather than three layers later as a decode error.
+FieldValueJSON is the single adapter between the package's own FieldValue
+vocabulary and the JSON text StructuredOutputDecoder consumes; that adapter is
+the entire cost of SchemaMigrationKit having no compile-time dependency on any
+sibling package. Loss is declared per step rather than inferred from a diff,
+because only the step's author knows whether a vanished field was folded into
+another one (conditionCode -> conditions, lossless) or genuinely discarded
+(stationId, lossy) — and a path that drops anything is refused until the caller
+says so.
+
 ```
 
 ## License

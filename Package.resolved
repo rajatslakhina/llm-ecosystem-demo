@@ -1,5 +1,5 @@
 {
-  "originHash" : "923806b4b40b277d08e603396197ed96ac36fa0c5bf1f4118c9c1e2b41203057",
+  "originHash" : "1e35d711b666fbe9a6ee279e6df6500d6979897251bea22283da019967d319d5",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -115,6 +115,15 @@
       "location" : "https://github.com/rajatslakhina/retry-policy-kit.git",
       "state" : {
         "revision" : "7532f7100c90d8acf2a1386690e6c0cab6519bc4",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "schema-migration-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/schema-migration-kit.git",
+      "state" : {
+        "revision" : "8c161694357e0c19cf886b17fd956be9a0dc012d",
         "version" : "1.0.0"
       }
     },
