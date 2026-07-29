@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-one packages in this
+A single runnable demo that wires together all twenty-two packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -21,7 +21,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`RealtimeSessionKit`](https://github.com/rajatslakhina/realtime-session-kit), and
 [`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit), and
 [`SchemaMigrationKit`](https://github.com/rajatslakhina/schema-migration-kit), and
-[`ToolAuthorityKit`](https://github.com/rajatslakhina/tool-authority-kit)
+[`ToolAuthorityKit`](https://github.com/rajatslakhina/tool-authority-kit), and
+[`GroundingKit`](https://github.com/rajatslakhina/grounding-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -68,6 +69,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit) | Guards a side-effecting routed call so it runs at most once: three attempts under one derived key cost a single gateway hop, the same key with a changed payload is refused, an indeterminate timeout freezes the key until a reconciler settles it, and only the hops that really ran bill under `idem-host` |
 | [`SchemaMigrationKit`](https://github.com/rajatslakhina/schema-migration-kit) | Migrates a payload written under an older contract into the shape today's decoder wants, with every hop validated against the schema it promised: a cached v1 reply is classified as a breaking change, refused while it would silently drop a field, then migrated with the loss opted into and decoded by the real `StructuredOutputDecoder` — all at zero gateway hops |
 | [`ToolAuthorityKit`](https://github.com/rajatslakhina/tool-authority-kit) | Refuses a tool call the rest of the pipeline was happy to pass along: a retrieved passage carries an injected instruction, the routed turn proposes the outbound send it asked for, and the broker denies it on the one axis no other layer models — where the arguments came from. The same grant allows a read from that same untrusted source, and escalates a refund to a human whose signature covers that refund and no other |
+| [`GroundingKit`](https://github.com/rajatslakhina/grounding-kit) | Checks the answer itself against the passages it was given: `StructuredOutputKit` accepts the reply because the shape is valid, and `GroundingVerifier` then gives each sentence its own verdict — one grounded and correctly cited, one inflating a number its source refutes (`contradicted`, not merely unsupported), and one citing a document that was never retrieved. Under `.strip` the grounded remainder is published and the rest is named, at zero extra gateway hops |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -345,10 +347,29 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
     that were authorized. One gateway hop, billed under `authority-host`, because
     an authorization decision is local computation.
 
+22. **`GroundingKit`** closes the set with a twenty-second scenario, and it is
+    the one that checks the *answer* rather than the machinery around it.
+    `RetrievalKit` indexes and retrieves three real passages.
+    `ProviderGatewayKit` routes a real turn. `StructuredOutputKit` decodes the
+    reply and **accepts it** — every required field present and correctly typed,
+    because a hallucination is not a schema violation. `GroundingVerifier` then
+    asks the question nothing else in the pipeline is positioned to ask, and
+    answers it three different ways for three sentences: the retention claim is
+    `supported` at 100% and correctly cited; the export-limit claim says 5000
+    where `kb-limits` says 500, which is `contradicted` rather than unsupported
+    because the source does not merely fail to mention it — it says otherwise;
+    and the enterprise claim cites `kb-enterprise`, a document that was never
+    retrieved at all. `.strict` refuses with three violations, each naming its
+    claim. `.stripping` removes c2 and c3 and publishes what survives. All of it
+    costs **zero extra gateway hops**, which is the contrast with
+    `OutputRepairKit`: repair pays a second hop to ask the model to try again,
+    while verification is local computation. One hop, billed under
+    `grounding-host`.
+
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
 `BatchInferenceKit`, `RealtimeSessionKit`, `IdempotencyKit`, and
-`SchemaMigrationKit`, and `ToolAuthorityKit` straight from
+`SchemaMigrationKit`, `ToolAuthorityKit`, and `GroundingKit` straight from
 their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
@@ -357,10 +378,10 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-one
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-two
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-one packages together; the output above is a genuine capture,
+  of all twenty-two packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -371,7 +392,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-one real packages compose and run," which the sample output
+means "the twenty-two real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

@@ -1,5 +1,5 @@
 {
-  "originHash" : "1c76bc55bb2c08095fda9ad83b1e4a0cec9480ab630799999374c9be8c86ff2d",
+  "originHash" : "91b4bb343b99f6ee2ebb9863fcdf2e5bd9e44fca586e78994518914df416bf44",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -43,6 +43,15 @@
       "location" : "https://github.com/rajatslakhina/foundation-model-provider-gateway.git",
       "state" : {
         "revision" : "e93e63506bd3d81279cd898ca8a9b25c8fe569f5",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "grounding-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/grounding-kit.git",
+      "state" : {
+        "revision" : "f7f160ca46d561aed5b06d9f9f3e5466c4c58997",
         "version" : "1.0.0"
       }
     },

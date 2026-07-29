@@ -1,135 +1,155 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1463" height="2029" viewBox="0 0 1463 2029" font-family="SF Mono, Menlo, monospace" font-size="11.5">
-<rect width="1463" height="2029" rx="10" fill="#12161c"/>
-<rect x="0" y="0" width="1463" height="34" rx="10" fill="#1b212a"/>
-<rect x="0" y="24" width="1463" height="10" fill="#1b212a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1357" height="2406" viewBox="0 0 1357 2406" font-family="SF Mono, Menlo, monospace" font-size="11.5">
+<rect width="1357" height="2406" rx="10" fill="#12161c"/>
+<rect x="0" y="0" width="1357" height="34" rx="10" fill="#1b212a"/>
+<rect x="0" y="24" width="1357" height="10" fill="#1b212a"/>
 <circle cx="20" cy="17" r="6" fill="#ff5f57"/>
 <circle cx="38" cy="17" r="6" fill="#febc2e"/>
 <circle cx="56" cy="17" r="6" fill="#28c840"/>
 <text x="86" y="21" fill="#7d8794" font-size="11">swift run LLMEcosystemDemo</text>
-<text x="26" y="54" fill="#7ee2b8" xml:space="preserve">== LLM Ecosystem Integration Demo ==</text>
-<text x="26" y="70" fill="#c8d1dc" xml:space="preserve"></text>
-<text x="26" y="85" fill="#c8d1dc" xml:space="preserve">[on-device provider, clean JSON] routed via on-device → decoded: WeatherReport(city: "Bengaluru", temperatureCelsius: 27.5, conditions: "cloudy")</text>
-<text x="26" y="100" fill="#c8d1dc" xml:space="preserve">[cloud provider, JSON fenced in prose] routed via cloud → decoded: WeatherReport(city: "Mumbai", temperatureCelsius: 31.0, conditions: "storm")</text>
-<text x="26" y="116" fill="#c8d1dc" xml:space="preserve">[self-hosted provider, self-repairing] decoded after a repair round-trip: WeatherReport(city: "Chennai", temperatureCelsius: 33.2, conditions: "clear")</text>
-<text x="26" y="132" fill="#c8d1dc" xml:space="preserve">[cached scenario] attempt 1: MISS — routed via cloud, decoded: WeatherReport(city: "Pune", temperatureCelsius: 24.0, conditions: "clear")</text>
-<text x="26" y="147" fill="#c8d1dc" xml:space="preserve">[cached scenario] attempt 2: HIT — no provider call, no additional cost</text>
-<text x="26" y="162" fill="#c8d1dc" xml:space="preserve">Cache Statistics</text>
-<text x="26" y="178" fill="#3f4855" xml:space="preserve">-----------------</text>
-<text x="26" y="194" fill="#c8d1dc" xml:space="preserve">Hits:        1</text>
-<text x="26" y="209" fill="#c8d1dc" xml:space="preserve">Misses:      1</text>
-<text x="26" y="224" fill="#c8d1dc" xml:space="preserve">Evictions:   0</text>
-<text x="26" y="240" fill="#c8d1dc" xml:space="preserve">Expirations: 0</text>
-<text x="26" y="256" fill="#c8d1dc" xml:space="preserve">Hit rate:    50.0%</text>
-<text x="26" y="271" fill="#c8d1dc" xml:space="preserve">Saved:       $0.001272</text>
-<text x="26" y="286" fill="#c8d1dc" xml:space="preserve">[tool-calling round trip] dispatched "get_weather", final answer: ToolBackedAnswer(city: "Denver", conditions: "Clear", tempF: 68.0)</text>
-<text x="26" y="302" fill="#c8d1dc" xml:space="preserve">ToolRegistry stats: totalCalls=1 success=1 failures=0</text>
-<text x="26" y="318" fill="#c8d1dc" xml:space="preserve">[AgentLoopKit orchestrated loop] 3 steps, halted: finalAnswer, answer: Austin is warmer than Boston right now.</text>
-<text x="26" y="333" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] request redacted, sanitized prompt routed via on-device, decoded: WeatherReport(city: "Miami", temperatureCelsius: 29.0, conditions: "clear")</text>
-<text x="26" y="348" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] second prompt verdict: blocked(reason: "matched banned phrase \"unreleased pricing\"") — no provider call made</text>
-<text x="26" y="364" fill="#c8d1dc" xml:space="preserve">[guardrail scenario] 3 trace events recorded by GuardrailEventRecorder</text>
-<text x="26" y="380" fill="#c8d1dc" xml:space="preserve">[trace scenario] traced round trip → final answer: ToolBackedAnswer(city: "Seattle", conditions: "Clear", tempF: 68.0)</text>
-<text x="26" y="395" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [agentStep] agent.weatherLookup — OK (0ms)</text>
-<text x="26" y="410" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [llmCall] llm.decide — OK (0ms)</text>
-<text x="26" y="426" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [toolCall] tool.get_weather — OK (0ms)</text>
-<text x="26" y="442" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span: [llmCall] llm.finalAnswer — OK (0ms)</text>
-<text x="26" y="457" fill="#c8d1dc" xml:space="preserve">[trace scenario] EvalGate passed: true (4 spans scored)</text>
-<text x="26" y="472" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] query: "How does token metering and cost work in this ecosystem?"</text>
-<text x="26" y="488" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] retrieved context:</text>
-<text x="26" y="504" fill="#c8d1dc" xml:space="preserve">[1] (score: 0.416) TokenMeterKit provides actor-based token usage and cost metering for LLM apps in Swift, tracking cost per provider with Decimal-based pricing and a formatted cost report.</text>
-<text x="26" y="519" fill="#c8d1dc" xml:space="preserve">[2] (score: 0.239) GuardrailKit provides actor-based guardrails for Swift LLM apps, screening prompts and responses for PII redaction and content policy violations before or after routing.</text>
-<text x="26" y="534" fill="#c8d1dc" xml:space="preserve">[retrieval scenario] routed via self-hosted → grounded answer: RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.", sourceCount: 2)</text>
-<text x="26" y="550" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rendered v2 (strict):</text>
-<text x="26" y="566" fill="#c8d1dc" xml:space="preserve">You are a grounded assistant. Using ONLY the context provided, answer concisely and do not rely on anything outside it.</text>
-<text x="26" y="581" fill="#c8d1dc" xml:space="preserve">Context:</text>
-<text x="26" y="596" fill="#c8d1dc" xml:space="preserve">TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.</text>
-<text x="26" y="612" fill="#c8d1dc" xml:space="preserve">Question: How is cost tracked across providers?</text>
-<text x="26" y="628" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] routed via prompt-host → decoded: RAGAnswer(answer: "TokenMeterKit meters usage per provider with Decimal-based pricing and a cost report.", sourceCount: 1)</text>
-<text x="26" y="643" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rolled back to v1</text>
-<text x="26" y="658" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] rendered v1 (lenient, question omitted):</text>
-<text x="26" y="674" fill="#c8d1dc" xml:space="preserve">Answer the question using only the context below.</text>
-<text x="26" y="690" fill="#c8d1dc" xml:space="preserve">Context: TokenMeterKit meters usage per provider with Decimal-based pricing.</text>
-<text x="26" y="705" fill="#c8d1dc" xml:space="preserve">Question: {{question}}</text>
-<text x="26" y="720" fill="#c8d1dc" xml:space="preserve">[prompt template scenario] 2 version(s) in history, 5 audit events: registered, promoted, rendered, rolledBack, rendered</text>
-<text x="26" y="736" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] succeeded on attempt 3: decoded WeatherReport(city: "Seattle", temperatureCelsius: 14.0, conditions: "rain")</text>
-<text x="26" y="752" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] attempt 1 failed (allProvidersFailed([retry-host: "simulated transport failure on attempt 1"])) → retry(after: 0.01)</text>
-<text x="26" y="767" fill="#c8d1dc" xml:space="preserve">[retry policy scenario] attempt 2 failed (allProvidersFailed([retry-host: "simulated transport failure on attempt 2"])) → retry(after: 0.02)</text>
-<text x="26" y="782" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] transcript before: 9 messages</text>
-<text x="26" y="798" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] compacted to: 3 messages, ~75 tokens (budget: 100), via ["sliding-window"]</text>
-<text x="26" y="814" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] recorded event: 9 → 3 messages, fits budget: true</text>
-<text x="26" y="829" fill="#c8d1dc" xml:space="preserve">[context compaction scenario] routed via compaction-host with compacted context → RAGAnswer(answer: "Keep all mutable state behind actor isolation; cross concurrency domains only with Sendable.", sourceCount: 4)</text>
-<text x="26" y="844" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] recalled 2 memories: [preference] The user's favorite editor theme is dark...; [fact] The user is a senior iOS engineer buildi...</text>
-<text x="26" y="860" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] routed via memory-host with recalled memory → RAGAnswer(answer: "A dark-themed, monospace-font editor fits this user\'s stated preference.", sourceCount: 2)</text>
-<text x="26" y="876" fill="#c8d1dc" xml:space="preserve">[agent memory scenario] decay pass pruned 1 low-importance, unpinned memories</text>
-<text x="26" y="891" fill="#c8d1dc" xml:space="preserve">[semantic router scenario] "what is the weather like in Denver rig..." → intent 'weather' (score 0.680), routing to model router-host</text>
-<text x="26" y="906" fill="#c8d1dc" xml:space="preserve">[semantic router scenario] routed via router-host, decoded: WeatherReport(city: "Denver", temperatureCelsius: 21.5, conditions: "clear")</text>
-<text x="26" y="922" fill="#c8d1dc" xml:space="preserve">[output-repair scenario] attempt 1 rejected [conditions], converged after 2 attempts (1 repair): WeatherReport(city: "Delhi", temperatureCelsius: 41.0, conditions: "clear")</text>
-<text x="26" y="938" fill="#c8d1dc" xml:space="preserve">[output-repair scenario] 5 repair events recorded; both routed hops metered under repair-host (succeeded: 1, totalRepairs: 1)</text>
-<text x="26" y="953" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] reassembled 1 tool call from 7 streamed deltas: get_weather({"city": "Denver"}), preamble "Looking that up for you."</text>
-<text x="26" y="968" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] dispatched get_weather -&gt; {"conditions":"Clear","tempF":68,"city":"Denver"}</text>
-<text x="26" y="984" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] streamed usage 30+14 tokens billed under stream-host: $0.000139</text>
-<text x="26" y="1000" fill="#c8d1dc" xml:space="preserve">[stream-aggregator scenario] 10 aggregation events recorded (finish toolCalls)</text>
-<text x="26" y="1015" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 5 prompts, limit 2 → peakActive 2 (bound held), 4 succeeded, 1 failed, 0 cancelled</text>
-<text x="26" y="1030" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] outcomes in input order: kochi=ok, jaipur=ok, shimla=failed, nagpur=ok, bhopal=ok</text>
-<text x="26" y="1046" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] shimla isolated (executorFailure): Response JSON did not match the expected schema: $.conditions is required but missing</text>
-<text x="26" y="1062" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 4 successful items summed to 367+68 tokens (435 total), billed under batch-host: $0.0016682</text>
-<text x="26" y="1077" fill="#c8d1dc" xml:space="preserve">[batch inference scenario] 12 batch events recorded, last: #12 batchFinished(ok: 4, failed: 1, cancelled: 0)</text>
-<text x="26" y="1092" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] connect -&gt; coldStart(ColdStartReason.noPriorSession), token sess-live-1</text>
-<text x="26" y="1108" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] turn c1 routed through the gateway; srv-1 accepted, ack true</text>
-<text x="26" y="1124" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] socket dropped with c2 unacked -&gt; retry(attempt: 1, delayTicks: 125)</text>
-<text x="26" y="1139" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] reconnect(4 ticks) -&gt; resumed(SessionCursor(token: "sess-live-1", lastServerSequence: 1)); c2 replayed, so 2 turns cost 3 gateway hops</text>
-<text x="26" y="1154" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] buffered srv-2 accepted, redelivery duplicate(RealtimeSessionKit.DuplicateReason.repeatedID)</text>
-<text x="26" y="1170" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] outbox drained: pending 0, acked 2, retransmitted 1, resumes 1</text>
-<text x="26" y="1186" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] 3 hops billed under realtime-host: 13+51 tokens, $0.0004072</text>
-<text x="26" y="1201" fill="#c8d1dc" xml:space="preserve">[realtime-session scenario] 15 session events recorded, trail is timestamp-free</text>
-<text x="26" y="1216" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] key k-25b33bd81297ca7c</text>
-<text x="26" y="1232" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] 3 attempts -&gt; executed, replayed, replayed; 1 gateway hop for 3 requests</text>
-<text x="26" y="1248" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] same key, severity high -&gt; low: key k-25b33bd81297ca7c was already used for a different payload</text>
-<text x="26" y="1263" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] Kochi attempt 1 -&gt; failed (indeterminate): gateway timeout after send</text>
-<text x="26" y="1278" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] Kochi attempt 2 -&gt; key k-14a0b2cda2a8467b has an indeterminate outcome and must be resolved before retrying (still 1 hop, no duplicate filing)</text>
-<text x="26" y="1294" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] reconciler says it never landed -&gt; executed alert-kochi</text>
-<text x="26" y="1310" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] 2 executed hops billed under idem-host: 15+33 tokens, $0.0003495</text>
-<text x="26" y="1325" fill="#c8d1dc" xml:space="preserve">[idempotency scenario] executed 2, replayed 2, conflicts 1, blocked 1, resolutions 1; 11 events recorded, trail is timestamp-free</text>
-<text x="26" y="1340" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] v1 -&gt; v2 is BREAKING — field 'conditionCode' removed; field 'stationId' removed; required field 'conditions' added</text>
-<text x="26" y="1356" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] cached v1 reply: {"city": "Shimla", "temperatureCelsius": 8.5, "conditionCode": 3, "stationId": "IN-SML-04"}</text>
-<text x="26" y="1372" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] today's decoder on the v1 text: rejected</text>
-<text x="26" y="1387" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] upgrade refused — lossyMigrationRefused(contract: weather.report, from: v1, to: v2, drops: ["stationId"])</text>
-<text x="26" y="1402" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] migrated v1 -&gt; v2 (1 step), 0 gateway hops, dropped stationId — {"city": "Shimla", "conditions": "storm", "temperatureCelsius": 8.5}</text>
-<text x="26" y="1418" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] decoded after migration: WeatherReport(city: "Shimla", temperatureCelsius: 8.5, conditions: "storm")</text>
-<text x="26" y="1434" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] live turn via schema-host -&gt; storm; negotiate(v2, v2) = exact v2</text>
-<text x="26" y="1449" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] 1 gateway hop billed under schema-host: 9+17 tokens, $0.0001634</text>
-<text x="26" y="1464" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] serving a v1 client: {"city": "Shimla", "conditionCode": 3, "temperatureCelsius": 8.5} (downgrade, dropped nothing)</text>
-<text x="26" y="1480" fill="#c8d1dc" xml:space="preserve">[schema-migration scenario] contracts 1, steps 2, migrations 2, reused 0, refusals 1, fields dropped 1</text>
-<text x="26" y="1496" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] retrieved passage carried an injected instruction</text>
-<text x="26" y="1511" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] routed via authority-host, model proposed: {"tool":"mailer","action":"externalSend","resource":"orders/1234"}</text>
-<text x="26" y="1526" fill="#ffb454" xml:space="preserve">[tool-authority scenario] externalSend orders/1234 (arguments from kb-refund-policy): DENIED - arguments are untrusted(kb-refund-policy), capability admits at most operator</text>
-<text x="26" y="1542" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] read orders/1234 (same untrusted source): ALLOWED via g-support</text>
-<text x="26" y="1558" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] dispatched read_order under digest c34df5f39285a19e: {orderId: "1234", status: "delivered late", total: 40.0}</text>
-<text x="26" y="1573" fill="#8ec6ff" xml:space="preserve">[tool-authority scenario] refund orders/1234 $40: APPROVAL REQUIRED - write on orders/1234, digest 6ba27e684094b21c</text>
-<text x="26" y="1588" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] refund orders/1234 $40 + dana@support signature: ALLOWED via g-support</text>
-<text x="26" y="1604" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] dispatched issue_refund under digest 6ba27e684094b21c: {refunded: true}</text>
-<text x="26" y="1620" fill="#ffb454" xml:space="preserve">[tool-authority scenario] same signature, $4000 instead of $40: THROWN approvalDigestMismatch(expected: "a65f3b1e74ad9cc4", presented: "6ba27e684094b21c")</text>
-<text x="26" y="1635" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] broker: allowed 2, denied 1, approvals required 1, consumed 1</text>
-<text x="26" y="1650" fill="#c8d1dc" xml:space="preserve">[tool-authority scenario] ToolRegistry dispatched 2 call(s), 2 succeeded — the refused calls never reached it</text>
-<text x="26" y="1666" fill="#c8d1dc" xml:space="preserve"></text>
-<text x="26" y="1682" fill="#c8d1dc" xml:space="preserve">Model                Prompt   Completion   Total     Cost(USD)</text>
-<text x="26" y="1697" fill="#3f4855" xml:space="preserve">-------------------------------------------------------------------</text>
-<text x="26" y="1712" fill="#c8d1dc" xml:space="preserve">authority-host      85       16           101       $0.000343</text>
-<text x="26" y="1728" fill="#c8d1dc" xml:space="preserve">batch-host          367      68           435       $0.001668</text>
-<text x="26" y="1744" fill="#c8d1dc" xml:space="preserve">cloud               277      78           355       $0.002001</text>
-<text x="26" y="1759" fill="#c8d1dc" xml:space="preserve">compaction-host     171      211          382       $0.002538</text>
-<text x="26" y="1774" fill="#c8d1dc" xml:space="preserve">idem-host           15       33           48        $0.00035</text>
-<text x="26" y="1790" fill="#c8d1dc" xml:space="preserve">memory-host         129      27           156       $0.000474</text>
-<text x="26" y="1806" fill="#c8d1dc" xml:space="preserve">on-device           98       35           133       $0</text>
-<text x="26" y="1821" fill="#c8d1dc" xml:space="preserve">prompt-host         65       30           95        $0.00037</text>
-<text x="26" y="1836" fill="#c8d1dc" xml:space="preserve">realtime-host       13       51           64        $0.000407</text>
-<text x="26" y="1852" fill="#c8d1dc" xml:space="preserve">repair-host         223      28           251       $0.000743</text>
-<text x="26" y="1868" fill="#c8d1dc" xml:space="preserve">retry-host          82       17           99        $0.000225</text>
-<text x="26" y="1883" fill="#c8d1dc" xml:space="preserve">router-host         96       17           113       $0.000292</text>
-<text x="26" y="1898" fill="#c8d1dc" xml:space="preserve">schema-host         9        17           26        $0.000163</text>
-<text x="26" y="1914" fill="#c8d1dc" xml:space="preserve">self-hosted         330      121          451       $0.000814</text>
-<text x="26" y="1930" fill="#c8d1dc" xml:space="preserve">stream-host         30       14           44        $0.000139</text>
-<text x="26" y="1945" fill="#3f4855" xml:space="preserve">-------------------------------------------------------------------</text>
-<text x="26" y="1960" fill="#c8d1dc" xml:space="preserve">TOTAL               1990     763          2753      $0.010526</text>
-<text x="26" y="1976" fill="#c8d1dc" xml:space="preserve"></text>
-<text x="26" y="1992" fill="#7ee2b8" xml:space="preserve">Total metered cost across all twenty-one scenarios: $0.0105259</text>
+<text x="26" y="54" fill="#7ee2b8" xml:space="preserve">==&#160;LLM&#160;Ecosystem&#160;Integration&#160;Demo&#160;==</text>
+<text x="26" y="70" fill="#c8d1dc" xml:space="preserve">ProviderGatewayKit&#160;(routing)&#160;+&#160;StructuredOutputKit&#160;(decoding)&#160;+&#160;TokenMeterKit&#160;(cost)&#160;+&#160;ResponseCacheKit&#160;(caching)&#160;+&#160;ToolRegistryKit&#160;(tool&#160;dispatch)&#160;+&#160;AgentLoopKit&#160;(agent&#160;loop)&#160;+&#160;GuardrailKit&#160;(PII</text>
+<text x="26" y="86" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;redaction&#160;&amp;&#160;policy)&#160;+&#160;TraceKit&#160;(tracing&#160;&amp;&#160;eval&#160;gates)&#160;+&#160;RetrievalKit&#160;(retrieval-augmented&#160;context)&#160;+&#160;PromptTemplateKit&#160;(prompt&#160;templating&#160;&amp;&#160;rollback)&#160;+&#160;RetryPolicyKit&#160;(rate&#160;limiting&#160;&amp;&#160;retry</text>
+<text x="26" y="102" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;policy)&#160;+&#160;ContextCompactionKit&#160;(conversation&#160;compaction&#160;under&#160;a&#160;token&#160;budget)&#160;+&#160;AgentMemoryKit&#160;(long-term&#160;write/recall&#160;memory&#160;across&#160;sessions)&#160;+&#160;SemanticRouterKit&#160;(semantic&#160;intent&#160;routing&#160;by</text>
+<text x="26" y="118" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;embedding&#160;distance)&#160;+&#160;OutputRepairKit&#160;(bounded&#160;self-healing&#160;structured-output&#160;repair&#160;loop)&#160;+&#160;StreamAggregatorKit&#160;(streamed&#160;delta&#160;+&#160;tool-call&#160;fragment&#160;reassembly)&#160;+&#160;BatchInferenceKit</text>
+<text x="26" y="134" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;(bounded-concurrency&#160;batch&#160;fan-out&#160;with&#160;per-item&#160;failure&#160;isolation)&#160;+&#160;RealtimeSessionKit&#160;(a&#160;realtime&#160;session&#160;that&#160;survives&#160;a&#160;reconnect:&#160;at-least-once&#160;outbox,&#160;strict&#160;inbound&#160;ordering,&#160;two-layer</text>
+<text x="26" y="150" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;dedup)&#160;+&#160;IdempotencyKit&#160;(at-most-once&#160;side&#160;effects&#160;under&#160;at-least-once&#160;delivery)&#160;+&#160;SchemaMigrationKit&#160;(versioned&#160;contracts:&#160;migrate&#160;a&#160;payload&#160;across&#160;schema&#160;versions,&#160;validated&#160;at&#160;every&#160;hop)&#160;+</text>
+<text x="26" y="166" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;ToolAuthorityKit&#160;(deny-by-default&#160;authority&#160;for&#160;agent&#160;tool&#160;calls:&#160;capability&#160;scoping,&#160;a&#160;provenance&#160;ceiling,&#160;and&#160;approvals&#160;bound&#160;to&#160;one&#160;exact&#160;call)&#160;+&#160;GroundingKit&#160;(claim-level&#160;grounding&#160;and</text>
+<text x="26" y="182" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;citation&#160;verification:&#160;a&#160;verdict&#160;per&#160;sentence&#160;with&#160;the&#160;source&#160;span&#160;that&#160;proves&#160;it)</text>
+<text x="26" y="198" fill="#c8d1dc" xml:space="preserve"></text>
+<text x="26" y="214" fill="#79b8ff" xml:space="preserve">[on-device&#160;provider,&#160;clean&#160;JSON]&#160;routed&#160;via&#160;on-device&#160;&#8594;&#160;decoded:&#160;WeatherReport(city:&#160;&quot;Bengaluru&quot;,&#160;temperatureCelsius:&#160;27.5,&#160;conditions:&#160;&quot;cloudy&quot;)</text>
+<text x="26" y="230" fill="#79b8ff" xml:space="preserve">[cloud&#160;provider,&#160;JSON&#160;fenced&#160;in&#160;prose]&#160;routed&#160;via&#160;cloud&#160;&#8594;&#160;decoded:&#160;WeatherReport(city:&#160;&quot;Mumbai&quot;,&#160;temperatureCelsius:&#160;31.0,&#160;conditions:&#160;&quot;storm&quot;)</text>
+<text x="26" y="246" fill="#79b8ff" xml:space="preserve">[self-hosted&#160;provider,&#160;self-repairing]&#160;decoded&#160;after&#160;a&#160;repair&#160;round-trip:&#160;WeatherReport(city:&#160;&quot;Chennai&quot;,&#160;temperatureCelsius:&#160;33.2,&#160;conditions:&#160;&quot;clear&quot;)</text>
+<text x="26" y="262" fill="#79b8ff" xml:space="preserve">[cached&#160;scenario]&#160;attempt&#160;1:&#160;MISS&#160;&#8212;&#160;routed&#160;via&#160;cloud,&#160;decoded:&#160;WeatherReport(city:&#160;&quot;Pune&quot;,&#160;temperatureCelsius:&#160;24.0,&#160;conditions:&#160;&quot;clear&quot;)</text>
+<text x="26" y="278" fill="#79b8ff" xml:space="preserve">[cached&#160;scenario]&#160;attempt&#160;2:&#160;HIT&#160;&#8212;&#160;no&#160;provider&#160;call,&#160;no&#160;additional&#160;cost</text>
+<text x="26" y="294" fill="#c8d1dc" xml:space="preserve">Cache&#160;Statistics</text>
+<text x="26" y="310" fill="#7d8794" xml:space="preserve">-----------------</text>
+<text x="26" y="326" fill="#c8d1dc" xml:space="preserve">Hits:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1</text>
+<text x="26" y="342" fill="#c8d1dc" xml:space="preserve">Misses:&#160;&#160;&#160;&#160;&#160;&#160;1</text>
+<text x="26" y="358" fill="#c8d1dc" xml:space="preserve">Evictions:&#160;&#160;&#160;0</text>
+<text x="26" y="374" fill="#c8d1dc" xml:space="preserve">Expirations:&#160;0</text>
+<text x="26" y="390" fill="#c8d1dc" xml:space="preserve">Hit&#160;rate:&#160;&#160;&#160;&#160;50.0%</text>
+<text x="26" y="406" fill="#c8d1dc" xml:space="preserve">Saved:&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.001272</text>
+<text x="26" y="422" fill="#79b8ff" xml:space="preserve">[tool-calling&#160;round&#160;trip]&#160;dispatched&#160;&quot;get_weather&quot;,&#160;final&#160;answer:&#160;ToolBackedAnswer(city:&#160;&quot;Denver&quot;,&#160;conditions:&#160;&quot;Clear&quot;,&#160;tempF:&#160;68.0)</text>
+<text x="26" y="438" fill="#c8d1dc" xml:space="preserve">ToolRegistry&#160;stats:&#160;totalCalls=1&#160;success=1&#160;failures=0</text>
+<text x="26" y="454" fill="#79b8ff" xml:space="preserve">[AgentLoopKit&#160;orchestrated&#160;loop]&#160;3&#160;steps,&#160;halted:&#160;finalAnswer,&#160;answer:&#160;Austin&#160;is&#160;warmer&#160;than&#160;Boston&#160;right&#160;now.</text>
+<text x="26" y="470" fill="#79b8ff" xml:space="preserve">[guardrail&#160;scenario]&#160;request&#160;redacted,&#160;sanitized&#160;prompt&#160;routed&#160;via&#160;on-device,&#160;decoded:&#160;WeatherReport(city:&#160;&quot;Miami&quot;,&#160;temperatureCelsius:&#160;29.0,&#160;conditions:&#160;&quot;clear&quot;)</text>
+<text x="26" y="486" fill="#79b8ff" xml:space="preserve">[guardrail&#160;scenario]&#160;second&#160;prompt&#160;verdict:&#160;blocked(reason:&#160;&quot;matched&#160;banned&#160;phrase&#160;\&quot;unreleased&#160;pricing\&quot;&quot;)&#160;&#8212;&#160;no&#160;provider&#160;call&#160;made</text>
+<text x="26" y="502" fill="#79b8ff" xml:space="preserve">[guardrail&#160;scenario]&#160;3&#160;trace&#160;events&#160;recorded&#160;by&#160;GuardrailEventRecorder</text>
+<text x="26" y="518" fill="#79b8ff" xml:space="preserve">[trace&#160;scenario]&#160;traced&#160;round&#160;trip&#160;&#8594;&#160;final&#160;answer:&#160;ToolBackedAnswer(city:&#160;&quot;Seattle&quot;,&#160;conditions:&#160;&quot;Clear&quot;,&#160;tempF:&#160;68.0)</text>
+<text x="26" y="534" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span:&#160;[agentStep]&#160;agent.weatherLookup&#160;&#8212;&#160;OK&#160;(1ms)</text>
+<text x="26" y="550" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span:&#160;[llmCall]&#160;llm.decide&#160;&#8212;&#160;OK&#160;(0ms)</text>
+<text x="26" y="566" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span:&#160;[toolCall]&#160;tool.get_weather&#160;&#8212;&#160;OK&#160;(0ms)</text>
+<text x="26" y="582" fill="#c8d1dc" xml:space="preserve">&#160;&#160;span:&#160;[llmCall]&#160;llm.finalAnswer&#160;&#8212;&#160;OK&#160;(0ms)</text>
+<text x="26" y="598" fill="#79b8ff" xml:space="preserve">[trace&#160;scenario]&#160;EvalGate&#160;passed:&#160;true&#160;(4&#160;spans&#160;scored)</text>
+<text x="26" y="614" fill="#79b8ff" xml:space="preserve">[retrieval&#160;scenario]&#160;query:&#160;&quot;How&#160;does&#160;token&#160;metering&#160;and&#160;cost&#160;work&#160;in&#160;this&#160;ecosystem?&quot;</text>
+<text x="26" y="630" fill="#79b8ff" xml:space="preserve">[retrieval&#160;scenario]&#160;retrieved&#160;context:</text>
+<text x="26" y="646" fill="#79b8ff" xml:space="preserve">[1]&#160;(score:&#160;0.416)&#160;TokenMeterKit&#160;provides&#160;actor-based&#160;token&#160;usage&#160;and&#160;cost&#160;metering&#160;for&#160;LLM&#160;apps&#160;in&#160;Swift,&#160;tracking&#160;cost&#160;per&#160;provider&#160;with&#160;Decimal-based&#160;pricing&#160;and&#160;a&#160;formatted&#160;cost&#160;report.</text>
+<text x="26" y="662" fill="#79b8ff" xml:space="preserve">[2]&#160;(score:&#160;0.239)&#160;GuardrailKit&#160;provides&#160;actor-based&#160;guardrails&#160;for&#160;Swift&#160;LLM&#160;apps,&#160;screening&#160;prompts&#160;and&#160;responses&#160;for&#160;PII&#160;redaction&#160;and&#160;content&#160;policy&#160;violations&#160;before&#160;or&#160;after&#160;routing.</text>
+<text x="26" y="678" fill="#79b8ff" xml:space="preserve">[retrieval&#160;scenario]&#160;routed&#160;via&#160;self-hosted&#160;&#8594;&#160;grounded&#160;answer:&#160;RAGAnswer(answer:&#160;&quot;TokenMeterKit&#160;meters&#160;usage&#160;per&#160;provider&#160;with&#160;Decimal-based&#160;pricing&#160;and&#160;a&#160;cost&#160;report.&quot;,&#160;sourceCount:&#160;2)</text>
+<text x="26" y="694" fill="#79b8ff" xml:space="preserve">[prompt&#160;template&#160;scenario]&#160;rendered&#160;v2&#160;(strict):</text>
+<text x="26" y="710" fill="#c8d1dc" xml:space="preserve">You&#160;are&#160;a&#160;grounded&#160;assistant.&#160;Using&#160;ONLY&#160;the&#160;context&#160;provided,&#160;answer&#160;concisely&#160;and&#160;do&#160;not&#160;rely&#160;on&#160;anything&#160;outside&#160;it.</text>
+<text x="26" y="726" fill="#c8d1dc" xml:space="preserve">Context:</text>
+<text x="26" y="742" fill="#c8d1dc" xml:space="preserve">TokenMeterKit&#160;meters&#160;usage&#160;per&#160;provider&#160;with&#160;Decimal-based&#160;pricing&#160;and&#160;a&#160;cost&#160;report.</text>
+<text x="26" y="758" fill="#c8d1dc" xml:space="preserve">Question:&#160;How&#160;is&#160;cost&#160;tracked&#160;across&#160;providers?</text>
+<text x="26" y="774" fill="#79b8ff" xml:space="preserve">[prompt&#160;template&#160;scenario]&#160;routed&#160;via&#160;prompt-host&#160;&#8594;&#160;decoded:&#160;RAGAnswer(answer:&#160;&quot;TokenMeterKit&#160;meters&#160;usage&#160;per&#160;provider&#160;with&#160;Decimal-based&#160;pricing&#160;and&#160;a&#160;cost&#160;report.&quot;,&#160;sourceCount:&#160;1)</text>
+<text x="26" y="790" fill="#79b8ff" xml:space="preserve">[prompt&#160;template&#160;scenario]&#160;rolled&#160;back&#160;to&#160;v1</text>
+<text x="26" y="806" fill="#79b8ff" xml:space="preserve">[prompt&#160;template&#160;scenario]&#160;rendered&#160;v1&#160;(lenient,&#160;question&#160;omitted):</text>
+<text x="26" y="822" fill="#c8d1dc" xml:space="preserve">Answer&#160;the&#160;question&#160;using&#160;only&#160;the&#160;context&#160;below.</text>
+<text x="26" y="838" fill="#c8d1dc" xml:space="preserve">Context:&#160;TokenMeterKit&#160;meters&#160;usage&#160;per&#160;provider&#160;with&#160;Decimal-based&#160;pricing.</text>
+<text x="26" y="854" fill="#c8d1dc" xml:space="preserve">Question:&#160;{{question}}</text>
+<text x="26" y="870" fill="#79b8ff" xml:space="preserve">[prompt&#160;template&#160;scenario]&#160;2&#160;version(s)&#160;in&#160;history,&#160;5&#160;audit&#160;events:&#160;registered,&#160;promoted,&#160;rendered,&#160;rolledBack,&#160;rendered</text>
+<text x="26" y="886" fill="#79b8ff" xml:space="preserve">[retry&#160;policy&#160;scenario]&#160;succeeded&#160;on&#160;attempt&#160;3:&#160;decoded&#160;WeatherReport(city:&#160;&quot;Seattle&quot;,&#160;temperatureCelsius:&#160;14.0,&#160;conditions:&#160;&quot;rain&quot;)</text>
+<text x="26" y="902" fill="#79b8ff" xml:space="preserve">[retry&#160;policy&#160;scenario]&#160;attempt&#160;1&#160;failed&#160;(allProvidersFailed([retry-host:&#160;&quot;simulated&#160;transport&#160;failure&#160;on&#160;attempt&#160;1&quot;]))&#160;&#8594;&#160;retry(after:&#160;0.01)</text>
+<text x="26" y="918" fill="#79b8ff" xml:space="preserve">[retry&#160;policy&#160;scenario]&#160;attempt&#160;2&#160;failed&#160;(allProvidersFailed([retry-host:&#160;&quot;simulated&#160;transport&#160;failure&#160;on&#160;attempt&#160;2&quot;]))&#160;&#8594;&#160;retry(after:&#160;0.02)</text>
+<text x="26" y="934" fill="#79b8ff" xml:space="preserve">[context&#160;compaction&#160;scenario]&#160;transcript&#160;before:&#160;9&#160;messages</text>
+<text x="26" y="950" fill="#79b8ff" xml:space="preserve">[context&#160;compaction&#160;scenario]&#160;compacted&#160;to:&#160;3&#160;messages,&#160;~75&#160;tokens&#160;(budget:&#160;100),&#160;via&#160;[&quot;sliding-window&quot;]</text>
+<text x="26" y="966" fill="#79b8ff" xml:space="preserve">[context&#160;compaction&#160;scenario]&#160;recorded&#160;event:&#160;9&#160;&#8594;&#160;3&#160;messages,&#160;fits&#160;budget:&#160;true</text>
+<text x="26" y="982" fill="#79b8ff" xml:space="preserve">[context&#160;compaction&#160;scenario]&#160;routed&#160;via&#160;compaction-host&#160;with&#160;compacted&#160;context&#160;&#8594;&#160;RAGAnswer(answer:&#160;&quot;Keep&#160;all&#160;mutable&#160;state&#160;behind&#160;actor&#160;isolation;&#160;cross&#160;concurrency&#160;domains&#160;only&#160;with&#160;Sendable.&quot;,</text>
+<text x="26" y="998" fill="#c8d1dc" xml:space="preserve">&#160;&#160;&#160;&#160;sourceCount:&#160;4)</text>
+<text x="26" y="1014" fill="#79b8ff" xml:space="preserve">[agent&#160;memory&#160;scenario]&#160;recalled&#160;2&#160;memories:&#160;[preference]&#160;The&#160;user's&#160;favorite&#160;editor&#160;theme&#160;is&#160;dark...;&#160;[fact]&#160;The&#160;user&#160;is&#160;a&#160;senior&#160;iOS&#160;engineer&#160;buildi...</text>
+<text x="26" y="1030" fill="#79b8ff" xml:space="preserve">[agent&#160;memory&#160;scenario]&#160;routed&#160;via&#160;memory-host&#160;with&#160;recalled&#160;memory&#160;&#8594;&#160;RAGAnswer(answer:&#160;&quot;A&#160;dark-themed,&#160;monospace-font&#160;editor&#160;fits&#160;this&#160;user\'s&#160;stated&#160;preference.&quot;,&#160;sourceCount:&#160;2)</text>
+<text x="26" y="1046" fill="#79b8ff" xml:space="preserve">[agent&#160;memory&#160;scenario]&#160;decay&#160;pass&#160;pruned&#160;1&#160;low-importance,&#160;unpinned&#160;memories</text>
+<text x="26" y="1062" fill="#79b8ff" xml:space="preserve">[semantic&#160;router&#160;scenario]&#160;&quot;what&#160;is&#160;the&#160;weather&#160;like&#160;in&#160;Denver&#160;rig...&quot;&#160;&#8594;&#160;intent&#160;'weather'&#160;(score&#160;0.680),&#160;routing&#160;to&#160;model&#160;router-host</text>
+<text x="26" y="1078" fill="#79b8ff" xml:space="preserve">[semantic&#160;router&#160;scenario]&#160;routed&#160;via&#160;router-host,&#160;decoded:&#160;WeatherReport(city:&#160;&quot;Denver&quot;,&#160;temperatureCelsius:&#160;21.5,&#160;conditions:&#160;&quot;clear&quot;)</text>
+<text x="26" y="1094" fill="#79b8ff" xml:space="preserve">[output-repair&#160;scenario]&#160;attempt&#160;1&#160;rejected&#160;[conditions],&#160;converged&#160;after&#160;2&#160;attempts&#160;(1&#160;repair):&#160;WeatherReport(city:&#160;&quot;Delhi&quot;,&#160;temperatureCelsius:&#160;41.0,&#160;conditions:&#160;&quot;clear&quot;)</text>
+<text x="26" y="1110" fill="#79b8ff" xml:space="preserve">[output-repair&#160;scenario]&#160;5&#160;repair&#160;events&#160;recorded;&#160;both&#160;routed&#160;hops&#160;metered&#160;under&#160;repair-host&#160;(succeeded:&#160;1,&#160;totalRepairs:&#160;1)</text>
+<text x="26" y="1126" fill="#79b8ff" xml:space="preserve">[stream-aggregator&#160;scenario]&#160;reassembled&#160;1&#160;tool&#160;call&#160;from&#160;7&#160;streamed&#160;deltas:&#160;get_weather({&quot;city&quot;:&#160;&quot;Denver&quot;}),&#160;preamble&#160;&quot;Looking&#160;that&#160;up&#160;for&#160;you.&quot;</text>
+<text x="26" y="1142" fill="#79b8ff" xml:space="preserve">[stream-aggregator&#160;scenario]&#160;dispatched&#160;get_weather&#160;-&gt;&#160;{&quot;tempF&quot;:68,&quot;city&quot;:&quot;Denver&quot;,&quot;conditions&quot;:&quot;Clear&quot;}</text>
+<text x="26" y="1158" fill="#79b8ff" xml:space="preserve">[stream-aggregator&#160;scenario]&#160;streamed&#160;usage&#160;30+14&#160;tokens&#160;billed&#160;under&#160;stream-host:&#160;$0.000139</text>
+<text x="26" y="1174" fill="#79b8ff" xml:space="preserve">[stream-aggregator&#160;scenario]&#160;10&#160;aggregation&#160;events&#160;recorded&#160;(finish&#160;toolCalls)</text>
+<text x="26" y="1190" fill="#79b8ff" xml:space="preserve">[batch&#160;inference&#160;scenario]&#160;5&#160;prompts,&#160;limit&#160;2&#160;&#8594;&#160;peakActive&#160;2&#160;(bound&#160;held),&#160;4&#160;succeeded,&#160;1&#160;failed,&#160;0&#160;cancelled</text>
+<text x="26" y="1206" fill="#79b8ff" xml:space="preserve">[batch&#160;inference&#160;scenario]&#160;outcomes&#160;in&#160;input&#160;order:&#160;kochi=ok,&#160;jaipur=ok,&#160;shimla=failed,&#160;nagpur=ok,&#160;bhopal=ok</text>
+<text x="26" y="1222" fill="#79b8ff" xml:space="preserve">[batch&#160;inference&#160;scenario]&#160;shimla&#160;isolated&#160;(executorFailure):&#160;Response&#160;JSON&#160;did&#160;not&#160;match&#160;the&#160;expected&#160;schema:&#160;$.conditions&#160;is&#160;required&#160;but&#160;missing</text>
+<text x="26" y="1238" fill="#79b8ff" xml:space="preserve">[batch&#160;inference&#160;scenario]&#160;4&#160;successful&#160;items&#160;summed&#160;to&#160;367+68&#160;tokens&#160;(435&#160;total),&#160;billed&#160;under&#160;batch-host:&#160;$0.0016682</text>
+<text x="26" y="1254" fill="#79b8ff" xml:space="preserve">[batch&#160;inference&#160;scenario]&#160;12&#160;batch&#160;events&#160;recorded,&#160;last:&#160;#12&#160;batchFinished(ok:&#160;4,&#160;failed:&#160;1,&#160;cancelled:&#160;0)</text>
+<text x="26" y="1270" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;connect&#160;-&gt;&#160;coldStart(ColdStartReason.noPriorSession),&#160;token&#160;sess-live-1</text>
+<text x="26" y="1286" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;turn&#160;c1&#160;routed&#160;through&#160;the&#160;gateway;&#160;srv-1&#160;accepted,&#160;ack&#160;true</text>
+<text x="26" y="1302" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;socket&#160;dropped&#160;with&#160;c2&#160;unacked&#160;-&gt;&#160;retry(attempt:&#160;1,&#160;delayTicks:&#160;125)</text>
+<text x="26" y="1318" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;reconnect(4&#160;ticks)&#160;-&gt;&#160;resumed(SessionCursor(token:&#160;&quot;sess-live-1&quot;,&#160;lastServerSequence:&#160;1));&#160;c2&#160;replayed,&#160;so&#160;2&#160;turns&#160;cost&#160;3&#160;gateway&#160;hops</text>
+<text x="26" y="1334" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;buffered&#160;srv-2&#160;accepted,&#160;redelivery&#160;duplicate(RealtimeSessionKit.DuplicateReason.repeatedID)</text>
+<text x="26" y="1350" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;outbox&#160;drained:&#160;pending&#160;0,&#160;acked&#160;2,&#160;retransmitted&#160;1,&#160;resumes&#160;1</text>
+<text x="26" y="1366" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;3&#160;hops&#160;billed&#160;under&#160;realtime-host:&#160;13+51&#160;tokens,&#160;$0.0004072</text>
+<text x="26" y="1382" fill="#79b8ff" xml:space="preserve">[realtime-session&#160;scenario]&#160;15&#160;session&#160;events&#160;recorded,&#160;trail&#160;is&#160;timestamp-free</text>
+<text x="26" y="1398" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;key&#160;k-25b33bd81297ca7c</text>
+<text x="26" y="1414" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;3&#160;attempts&#160;-&gt;&#160;executed,&#160;replayed,&#160;replayed;&#160;1&#160;gateway&#160;hop&#160;for&#160;3&#160;requests</text>
+<text x="26" y="1430" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;same&#160;key,&#160;severity&#160;high&#160;-&gt;&#160;low:&#160;key&#160;k-25b33bd81297ca7c&#160;was&#160;already&#160;used&#160;for&#160;a&#160;different&#160;payload</text>
+<text x="26" y="1446" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;Kochi&#160;attempt&#160;1&#160;-&gt;&#160;failed&#160;(indeterminate):&#160;gateway&#160;timeout&#160;after&#160;send</text>
+<text x="26" y="1462" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;Kochi&#160;attempt&#160;2&#160;-&gt;&#160;key&#160;k-14a0b2cda2a8467b&#160;has&#160;an&#160;indeterminate&#160;outcome&#160;and&#160;must&#160;be&#160;resolved&#160;before&#160;retrying&#160;(still&#160;1&#160;hop,&#160;no&#160;duplicate&#160;filing)</text>
+<text x="26" y="1478" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;reconciler&#160;says&#160;it&#160;never&#160;landed&#160;-&gt;&#160;executed&#160;alert-kochi</text>
+<text x="26" y="1494" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;2&#160;executed&#160;hops&#160;billed&#160;under&#160;idem-host:&#160;15+33&#160;tokens,&#160;$0.0003495</text>
+<text x="26" y="1510" fill="#79b8ff" xml:space="preserve">[idempotency&#160;scenario]&#160;executed&#160;2,&#160;replayed&#160;2,&#160;conflicts&#160;1,&#160;blocked&#160;1,&#160;resolutions&#160;1;&#160;11&#160;events&#160;recorded,&#160;trail&#160;is&#160;timestamp-free</text>
+<text x="26" y="1526" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;v1&#160;-&gt;&#160;v2&#160;is&#160;BREAKING&#160;&#8212;&#160;field&#160;'conditionCode'&#160;removed;&#160;field&#160;'stationId'&#160;removed;&#160;required&#160;field&#160;'conditions'&#160;added</text>
+<text x="26" y="1542" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;cached&#160;v1&#160;reply:&#160;{&quot;city&quot;:&#160;&quot;Shimla&quot;,&#160;&quot;temperatureCelsius&quot;:&#160;8.5,&#160;&quot;conditionCode&quot;:&#160;3,&#160;&quot;stationId&quot;:&#160;&quot;IN-SML-04&quot;}</text>
+<text x="26" y="1558" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;today's&#160;decoder&#160;on&#160;the&#160;v1&#160;text:&#160;rejected</text>
+<text x="26" y="1574" fill="#ff9492" xml:space="preserve">[schema-migration&#160;scenario]&#160;upgrade&#160;refused&#160;&#8212;&#160;lossyMigrationRefused(contract:&#160;weather.report,&#160;from:&#160;v1,&#160;to:&#160;v2,&#160;drops:&#160;[&quot;stationId&quot;])</text>
+<text x="26" y="1590" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;migrated&#160;v1&#160;-&gt;&#160;v2&#160;(1&#160;step),&#160;0&#160;gateway&#160;hops,&#160;dropped&#160;stationId&#160;&#8212;&#160;{&quot;city&quot;:&#160;&quot;Shimla&quot;,&#160;&quot;conditions&quot;:&#160;&quot;storm&quot;,&#160;&quot;temperatureCelsius&quot;:&#160;8.5}</text>
+<text x="26" y="1606" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;decoded&#160;after&#160;migration:&#160;WeatherReport(city:&#160;&quot;Shimla&quot;,&#160;temperatureCelsius:&#160;8.5,&#160;conditions:&#160;&quot;storm&quot;)</text>
+<text x="26" y="1622" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;live&#160;turn&#160;via&#160;schema-host&#160;-&gt;&#160;storm;&#160;negotiate(v2,&#160;v2)&#160;=&#160;exact&#160;v2</text>
+<text x="26" y="1638" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;1&#160;gateway&#160;hop&#160;billed&#160;under&#160;schema-host:&#160;9+17&#160;tokens,&#160;$0.0001634</text>
+<text x="26" y="1654" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;serving&#160;a&#160;v1&#160;client:&#160;{&quot;city&quot;:&#160;&quot;Shimla&quot;,&#160;&quot;conditionCode&quot;:&#160;3,&#160;&quot;temperatureCelsius&quot;:&#160;8.5}&#160;(downgrade,&#160;dropped&#160;nothing)</text>
+<text x="26" y="1670" fill="#79b8ff" xml:space="preserve">[schema-migration&#160;scenario]&#160;contracts&#160;1,&#160;steps&#160;2,&#160;migrations&#160;2,&#160;reused&#160;0,&#160;refusals&#160;1,&#160;fields&#160;dropped&#160;1</text>
+<text x="26" y="1686" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;retrieved&#160;passage&#160;carried&#160;an&#160;injected&#160;instruction</text>
+<text x="26" y="1702" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;routed&#160;via&#160;authority-host,&#160;model&#160;proposed:&#160;{&quot;tool&quot;:&quot;mailer&quot;,&quot;action&quot;:&quot;externalSend&quot;,&quot;resource&quot;:&quot;orders/1234&quot;}</text>
+<text x="26" y="1718" fill="#ff9492" xml:space="preserve">[tool-authority&#160;scenario]&#160;externalSend&#160;orders/1234&#160;(arguments&#160;from&#160;kb-refund-policy):&#160;DENIED&#160;-&#160;arguments&#160;are&#160;untrusted(kb-refund-policy),&#160;capability&#160;admits&#160;at&#160;most&#160;operator</text>
+<text x="26" y="1734" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;read&#160;orders/1234&#160;(same&#160;untrusted&#160;source):&#160;ALLOWED&#160;via&#160;g-support</text>
+<text x="26" y="1750" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;dispatched&#160;read_order&#160;under&#160;digest&#160;c34df5f39285a19e:&#160;{orderId:&#160;&quot;1234&quot;,&#160;status:&#160;&quot;delivered&#160;late&quot;,&#160;total:&#160;40.0}</text>
+<text x="26" y="1766" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;refund&#160;orders/1234&#160;$40:&#160;APPROVAL&#160;REQUIRED&#160;-&#160;write&#160;on&#160;orders/1234,&#160;digest&#160;6ba27e684094b21c</text>
+<text x="26" y="1782" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;refund&#160;orders/1234&#160;$40&#160;+&#160;dana@support&#160;signature:&#160;ALLOWED&#160;via&#160;g-support</text>
+<text x="26" y="1798" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;dispatched&#160;issue_refund&#160;under&#160;digest&#160;6ba27e684094b21c:&#160;{refunded:&#160;true}</text>
+<text x="26" y="1814" fill="#79b8ff" xml:space="preserve">[tool-authority&#160;scenario]&#160;same&#160;signature,&#160;$4000&#160;instead&#160;of&#160;$40:&#160;THROWN&#160;approvalDigestMismatch(expected:&#160;&quot;a65f3b1e74ad9cc4&quot;,&#160;presented:&#160;&quot;6ba27e684094b21c&quot;)</text>
+<text x="26" y="1830" fill="#ff9492" xml:space="preserve">[tool-authority&#160;scenario]&#160;broker:&#160;allowed&#160;2,&#160;denied&#160;1,&#160;approvals&#160;required&#160;1,&#160;consumed&#160;1</text>
+<text x="26" y="1846" fill="#ff9492" xml:space="preserve">[tool-authority&#160;scenario]&#160;ToolRegistry&#160;dispatched&#160;2&#160;call(s),&#160;2&#160;succeeded&#160;&#8212;&#160;the&#160;refused&#160;calls&#160;never&#160;reached&#160;it</text>
+<text x="26" y="1862" fill="#79b8ff" xml:space="preserve">[grounding&#160;scenario]&#160;retrieved&#160;3&#160;passages:&#160;kb-metering,&#160;kb-limits,&#160;kb-retention</text>
+<text x="26" y="1878" fill="#79b8ff" xml:space="preserve">[grounding&#160;scenario]&#160;routed&#160;via&#160;grounding-host;&#160;StructuredOutputKit&#160;ACCEPTED&#160;the&#160;reply&#160;(sourceCount&#160;3)&#160;-&#160;the&#160;shape&#160;is&#160;valid,&#160;which&#160;says&#160;nothing&#160;about&#160;the&#160;content</text>
+<text x="26" y="1894" fill="#c8d1dc" xml:space="preserve">&#160;&#160;c1&#160;supported&#160;(100%&#160;vs&#160;kb-retention)&#160;cites&#160;kb-retention</text>
+<text x="26" y="1910" fill="#ff9492" xml:space="preserve">&#160;&#160;c2&#160;contradicted&#160;(86%&#160;vs&#160;kb-limits)&#160;cites&#160;kb-limits</text>
+<text x="26" y="1926" fill="#ff9492" xml:space="preserve">&#160;&#160;&#160;&#160;&#160;&#160;conflict&#160;quantity(claim:&#160;&quot;5000&quot;,&#160;source:&#160;&quot;500&quot;);&#160;source&#160;says&#160;&quot;The&#160;metering&#160;export&#160;limit&#160;is&#160;500&#160;records&#160;per&#160;request.&quot;</text>
+<text x="26" y="1942" fill="#c8d1dc" xml:space="preserve">&#160;&#160;c3&#160;partiallySupported&#160;(40%&#160;vs&#160;kb-limits)&#160;cites&#160;kb-enterprise</text>
+<text x="26" y="1958" fill="#ff9492" xml:space="preserve">&#160;&#160;&#160;&#160;&#160;&#160;unknownSource(kb-enterprise)</text>
+<text x="26" y="1974" fill="#ff9492" xml:space="preserve">&#160;&#160;strict&#160;-&gt;&#160;refused,&#160;3&#160;violation(s);&#160;unused&#160;1</text>
+<text x="26" y="1990" fill="#c8d1dc" xml:space="preserve">&#160;&#160;strip&#160;&#160;-&gt;&#160;removed&#160;c2,c3:&#160;&quot;Cached&#160;responses&#160;are&#160;retained&#160;for&#160;30&#160;days&#160;[kb-retention].&quot;</text>
+<text x="26" y="2006" fill="#c8d1dc" xml:space="preserve">&#160;&#160;extra&#160;gateway&#160;hops&#160;spent&#160;catching&#160;this:&#160;0&#160;-&#160;verification&#160;is&#160;local&#160;computation</text>
+<text x="26" y="2022" fill="#c8d1dc" xml:space="preserve"></text>
+<text x="26" y="2038" fill="#7d8794" xml:space="preserve">Model&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Prompt&#160;&#160;&#160;Completion&#160;&#160;&#160;Total&#160;&#160;&#160;&#160;&#160;Cost(USD)</text>
+<text x="26" y="2054" fill="#7d8794" xml:space="preserve">-------------------------------------------------------------------</text>
+<text x="26" y="2070" fill="#c8d1dc" xml:space="preserve">authority-host&#160;&#160;&#160;&#160;&#160;&#160;85&#160;&#160;&#160;&#160;&#160;&#160;&#160;16&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;101&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000343</text>
+<text x="26" y="2086" fill="#c8d1dc" xml:space="preserve">batch-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;367&#160;&#160;&#160;&#160;&#160;&#160;68&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;435&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.001668</text>
+<text x="26" y="2102" fill="#c8d1dc" xml:space="preserve">cloud&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;277&#160;&#160;&#160;&#160;&#160;&#160;78&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;355&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002001</text>
+<text x="26" y="2118" fill="#c8d1dc" xml:space="preserve">compaction-host&#160;&#160;&#160;&#160;&#160;171&#160;&#160;&#160;&#160;&#160;&#160;211&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;382&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.002538</text>
+<text x="26" y="2134" fill="#c8d1dc" xml:space="preserve">grounding-host&#160;&#160;&#160;&#160;&#160;&#160;81&#160;&#160;&#160;&#160;&#160;&#160;&#160;56&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;137&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.00061</text>
+<text x="26" y="2150" fill="#c8d1dc" xml:space="preserve">idem-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;15&#160;&#160;&#160;&#160;&#160;&#160;&#160;33&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;48&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.00035</text>
+<text x="26" y="2166" fill="#c8d1dc" xml:space="preserve">memory-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;129&#160;&#160;&#160;&#160;&#160;&#160;27&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;156&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000474</text>
+<text x="26" y="2182" fill="#c8d1dc" xml:space="preserve">on-device&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;98&#160;&#160;&#160;&#160;&#160;&#160;&#160;35&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;133&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0</text>
+<text x="26" y="2198" fill="#c8d1dc" xml:space="preserve">prompt-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;65&#160;&#160;&#160;&#160;&#160;&#160;&#160;30&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;95&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.00037</text>
+<text x="26" y="2214" fill="#c8d1dc" xml:space="preserve">realtime-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;13&#160;&#160;&#160;&#160;&#160;&#160;&#160;51&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;64&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000407</text>
+<text x="26" y="2230" fill="#c8d1dc" xml:space="preserve">repair-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;223&#160;&#160;&#160;&#160;&#160;&#160;28&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;251&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000743</text>
+<text x="26" y="2246" fill="#c8d1dc" xml:space="preserve">retry-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;82&#160;&#160;&#160;&#160;&#160;&#160;&#160;17&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;99&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000225</text>
+<text x="26" y="2262" fill="#c8d1dc" xml:space="preserve">router-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;96&#160;&#160;&#160;&#160;&#160;&#160;&#160;17&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;113&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000292</text>
+<text x="26" y="2278" fill="#c8d1dc" xml:space="preserve">schema-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;9&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;17&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;26&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000163</text>
+<text x="26" y="2294" fill="#c8d1dc" xml:space="preserve">self-hosted&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;330&#160;&#160;&#160;&#160;&#160;&#160;121&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;451&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000814</text>
+<text x="26" y="2310" fill="#c8d1dc" xml:space="preserve">stream-host&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;30&#160;&#160;&#160;&#160;&#160;&#160;&#160;14&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;44&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$0.000139</text>
+<text x="26" y="2326" fill="#7d8794" xml:space="preserve">-------------------------------------------------------------------</text>
+<text x="26" y="2342" fill="#e3b341" xml:space="preserve">TOTAL&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2071&#160;&#160;&#160;&#160;&#160;819&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2890&#160;&#160;&#160;&#160;&#160;&#160;$0.011136</text>
+<text x="26" y="2358" fill="#c8d1dc" xml:space="preserve"></text>
+<text x="26" y="2374" fill="#e3b341" xml:space="preserve">Total&#160;metered&#160;cost&#160;across&#160;all&#160;twenty-two&#160;scenarios:&#160;$0.0111359</text>
 </svg>

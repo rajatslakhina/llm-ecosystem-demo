@@ -3,6 +3,7 @@ import AgentMemoryKit
 import BatchInferenceKit
 import ContextCompactionKit
 import Foundation
+import GroundingKit
 import GuardrailKit
 import IdempotencyKit
 import OutputRepairKit
@@ -22,27 +23,7 @@ import TraceKit
 @main
 struct EcosystemDemo {
     static func main() async {
-        print("== LLM Ecosystem Integration Demo ==")
-        print(
-            "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
-                + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + "
-                + "GuardrailKit (PII redaction & policy) + TraceKit (tracing & eval gates) + "
-                + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback) + "
-                + "RetryPolicyKit (rate limiting & retry policy) + "
-                + "ContextCompactionKit (conversation compaction under a token budget) + "
-                + "AgentMemoryKit (long-term write/recall memory across sessions) + "
-                + "SemanticRouterKit (semantic intent routing by embedding distance) + "
-                + "OutputRepairKit (bounded self-healing structured-output repair loop) + "
-                + "StreamAggregatorKit (streamed delta + tool-call fragment reassembly) + "
-                + "BatchInferenceKit (bounded-concurrency batch fan-out with per-item failure isolation) + "
-                + "RealtimeSessionKit (a realtime session that survives a reconnect: at-least-once "
-                + "outbox, strict inbound ordering, two-layer dedup) + "
-                + "IdempotencyKit (at-most-once side effects under at-least-once delivery) + "
-                + "SchemaMigrationKit (versioned contracts: migrate a payload across schema versions, "
-                + "validated at every hop) + "
-                + "ToolAuthorityKit (deny-by-default authority for agent tool calls: capability scoping, "
-                + "a provenance ceiling, and approvals bound to one exact call)\n"
-        )
+        printBanner()
 
         let meter = await buildMeter()
         let decoder = StructuredOutputDecoder()
@@ -68,11 +49,40 @@ struct EcosystemDemo {
         await runIdempotencyScenario(decoder: decoder, meter: meter)
         await runSchemaMigrationScenario(decoder: decoder, meter: meter)
         await runToolAuthorityScenario(meter: meter)
+        await runGroundingScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twenty-one scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all twenty-two scenarios: $\(await meter.totalCost())")
+    }
+
+    /// The banner, lifted out of `main()` so that function stays inside
+    /// SwiftLint's 50-line body limit as scenarios keep being added.
+    private static func printBanner() {
+            print("== LLM Ecosystem Integration Demo ==")
+            print(
+                "ProviderGatewayKit (routing) + StructuredOutputKit (decoding) + TokenMeterKit (cost) + "
+                    + "ResponseCacheKit (caching) + ToolRegistryKit (tool dispatch) + AgentLoopKit (agent loop) + "
+                    + "GuardrailKit (PII redaction & policy) + TraceKit (tracing & eval gates) + "
+                    + "RetrievalKit (retrieval-augmented context) + PromptTemplateKit (prompt templating & rollback) + "
+                    + "RetryPolicyKit (rate limiting & retry policy) + "
+                    + "ContextCompactionKit (conversation compaction under a token budget) + "
+                    + "AgentMemoryKit (long-term write/recall memory across sessions) + "
+                    + "SemanticRouterKit (semantic intent routing by embedding distance) + "
+                    + "OutputRepairKit (bounded self-healing structured-output repair loop) + "
+                    + "StreamAggregatorKit (streamed delta + tool-call fragment reassembly) + "
+                    + "BatchInferenceKit (bounded-concurrency batch fan-out with per-item failure isolation) + "
+                    + "RealtimeSessionKit (a realtime session that survives a reconnect: at-least-once "
+                    + "outbox, strict inbound ordering, two-layer dedup) + "
+                    + "IdempotencyKit (at-most-once side effects under at-least-once delivery) + "
+                    + "SchemaMigrationKit (versioned contracts: migrate a payload across schema versions, "
+                    + "validated at every hop) + "
+                    + "ToolAuthorityKit (deny-by-default authority for agent tool calls: capability scoping, "
+                    + "a provenance ceiling, and approvals bound to one exact call) + "
+                    + "GroundingKit (claim-level grounding and citation verification: a verdict per sentence "
+                    + "with the source span that proves it)\n"
+            )
     }
 
     /// Registers illustrative rates for the three routed providers this demo
@@ -98,7 +108,8 @@ struct EcosystemDemo {
             (.realtimeHost, ModelPricing(inputPerMillion: 1.9, outputPerMillion: 7.5)),
             (.idempotencyHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.5)),
             (.schemaHost, ModelPricing(inputPerMillion: 2.1, outputPerMillion: 8.5)),
-            (.authorityHost, ModelPricing(inputPerMillion: 2.3, outputPerMillion: 9.2))
+            (.authorityHost, ModelPricing(inputPerMillion: 2.3, outputPerMillion: 9.2)),
+            (.groundingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)
