@@ -1,5 +1,5 @@
 {
-  "originHash" : "91b4bb343b99f6ee2ebb9863fcdf2e5bd9e44fca586e78994518914df416bf44",
+  "originHash" : "8199736e83463d9ea0d974e99ddd9a0689787f2ddcf799b16239f670645db438",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -88,6 +88,15 @@
       "location" : "https://github.com/rajatslakhina/prompt-template-kit.git",
       "state" : {
         "revision" : "eea4b794a1ea5e9e78343003265ca12c818b9ba7",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "quota-governor-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/quota-governor-kit.git",
+      "state" : {
+        "revision" : "5f4231aa4c484be26df4769ecddbd23355a2213c",
         "version" : "1.0.0"
       }
     },

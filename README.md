@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-two packages in this
+A single runnable demo that wires together all twenty-three packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -22,7 +22,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`IdempotencyKit`](https://github.com/rajatslakhina/idempotency-kit), and
 [`SchemaMigrationKit`](https://github.com/rajatslakhina/schema-migration-kit), and
 [`ToolAuthorityKit`](https://github.com/rajatslakhina/tool-authority-kit), and
-[`GroundingKit`](https://github.com/rajatslakhina/grounding-kit)
+[`GroundingKit`](https://github.com/rajatslakhina/grounding-kit), and
+[`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -70,6 +71,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SchemaMigrationKit`](https://github.com/rajatslakhina/schema-migration-kit) | Migrates a payload written under an older contract into the shape today's decoder wants, with every hop validated against the schema it promised: a cached v1 reply is classified as a breaking change, refused while it would silently drop a field, then migrated with the loss opted into and decoded by the real `StructuredOutputDecoder` — all at zero gateway hops |
 | [`ToolAuthorityKit`](https://github.com/rajatslakhina/tool-authority-kit) | Refuses a tool call the rest of the pipeline was happy to pass along: a retrieved passage carries an injected instruction, the routed turn proposes the outbound send it asked for, and the broker denies it on the one axis no other layer models — where the arguments came from. The same grant allows a read from that same untrusted source, and escalates a refund to a human whose signature covers that refund and no other |
 | [`GroundingKit`](https://github.com/rajatslakhina/grounding-kit) | Checks the answer itself against the passages it was given: `StructuredOutputKit` accepts the reply because the shape is valid, and `GroundingVerifier` then gives each sentence its own verdict — one grounded and correctly cited, one inflating a number its source refutes (`contradicted`, not merely unsupported), and one citing a document that was never retrieved. Under `.strip` the grounded remainder is published and the rest is named, at zero extra gateway hops |
+| [`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit) | Decides whether the *next* hop may run at all. `reserve` holds an estimate on every scope of a `tenant / run` path before the gateway is called; `TokenMeter` prices the response; `settle` closes the reservation against that real figure, so the metered cost becomes the input to the next admission decision rather than a report at the end. One settlement comes in under its hold on tokens and over it on money at once. A run budget cuts a loop off at step 4 while the tenant never notices, and a badly estimated answer leaves its scope in arrears — the spend already happened, so all the governor can do is refuse what comes next |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -366,10 +368,32 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
     while verification is local computation. One hop, billed under
     `grounding-host`.
 
+23. **`QuotaGovernorKit`** adds the twenty-third scenario, and it is the only
+    one that can say *no*. Every scenario before it spends whatever it needs;
+    `TokenMeterKit` can price a hop, but only once it has been paid for, and
+    nothing in the toolkit could refuse the hop after it. `QuotaGovernor.reserve`
+    holds an estimate against every scope on a `tenant-acme / run-atlas` path
+    before `ProviderGatewayKit` routes the turn, `TokenMeter` prices the reply,
+    and `settle` closes the reservation against that real figure — so the metered
+    cost is the input to the next admission decision, not a summary at the end.
+    Step 1 shows the per-axis claim rather than asserting it: a 150-token /
+    60,000-microcent estimate held 180 / 72,000 under 20% headroom, the hop really
+    cost 112 / 95,280, and the settlement reports **refunded 68 tokens / 0
+    microcents** and **overran 0 tokens / 23,280 microcents** — under on tokens and
+    over on money in one request, which one signed number would have netted out and
+    reported as neither. Refunded holds then let the loop get further than a fixed
+    reservation would have, and it still stops: 3 of 8 steps run before step 4 is
+    refused with `run-atlas is out of tokens: 164 left, 180 requested`. A second
+    run estimates badly — 180 held, 737 spent — so it breaches its ceiling, sits in
+    arrears at -237 tokens, and is refused on its next request. `tenant-acme`
+    absorbs both and finishes with 98,927 of 100,000 tokens, which is the nesting
+    doing its job: a run that will not stop cannot reach past its own ceiling.
+
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
 `BatchInferenceKit`, `RealtimeSessionKit`, `IdempotencyKit`, and
-`SchemaMigrationKit`, `ToolAuthorityKit`, and `GroundingKit` straight from
+`SchemaMigrationKit`, `ToolAuthorityKit`, `GroundingKit`, and
+`QuotaGovernorKit` straight from
 their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
@@ -378,10 +402,10 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-two
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-three
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-two packages together; the output above is a genuine capture,
+  of all twenty-three packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -392,7 +416,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-two real packages compose and run," which the sample output
+means "the twenty-three real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

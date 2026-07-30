@@ -8,6 +8,7 @@ import GuardrailKit
 import IdempotencyKit
 import OutputRepairKit
 import ProviderGatewayKit
+import QuotaGovernorKit
 import RealtimeSessionKit
 import ResponseCacheKit
 import RetrievalKit
@@ -50,11 +51,12 @@ struct EcosystemDemo {
         await runSchemaMigrationScenario(decoder: decoder, meter: meter)
         await runToolAuthorityScenario(meter: meter)
         await runGroundingScenario(decoder: decoder, meter: meter)
+        await runQuotaGovernorScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twenty-two scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all twenty-three scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside
@@ -81,7 +83,9 @@ struct EcosystemDemo {
                     + "ToolAuthorityKit (deny-by-default authority for agent tool calls: capability scoping, "
                     + "a provenance ceiling, and approvals bound to one exact call) + "
                     + "GroundingKit (claim-level grounding and citation verification: a verdict per sentence "
-                    + "with the source span that proves it)\n"
+                    + "with the source span that proves it) + "
+                    + "QuotaGovernorKit (hierarchical reserve/settle budget governance: hold an estimate "
+                    + "before the hop, settle it against the metered cost, refuse the next one)\n"
             )
     }
 
@@ -109,7 +113,8 @@ struct EcosystemDemo {
             (.idempotencyHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.5)),
             (.schemaHost, ModelPricing(inputPerMillion: 2.1, outputPerMillion: 8.5)),
             (.authorityHost, ModelPricing(inputPerMillion: 2.3, outputPerMillion: 9.2)),
-            (.groundingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
+            (.groundingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
+            (.quotaHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.6))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)
