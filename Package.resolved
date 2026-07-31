@@ -1,5 +1,5 @@
 {
-  "originHash" : "8199736e83463d9ea0d974e99ddd9a0689787f2ddcf799b16239f670645db438",
+  "originHash" : "e19c4603f8f8120df3a64f25d7a98c38f53b25c40d152afdca98c1d1b6bcc787",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -34,6 +34,15 @@
       "location" : "https://github.com/rajatslakhina/context-compaction-kit.git",
       "state" : {
         "revision" : "be8770e29c516361d9ab6bcc869a200a6804d172",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "cost-estimator-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/cost-estimator-kit.git",
+      "state" : {
+        "revision" : "826b1a3c02befd01bba271511ea6137ae07a2f94",
         "version" : "1.0.0"
       }
     },

@@ -52,11 +52,12 @@ struct EcosystemDemo {
         await runToolAuthorityScenario(meter: meter)
         await runGroundingScenario(decoder: decoder, meter: meter)
         await runQuotaGovernorScenario(decoder: decoder, meter: meter)
+        await runCostEstimatorScenario(decoder: decoder, meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twenty-three scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all twenty-four scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside
@@ -85,7 +86,10 @@ struct EcosystemDemo {
                     + "GroundingKit (claim-level grounding and citation verification: a verdict per sentence "
                     + "with the source span that proves it) + "
                     + "QuotaGovernorKit (hierarchical reserve/settle budget governance: hold an estimate "
-                    + "before the hop, settle it against the metered cost, refuse the next one)\n"
+                    + "before the hop, settle it against the metered cost, refuse the next one) + "
+                    + "CostEstimatorKit (where that estimate comes from: forecast a loop's cost before it "
+                    + "runs from transcript growth, tools, cache and retries, then reconcile against the "
+                    + "metered actual)\n"
             )
     }
 
@@ -114,7 +118,8 @@ struct EcosystemDemo {
             (.schemaHost, ModelPricing(inputPerMillion: 2.1, outputPerMillion: 8.5)),
             (.authorityHost, ModelPricing(inputPerMillion: 2.3, outputPerMillion: 9.2)),
             (.groundingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
-            (.quotaHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.6))
+            (.quotaHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.6)),
+            (.estimatorHost, ModelPricing(inputPerMillion: 2.8, outputPerMillion: 11.2))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)

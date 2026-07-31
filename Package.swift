@@ -33,7 +33,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/schema-migration-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/tool-authority-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/grounding-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/quota-governor-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/quota-governor-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/cost-estimator-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -61,7 +62,8 @@ let package = Package(
                 .product(name: "SchemaMigrationKit", package: "schema-migration-kit"),
                 .product(name: "ToolAuthorityKit", package: "tool-authority-kit"),
                 .product(name: "GroundingKit", package: "grounding-kit"),
-                .product(name: "QuotaGovernorKit", package: "quota-governor-kit")
+                .product(name: "QuotaGovernorKit", package: "quota-governor-kit"),
+                .product(name: "CostEstimatorKit", package: "cost-estimator-kit")
             ]
         )
     ]
