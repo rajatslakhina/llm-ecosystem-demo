@@ -1,5 +1,5 @@
 {
-  "originHash" : "e19c4603f8f8120df3a64f25d7a98c38f53b25c40d152afdca98c1d1b6bcc787",
+  "originHash" : "a9063a849ef34de44e0585ff5036aa2ebf92dfa1357ce4f7d0b7fb16c76563bd",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -214,6 +214,15 @@
       "location" : "https://github.com/rajatslakhina/trace-kit.git",
       "state" : {
         "revision" : "5f7a31768adf9e35acc5b440827e2b5d950d6dcb",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "workload-profiler-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/workload-profiler-kit.git",
+      "state" : {
+        "revision" : "30e3164f52c85797bdac9b7274102e31b612fac2",
         "version" : "1.0.0"
       }
     }

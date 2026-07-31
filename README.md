@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-four packages in this
+A single runnable demo that wires together all twenty-five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -24,7 +24,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`ToolAuthorityKit`](https://github.com/rajatslakhina/tool-authority-kit), and
 [`GroundingKit`](https://github.com/rajatslakhina/grounding-kit), and
 [`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit), and
-[`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit)
+[`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit), and
+[`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -74,6 +75,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`GroundingKit`](https://github.com/rajatslakhina/grounding-kit) | Checks the answer itself against the passages it was given: `StructuredOutputKit` accepts the reply because the shape is valid, and `GroundingVerifier` then gives each sentence its own verdict — one grounded and correctly cited, one inflating a number its source refutes (`contradicted`, not merely unsupported), and one citing a document that was never retrieved. Under `.strip` the grounded remainder is published and the rest is named, at zero extra gateway hops |
 | [`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit) | Decides whether the *next* hop may run at all. `reserve` holds an estimate on every scope of a `tenant / run` path before the gateway is called; `TokenMeter` prices the response; `settle` closes the reservation against that real figure, so the metered cost becomes the input to the next admission decision rather than a report at the end. One settlement comes in under its hold on tokens and over it on money at once. A run budget cuts a loop off at step 4 while the tenant never notices, and a badly estimated answer leaves its scope in arrears — the spend already happened, so all the governor can do is refuse what comes next |
 | [`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit) | Supplies the estimate `QuotaGovernorKit` reserves against, instead of it being a literal. A `WorkloadPlan` describes the loop shape — steps, tool calls per step, tool-result size, cache hit rate, retry overhead, compaction — and the forecast walks the transcript forward step by step, because an agent loop resends everything said so far. In this scenario the flat estimate says 200 input tokens and the run really uses 715. Output length is the one value a plan cannot supply, so it sits behind a predictor protocol and is learned per shape; reconciling against `TokenMeter`'s real figure feeds both the predictor and the width of the band |
+| [`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit) | Answers the question `CostEstimatorKit` leaves open: where does the *plan* come from? Inverts the forecast — from the per-hop input counts of runs that already happened it recovers steps, tool shape, output length, retry overhead, cache hit rate and compaction thresholds, reporting the share of observed input it cannot account for rather than absorbing it. Then it gates the hand-written plan against what the runs did: scenario 24's literal drifts on exactly one of seven fields, `expectedOutputTokensPerStep` declared 15 against 56 observed — the same field scenario 24's own 81% overrun is caused by |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -413,11 +415,35 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
     hands over as the two integers `QuotaGovernorKit` reserves against, and neither
     package imports the other.
 
+25. **`WorkloadProfilerKit`** adds the twenty-fifth scenario, and it closes the
+    loop the previous one opened. Scenario 24 forecasts from a `WorkloadPlan`
+    somebody typed by hand, and its own narrative admits the prior of 15 output
+    tokens per step was wrong. This scenario runs three real routed loops of 3, 4
+    and 5 steps, records what each hop actually sent and received, and derives the
+    plan from those runs instead of declaring one. Run 1 sends **408 input tokens
+    across 3 steps — 266% of the 153** a flat estimate predicts, with **4‰
+    unexplained**, which is real integer-division rounding in the demo's
+    tokenizer rather than a number massaged to zero. The derived plan says **4
+    steps, 1 tool call per step at 28 tokens, 56 output tokens per step**, at
+    **medium** confidence with **477‰** dispersion — medium rather than high
+    because three runs of deliberately different lengths are a wide sample, and
+    the package reports that instead of hiding it. Then the check nobody in this
+    series had: scenario 24's declared plan against these runs **drifts on exactly
+    1 of 7 fields**, and it is `expectedOutputTokensPerStep`, **declared 15,
+    observed 56, understated by 2733‰**. The two packages were written on
+    different days and agree independently about which number was wrong. Feeding
+    the derived plan back into a real `CostEstimatorKit.WorkloadPlan` forecasts
+    **708 in / 224 out** where the flat estimate says 204 in — so the estimate is
+    now a measurement with a provenance rather than a literal with a history.
+    `profiler-host` is registered at the same $2.80 / $11.20 per million in both
+    `TokenMeter` and the estimator's `PriceBook`, per the standing rule, and
+    neither package imports the other.
+
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
 `BatchInferenceKit`, `RealtimeSessionKit`, `IdempotencyKit`, and
 `SchemaMigrationKit`, `ToolAuthorityKit`, `GroundingKit`, and
-`QuotaGovernorKit`, and `CostEstimatorKit` straight from
+`QuotaGovernorKit`, `CostEstimatorKit`, and `WorkloadProfilerKit` straight from
 their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
@@ -426,10 +452,10 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-four
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-five
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-four packages together; the output above is a genuine capture,
+  of all twenty-five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -440,7 +466,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-four real packages compose and run," which the sample output
+means "the twenty-five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
