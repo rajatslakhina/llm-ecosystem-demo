@@ -1,5 +1,5 @@
 {
-  "originHash" : "a9063a849ef34de44e0585ff5036aa2ebf92dfa1357ce4f7d0b7fb16c76563bd",
+  "originHash" : "207d0e1c057eef5e87bc8f40bd19275e49e98cb24bf29b3020f60907bb259112",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -25,6 +25,15 @@
       "location" : "https://github.com/rajatslakhina/batch-inference-kit.git",
       "state" : {
         "revision" : "18b73c53857719e23f646c904151e11f4d0f0fa2",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "claim-consistency-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/claim-consistency-kit.git",
+      "state" : {
+        "revision" : "a529e17c24695074c3b077688fc26e685525777b",
         "version" : "1.0.0"
       }
     },

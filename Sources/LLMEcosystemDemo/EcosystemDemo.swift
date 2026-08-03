@@ -1,4 +1,5 @@
 import AgentLoopKit
+import ClaimConsistencyKit
 import AgentMemoryKit
 import BatchInferenceKit
 import ContextCompactionKit
@@ -54,11 +55,12 @@ struct EcosystemDemo {
         await runQuotaGovernorScenario(decoder: decoder, meter: meter)
         await runCostEstimatorScenario(decoder: decoder, meter: meter)
         await runWorkloadProfilerScenario(meter: meter)
+        await runClaimConsistencyScenario(meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twenty-five scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all twenty-six scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside
@@ -92,7 +94,10 @@ struct EcosystemDemo {
                     + "runs from transcript growth, tools, cache and retries, then reconcile against the "
                     + "metered actual) + "
                     + "WorkloadProfilerKit (and where that plan comes from: derive it from runs that "
-                    + "already happened, then gate the hand-written one against what the runs did)\n"
+                    + "already happened, then gate the hand-written one against what the runs did) + "
+                    + "ClaimConsistencyKit (and the question grounding cannot answer: given the passage a "
+                    + "claim matched, do the two actually agree - negation, numerics, quantifiers, versions "
+                    + "and exclusive values, decided without a model call)\n"
             )
     }
 
@@ -123,7 +128,8 @@ struct EcosystemDemo {
             (.groundingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.quotaHost, ModelPricing(inputPerMillion: 2.4, outputPerMillion: 9.6)),
             (.estimatorHost, ModelPricing(inputPerMillion: 2.8, outputPerMillion: 11.2)),
-            (.profilerHost, ModelPricing(inputPerMillion: 2.8, outputPerMillion: 11.2))
+            (.profilerHost, ModelPricing(inputPerMillion: 2.8, outputPerMillion: 11.2)),
+            (.consistencyHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
         ]
         for (identifier, pricing) in rates {
             await registry.register(pricing, for: identifier.rawValue)

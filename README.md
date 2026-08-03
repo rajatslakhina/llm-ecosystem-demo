@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-five packages in this
+A single runnable demo that wires together all twenty-six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -25,7 +25,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`GroundingKit`](https://github.com/rajatslakhina/grounding-kit), and
 [`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit), and
 [`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit), and
-[`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit)
+[`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit), and
+[`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -76,6 +77,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit) | Decides whether the *next* hop may run at all. `reserve` holds an estimate on every scope of a `tenant / run` path before the gateway is called; `TokenMeter` prices the response; `settle` closes the reservation against that real figure, so the metered cost becomes the input to the next admission decision rather than a report at the end. One settlement comes in under its hold on tokens and over it on money at once. A run budget cuts a loop off at step 4 while the tenant never notices, and a badly estimated answer leaves its scope in arrears — the spend already happened, so all the governor can do is refuse what comes next |
 | [`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit) | Supplies the estimate `QuotaGovernorKit` reserves against, instead of it being a literal. A `WorkloadPlan` describes the loop shape — steps, tool calls per step, tool-result size, cache hit rate, retry overhead, compaction — and the forecast walks the transcript forward step by step, because an agent loop resends everything said so far. In this scenario the flat estimate says 200 input tokens and the run really uses 715. Output length is the one value a plan cannot supply, so it sits behind a predictor protocol and is learned per shape; reconciling against `TokenMeter`'s real figure feeds both the predictor and the width of the band |
 | [`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit) | Answers the question `CostEstimatorKit` leaves open: where does the *plan* come from? Inverts the forecast — from the per-hop input counts of runs that already happened it recovers steps, tool shape, output length, retry overhead, cache hit rate and compaction thresholds, reporting the share of observed input it cannot account for rather than absorbing it. Then it gates the hand-written plan against what the runs did: scenario 24's literal drifts on exactly one of seven fields, `expectedOutputTokensPerStep` declared 15 against 56 observed — the same field scenario 24's own 81% overrun is caused by |
+| [`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit) | Asks the question overlap cannot: given the passage a claim already matched, do the two *agree*? Five deterministic rules — polarity, numerics with units and bounds, quantifier and modal scope, version ordering, mutually exclusive values — decided by reading two sentences, with no model call. Scenario 26 runs it on `GroundingKit`'s own matches: it agrees on the polarity flip, **withdraws a grounding false positive** (`5 times` against `at least 3 times` is a satisfied bound, not a conflict), and catches the two claims that carry neither negation nor numbers, so nothing in an overlap score can reach them |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -439,23 +441,52 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
     `TokenMeter` and the estimator's `PriceBook`, per the standing rule, and
     neither package imports the other.
 
+26. **`ClaimConsistencyKit`** adds the twenty-sixth scenario, and the result worth
+    reading is the *boundary* between it and scenario 22, not a clean win for
+    either. `GroundingKit` scores lexical overlap and, above a threshold, checks
+    two conflicts of its own — `polarity` and `quantity` — so it is not blind
+    here. It routes one real turn with four claims, each citing a document that
+    genuinely is about it, and the two layers are then run over `GroundingKit`'s
+    **own** claim-to-source matches, unchanged.
+
+    They agree on the first: `is enabled by default` against `is not enabled by
+    default`, **100% overlap**, both call it a contradiction. They part on the
+    other three. `GroundingKit`'s quantity check compares numeric terms *as
+    written*, so `retries 5 times` against `retries at least 3 times` reads as a
+    conflict — **it is a satisfied bound, and the grounding verdict is a false
+    positive**. `ClaimConsistencyKit` parses the bound and returns `AGREES`,
+    which matters more than the additions: a false alarm is what teaches a reader
+    to stop reading the report. The last two carry no negation and no numbers at
+    all, so nothing in an overlap score can reach them — `some providers` widened
+    to `all providers` (**supported, 83%**) and `enabled` swapped for `disabled`
+    (**supported, 75%**) — and both come back `CONTRADICTS`. Net: grounding
+    refuses on 2 violations, consistency rejects naming `c1, c3, c4`, and the
+    second pass costs **zero** extra gateway hops, where the published fix for
+    this class of error is an NLI model call per claim.
+
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
 `BatchInferenceKit`, `RealtimeSessionKit`, `IdempotencyKit`, and
 `SchemaMigrationKit`, `ToolAuthorityKit`, `GroundingKit`, and
-`QuotaGovernorKit`, `CostEstimatorKit`, and `WorkloadProfilerKit` straight from
+`QuotaGovernorKit`, `CostEstimatorKit`, `WorkloadProfilerKit`, and
+`ClaimConsistencyKit` straight from
 their `1.0.0` tags — no local checkouts or path overrides needed.
 
 ## Sample output
 
 ![Demo output](Screenshots/demo.svg)
 
+*The capture above is from an earlier run and shows twenty-four scenarios; it is left
+as captured rather than edited, because a doctored total is worse than a dated one.
+The current run is **twenty-six scenarios, $0.0488195 metered total**. `architecture.svg`
+is likewise a point-in-time subset. The package table and narrative above are current.*
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-five
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-six
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-five packages together; the output above is a genuine capture,
+  of all twenty-six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -466,7 +497,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-five real packages compose and run," which the sample output
+means "the twenty-six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

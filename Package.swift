@@ -35,7 +35,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/grounding-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/quota-governor-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/cost-estimator-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/workload-profiler-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/workload-profiler-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/claim-consistency-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -65,7 +66,8 @@ let package = Package(
                 .product(name: "GroundingKit", package: "grounding-kit"),
                 .product(name: "QuotaGovernorKit", package: "quota-governor-kit"),
                 .product(name: "CostEstimatorKit", package: "cost-estimator-kit"),
-                .product(name: "WorkloadProfilerKit", package: "workload-profiler-kit")
+                .product(name: "WorkloadProfilerKit", package: "workload-profiler-kit"),
+                .product(name: "ClaimConsistencyKit", package: "claim-consistency-kit")
             ]
         )
     ]
