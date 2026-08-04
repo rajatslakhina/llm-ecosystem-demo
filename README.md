@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-six packages in this
+A single runnable demo that wires together all twenty-seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -78,6 +78,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit) | Supplies the estimate `QuotaGovernorKit` reserves against, instead of it being a literal. A `WorkloadPlan` describes the loop shape — steps, tool calls per step, tool-result size, cache hit rate, retry overhead, compaction — and the forecast walks the transcript forward step by step, because an agent loop resends everything said so far. In this scenario the flat estimate says 200 input tokens and the run really uses 715. Output length is the one value a plan cannot supply, so it sits behind a predictor protocol and is learned per shape; reconciling against `TokenMeter`'s real figure feeds both the predictor and the width of the band |
 | [`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit) | Answers the question `CostEstimatorKit` leaves open: where does the *plan* come from? Inverts the forecast — from the per-hop input counts of runs that already happened it recovers steps, tool shape, output length, retry overhead, cache hit rate and compaction thresholds, reporting the share of observed input it cannot account for rather than absorbing it. Then it gates the hand-written plan against what the runs did: scenario 24's literal drifts on exactly one of seven fields, `expectedOutputTokensPerStep` declared 15 against 56 observed — the same field scenario 24's own 81% overrun is caused by |
 | [`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit) | Asks the question overlap cannot: given the passage a claim already matched, do the two *agree*? Five deterministic rules — polarity, numerics with units and bounds, quantifier and modal scope, version ordering, mutually exclusive values — decided by reading two sentences, with no model call. Scenario 26 runs it on `GroundingKit`'s own matches: it agrees on the polarity flip, **withdraws a grounding false positive** (`5 times` against `at least 3 times` is a satisfied bound, not a conflict), and catches the two claims that carry neither negation nor numbers, so nothing in an overlap score can reach them |
+| [`SourceConflictKit`](https://github.com/rajatslakhina/source-conflict-kit) | Asks the question every check above asks too late: do the retrieved passages agree with *each other*? Topic-scoped conflict groups, corroboration counted in distinct documents rather than chunks, an explicit tie-breaker ladder that stands aside rather than guessing, and a block when sources cannot be reconciled. Scenario 27 runs the same audit twice — once with the built-in lexical oracle, once with `ClaimConsistencyKit` plugged in through the `ContradictionOracle` seam — and the propositional oracle **withholds one fewer passage**, because the lexical one manufactures a conflict out of a satisfied bound |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -464,6 +465,41 @@ Swift Package Manager resolves `ProviderGatewayKit`, `TokenMeterKit`,
     second pass costs **zero** extra gateway hops, where the published fix for
     this class of error is an NLI model call per claim.
 
+27. **`SourceConflictKit`** adds the twenty-seventh scenario, and it is the first
+    one in this demo that runs *before* a turn rather than after it. Every
+    truthfulness check above — grounding, citation verification, claim
+    consistency — judges a paragraph that has already been generated and already
+    been paid for. This one asks whether the retrieved passages agree with **each
+    other**, which is the failure the research literature keeps naming and which
+    nothing else in this pipeline covers.
+
+    The integration worth reading is the oracle. `ContradictionOracle` asks
+    exactly the question `ClaimConsistencyKit` already answers — *do these two
+    sentences agree* — so scenario 26's package plugs straight into scenario 27's
+    seam. Seven passages over three topics are audited twice, once with the
+    built-in lexical oracle and once with the propositional one, and the
+    difference is measurable: lexical splits the retry topic into **3 positions
+    and withholds 2 passages**; the propositional oracle finds **2 positions and
+    withholds 1**. The passage it rescues is `s-blog` — `retries 5 times` against
+    `retries at least 3 times`, a satisfied bound that lexical reads as `3 vs 5`
+    and throws away. Withheld evidence is evidence the model never sees, so a
+    false positive here is not a cosmetic reporting bug.
+
+    Two honest boundaries the run makes visible. First, `some providers` against
+    `all providers` is **not** reported by either oracle, and that is correct:
+    `all X` entails `some X`, so two sources saying that are compatible even
+    though an *answer* widening `some` to `all` is not — source-source and
+    claim-source are different questions, and this stage only asks the first.
+    Second, `judge` is synchronous, so an actor-based checker cannot be called
+    inline; the pairs are judged once up front and served through a table-backed
+    oracle, in one canonical id order, which is how the seam's symmetry contract
+    survives a checker that never promised it.
+
+    Cost: the whole audit is local computation, **0 extra gateway hops**, and the
+    losing position never reaches the model. `conflict-host` is registered at
+    $2 / $8 per million so the one surviving turn bills visibly rather than
+    defaulting to $0.
+
 `RetryPolicyKit`, `ContextCompactionKit`, `AgentMemoryKit`,
 `SemanticRouterKit`, `OutputRepairKit`, `StreamAggregatorKit`,
 `BatchInferenceKit`, `RealtimeSessionKit`, `IdempotencyKit`, and
@@ -478,15 +514,15 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **twenty-six scenarios, $0.0488195 metered total**. `architecture.svg`
+The current run is **twenty-seven scenarios, $0.0492675 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-six
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-seven
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-six packages together; the output above is a genuine capture,
+  of all twenty-seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -497,7 +533,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-six real packages compose and run," which the sample output
+means "the twenty-seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

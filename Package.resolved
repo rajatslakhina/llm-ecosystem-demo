@@ -1,5 +1,5 @@
 {
-  "originHash" : "207d0e1c057eef5e87bc8f40bd19275e49e98cb24bf29b3020f60907bb259112",
+  "originHash" : "10853a9c7b244961da66056cf2eb81f8adfe25825fec406bef1d4aa0fb7b106c",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -169,6 +169,15 @@
       "location" : "https://github.com/rajatslakhina/semantic-router-kit.git",
       "state" : {
         "revision" : "fdb33b94eb889d1fd810a150225ba44043fc2e94",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "source-conflict-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/source-conflict-kit.git",
+      "state" : {
+        "revision" : "773430fbe5984c3f8c1a852b2b973fc7c6a353bf",
         "version" : "1.0.0"
       }
     },
