@@ -1,5 +1,5 @@
 {
-  "originHash" : "10853a9c7b244961da66056cf2eb81f8adfe25825fec406bef1d4aa0fb7b106c",
+  "originHash" : "86297f1947711a891f9b32c304d604429e8157a9d513bde4b6106292cbfe7ed6",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -35,6 +35,15 @@
       "state" : {
         "revision" : "a529e17c24695074c3b077688fc26e685525777b",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "claim-segmenter-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/claim-segmenter-kit.git",
+      "state" : {
+        "revision" : "3661a7a9b152d02f788f285eab38bad59bfa5e11",
+        "version" : "1.1.0"
       }
     },
     {

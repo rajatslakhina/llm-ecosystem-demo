@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-seven packages in this
+A single runnable demo that wires together all twenty-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -79,6 +79,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit) | Answers the question `CostEstimatorKit` leaves open: where does the *plan* come from? Inverts the forecast — from the per-hop input counts of runs that already happened it recovers steps, tool shape, output length, retry overhead, cache hit rate and compaction thresholds, reporting the share of observed input it cannot account for rather than absorbing it. Then it gates the hand-written plan against what the runs did: scenario 24's literal drifts on exactly one of seven fields, `expectedOutputTokensPerStep` declared 15 against 56 observed — the same field scenario 24's own 81% overrun is caused by |
 | [`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit) | Asks the question overlap cannot: given the passage a claim already matched, do the two *agree*? Five deterministic rules — polarity, numerics with units and bounds, quantifier and modal scope, version ordering, mutually exclusive values — decided by reading two sentences, with no model call. Scenario 26 runs it on `GroundingKit`'s own matches: it agrees on the polarity flip, **withdraws a grounding false positive** (`5 times` against `at least 3 times` is a satisfied bound, not a conflict), and catches the two claims that carry neither negation nor numbers, so nothing in an overlap score can reach them |
 | [`SourceConflictKit`](https://github.com/rajatslakhina/source-conflict-kit) | Asks the question every check above asks too late: do the retrieved passages agree with *each other*? Topic-scoped conflict groups, corroboration counted in distinct documents rather than chunks, an explicit tie-breaker ladder that stands aside rather than guessing, and a block when sources cannot be reconciled. Scenario 27 runs the same audit twice — once with the built-in lexical oracle, once with `ClaimConsistencyKit` plugged in through the `ContradictionOracle` seam — and the propositional oracle **withholds one fewer passage**, because the lexical one manufactures a conflict out of a satisfied bound |
+| [`ClaimSegmenterKit`](https://github.com/rajatslakhina/claim-segmenter-kit) | The unit every check above takes for granted. Grounding, claim consistency and source conflict all begin by cutting text into claims, and all three inherit whatever that cut gets wrong — silently, because a claim lost at a boundary is never checked rather than reported as a miss. Protected spans for code, URLs and quotes; Markdown structure; and clause-level splitting that carries the subject forward or refuses the cut. Scenario 28 runs `GroundingKit`'s verifier twice over one answer, changing nothing but the segmenter behind its `ClaimSegmenting` seam |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -514,15 +515,55 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **twenty-seven scenarios, $0.0492675 metered total**. `architecture.svg`
+The current run is **twenty-eight scenarios, $0.0498395 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
+
+28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
+    one that changes nothing about the pipeline except the unit it measures. Every
+    truthfulness check in this demo — grounding, citation verification, claim
+    consistency, source conflict — begins by cutting text into claims, and all
+    four take that cut as given.
+
+    The answer is built so each sentence pairs a true clause with a false one,
+    each citing the document that is genuinely about it. `GroundingKit`'s verifier
+    then runs twice, with nothing swapped but the segmenter behind its
+    `ClaimSegmenting` seam.
+
+    At sentence granularity it returns **3 claims and 5 violations**, and both
+    errors it makes point in opposite directions. `c1` comes back **contradicted
+    (71%)**, which condemns `The response cache is enabled by default` — a true
+    statement — along with the false half beside it. `c2` comes back
+    **partiallySupported (57%)**, which absolves `streaming is enabled by default`
+    — a false statement — along with the true half beside it. One verdict cannot
+    describe two assertions, and neither error is visible in the output.
+
+    At clause granularity it returns **5 claims and 3 violations**: `c1 supported
+    (100%)`, `c2 contradicted (100%)`, `c3 supported (100%)`, `c5 supported
+    (100%)`. The claim that is wrong is named and the claims that are right are
+    not condemned with it. `c2` is the repaired one — the segmenter carried
+    `The response cache` in to replace `it`, because `it is not shared across
+    sessions` verified alone is a coin flip.
+
+    **The finding worth the scenario is `c4`, and it is not a win.** `Streaming is
+    enabled by default` was scored **67% against `kb-cache`** — a document it never
+    cited — because the lexical scorer found more overlap with *the response cache
+    is enabled by default* than with the streaming source it did cite. Isolating
+    the clause was necessary and was not sufficient: the smaller a claim gets, the
+    more of its wording it shares with a near neighbour. The demo detects and
+    prints this rather than smoothing it over. It is a real limit of matching by
+    overlap and it belongs to the layer below the segmenter.
+
+    One sentence is **left whole and the refusal reported**: `Requests queue behind
+    the limiter, and the queue is bounded` has no auxiliary in its first clause, so
+    there is no subject for the second to inherit. Under-splitting loses
+    granularity; over-splitting invents assertions the model never made.
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-eight
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-seven packages together; the output above is a genuine capture,
+  of all twenty-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -533,7 +574,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-seven real packages compose and run," which the sample output
+means "the twenty-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

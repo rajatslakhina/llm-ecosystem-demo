@@ -42,7 +42,8 @@ extension EcosystemDemo {
             (.estimatorHost, ModelPricing(inputPerMillion: 2.8, outputPerMillion: 11.2)),
             (.profilerHost, ModelPricing(inputPerMillion: 2.8, outputPerMillion: 11.2)),
             (.consistencyHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
-            (.conflictHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
+            (.conflictHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
+            (.segmenterHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
         ]
     }
 }
