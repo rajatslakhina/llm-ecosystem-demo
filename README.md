@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-eight packages in this
+A single runnable demo that wires together all twenty-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -80,6 +80,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit) | Asks the question overlap cannot: given the passage a claim already matched, do the two *agree*? Five deterministic rules — polarity, numerics with units and bounds, quantifier and modal scope, version ordering, mutually exclusive values — decided by reading two sentences, with no model call. Scenario 26 runs it on `GroundingKit`'s own matches: it agrees on the polarity flip, **withdraws a grounding false positive** (`5 times` against `at least 3 times` is a satisfied bound, not a conflict), and catches the two claims that carry neither negation nor numbers, so nothing in an overlap score can reach them |
 | [`SourceConflictKit`](https://github.com/rajatslakhina/source-conflict-kit) | Asks the question every check above asks too late: do the retrieved passages agree with *each other*? Topic-scoped conflict groups, corroboration counted in distinct documents rather than chunks, an explicit tie-breaker ladder that stands aside rather than guessing, and a block when sources cannot be reconciled. Scenario 27 runs the same audit twice — once with the built-in lexical oracle, once with `ClaimConsistencyKit` plugged in through the `ContradictionOracle` seam — and the propositional oracle **withholds one fewer passage**, because the lexical one manufactures a conflict out of a satisfied bound |
 | [`ClaimSegmenterKit`](https://github.com/rajatslakhina/claim-segmenter-kit) | The unit every check above takes for granted. Grounding, claim consistency and source conflict all begin by cutting text into claims, and all three inherit whatever that cut gets wrong — silently, because a claim lost at a boundary is never checked rather than reported as a miss. Protected spans for code, URLs and quotes; Markdown structure; and clause-level splitting that carries the subject forward or refuses the cut. Scenario 28 runs `GroundingKit`'s verifier twice over one answer, changing nothing but the segmenter behind its `ClaimSegmenting` seam |
+| [`CitationBindingKit`](https://github.com/rajatslakhina/citation-binding-kit) | The question every verifier above skips: not *which document supports this claim best*, but *does the document the answer actually named support it*. A verifier that keeps the best-scoring source has no opinion about what was cited, and the finer a claim gets the more of its wording it shares with a near neighbour. Honours the citation over the score, and reports the divergence rather than silently rebinding. Scenario 29 runs it over the exact claims scenario 28 produced |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -515,7 +516,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **twenty-eight scenarios, $0.0498395 metered total**. `architecture.svg`
+The current run is **twenty-nine scenarios, $0.0504115 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -558,12 +559,46 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     there is no subject for the second to inherit. Under-splitting loses
     granularity; over-splitting invents assertions the model never made.
 
+
+29. **`CitationBindingKit`** adds the twenty-ninth scenario, and it exists because
+    scenario 28 ended by reporting a defect it could see but not fix. Its last line
+    was `c4 cited [kb-stream] but was scored against kb-cache - the overlap scorer
+    picked a neighbour`, followed by the admission that the fix belonged to the
+    layer below.
+
+    This is that layer, run over the exact same claims from the exact same
+    segmenter, so the only difference in the output is the difference between the
+    two questions:
+
+    ```
+      claim  grounding scored against   binding attributed to   agree?
+      c1     kb-cache                   kb-cache                yes
+      c4     kb-cache                   kb-stream               NO
+    ```
+
+    **`c4` is where the two layers part company.** `GroundingKit` scored
+    `Streaming is enabled by default` against `kb-cache` — the document about the
+    *cache* being enabled by default — because that is what it overlaps most.
+    `CitationBindingKit` attributes it to `kb-stream`, which is what the answer
+    actually cited. Neither layer is wrong about its own question; only one of
+    them is answering the question a reader assumes was asked.
+
+    **And the honest part: no `strongerUncitedSource` finding was raised.** Under
+    this package's scorer `kb-stream` and `kb-cache` both align at 67% with that
+    claim — a tie, and a tie is not a decisive margin. That is the designed
+    behaviour, not a miss. Two documents that score identically are two documents
+    that say something equally similar, and calling that a misattribution would
+    raise a finding on every near-duplicate corpus until nobody read the findings.
+    The divergence between the two *layers* is real and is reported; the claim that
+    one *document* beat another is not made, because the evidence does not support
+    it.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all twenty-nine
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-eight packages together; the output above is a genuine capture,
+  of all twenty-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -574,7 +609,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-eight real packages compose and run," which the sample output
+means "the twenty-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

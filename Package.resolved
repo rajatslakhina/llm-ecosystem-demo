@@ -1,5 +1,5 @@
 {
-  "originHash" : "86297f1947711a891f9b32c304d604429e8157a9d513bde4b6106292cbfe7ed6",
+  "originHash" : "1c858ed9984f48cb7433bc7f0457d85d0854e3aac6e23ce4379a5c0e3b6e8535",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "18b73c53857719e23f646c904151e11f4d0f0fa2",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "citation-binding-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/citation-binding-kit.git",
+      "state" : {
+        "revision" : "539599205c0f3e388e9e2fc38f073e47cea7799f",
+        "version" : "1.0.1"
       }
     },
     {
