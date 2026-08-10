@@ -1,5 +1,6 @@
 import AgentLoopKit
 import ClaimConsistencyKit
+import ClaimDecontextualizerKit
 import ClaimSegmenterKit
 import AgentMemoryKit
 import BatchInferenceKit
@@ -60,11 +61,12 @@ struct EcosystemDemo {
         await runSourceConflictScenario(meter: meter)
         await runClaimSegmenterScenario(meter: meter)
         await runCitationBindingScenario(meter: meter)
+        await runClaimDecontextualizerScenario(meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all twenty-nine scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all thirty scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside

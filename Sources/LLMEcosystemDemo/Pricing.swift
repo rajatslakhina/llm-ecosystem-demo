@@ -44,7 +44,8 @@ extension EcosystemDemo {
             (.consistencyHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.conflictHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.segmenterHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
-            (.citationHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
+            (.citationHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
+            (.decontextHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
         ]
     }
 }

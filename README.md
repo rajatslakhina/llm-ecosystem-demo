@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all twenty-nine packages in this
+A single runnable demo that wires together all thirty packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -81,6 +81,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SourceConflictKit`](https://github.com/rajatslakhina/source-conflict-kit) | Asks the question every check above asks too late: do the retrieved passages agree with *each other*? Topic-scoped conflict groups, corroboration counted in distinct documents rather than chunks, an explicit tie-breaker ladder that stands aside rather than guessing, and a block when sources cannot be reconciled. Scenario 27 runs the same audit twice — once with the built-in lexical oracle, once with `ClaimConsistencyKit` plugged in through the `ContradictionOracle` seam — and the propositional oracle **withholds one fewer passage**, because the lexical one manufactures a conflict out of a satisfied bound |
 | [`ClaimSegmenterKit`](https://github.com/rajatslakhina/claim-segmenter-kit) | The unit every check above takes for granted. Grounding, claim consistency and source conflict all begin by cutting text into claims, and all three inherit whatever that cut gets wrong — silently, because a claim lost at a boundary is never checked rather than reported as a miss. Protected spans for code, URLs and quotes; Markdown structure; and clause-level splitting that carries the subject forward or refuses the cut. Scenario 28 runs `GroundingKit`'s verifier twice over one answer, changing nothing but the segmenter behind its `ClaimSegmenting` seam |
 | [`CitationBindingKit`](https://github.com/rajatslakhina/citation-binding-kit) | The question every verifier above skips: not *which document supports this claim best*, but *does the document the answer actually named support it*. A verifier that keeps the best-scoring source has no opinion about what was cited, and the finer a claim gets the more of its wording it shares with a near neighbour. Honours the citation over the score, and reports the divergence rather than silently rebinding. Scenario 29 runs it over the exact claims scenario 28 produced |
+| [`ClaimDecontextualizerKit`](https://github.com/rajatslakhina/claim-decontextualizer-kit) | The step before every verifier above, and the one that decides whether they had anything to work with. A claim lifted out of a paragraph often has no subject — `It is not shared across sessions` cannot be scored correctly, only scored. Rewrites what a decisive antecedent justifies, and refuses in two directions: when candidates are too close to choose between, and when a correct-but-long antecedent would narrow the claim beyond what the sentence asserted. `standaloneText(at:)` returns `nil` for every refusal, so an unresolved claim cannot be forwarded by accident. Scenario 30 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -516,7 +517,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **twenty-nine scenarios, $0.0504115 metered total**. `architecture.svg`
+The current run is **thirty scenarios, $0.0508015 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -593,12 +594,50 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     one *document* beat another is not made, because the evidence does not support
     it.
 
+30. **`ClaimDecontextualizerKit`** adds the thirtieth scenario, and it goes under
+    both of the two before it. Scenarios 28 and 29 each ended on the same defect
+    from opposite sides — a finely-cut claim gets scored against whichever passage
+    shares the most wording — and both treated it as a scoring problem. Some of it
+    is not. A claim reading `It is not shared across sessions` has no subject at
+    all. There is nothing in it to score correctly.
+
+    The scenario resolves what it can and then runs `GroundingKit` twice, over the
+    answer as written and over the answer as resolved:
+
+    ```
+      sentence  outcome          detail
+      s0        standalone       nothing to resolve
+      s1        resolved         The response cache is not shared across sessions.  (+2 tokens)
+      s2        standalone       nothing to resolve
+      s3        REFUSED no ant.  nothing agrees with "They" (plural) - left as written
+    ```
+
+    **No verdict moved.** That is the honest result and it is stated in the output
+    rather than smoothed over: the predicate alone — `shared`, `sessions` — was
+    enough for the overlap scorer to reach `kb-share` without ever needing the
+    subject. On this passage the rewrite made an already-correct verdict
+    *justified*; it did not make a wrong one right.
+
+    **The refused claim is the sharper case.** `They expire after an hour` has no
+    antecedent that agrees with it — the plural referent is only implied — so the
+    resolver declines. Grounding scored it anyway:
+
+    ```
+      c3     unsupported 0% vs kb-cache
+    ```
+
+    Zero per cent against a document about the response cache, reported as
+    `unsupported`. A reader takes that as "checked and found wanting" when the
+    claim was never interpretable in the first place. The resolver's refusal is
+    the only signal in the pipeline that distinguishes the two, and it is a
+    signal the verifier below it cannot produce.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all twenty-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all twenty-nine packages together; the output above is a genuine capture,
+  of all thirty packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -609,7 +648,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the twenty-nine real packages compose and run," which the sample output
+means "the thirty real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

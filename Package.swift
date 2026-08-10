@@ -39,7 +39,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/claim-consistency-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/source-conflict-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/claim-segmenter-kit.git", from: "1.1.0"),
-        .package(url: "https://github.com/rajatslakhina/citation-binding-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/citation-binding-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/claim-decontextualizer-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -73,7 +74,8 @@ let package = Package(
                 .product(name: "ClaimConsistencyKit", package: "claim-consistency-kit"),
                 .product(name: "SourceConflictKit", package: "source-conflict-kit"),
                 .product(name: "ClaimSegmenterKit", package: "claim-segmenter-kit"),
-                .product(name: "CitationBindingKit", package: "citation-binding-kit")
+                .product(name: "CitationBindingKit", package: "citation-binding-kit"),
+                .product(name: "ClaimDecontextualizerKit", package: "claim-decontextualizer-kit")
             ]
         )
     ]

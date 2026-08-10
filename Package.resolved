@@ -1,5 +1,5 @@
 {
-  "originHash" : "1c858ed9984f48cb7433bc7f0457d85d0854e3aac6e23ce4379a5c0e3b6e8535",
+  "originHash" : "e055dfc85a91945ade1fb8c81a078df3951cb640a69caad06cfc6060bb034505",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -44,6 +44,15 @@
       "state" : {
         "revision" : "a529e17c24695074c3b077688fc26e685525777b",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "claim-decontextualizer-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/claim-decontextualizer-kit.git",
+      "state" : {
+        "revision" : "375364064d3685215adddcbb7952ef4c753d4ede",
+        "version" : "1.0.1"
       }
     },
     {
