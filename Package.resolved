@@ -1,5 +1,5 @@
 {
-  "originHash" : "e055dfc85a91945ade1fb8c81a078df3951cb640a69caad06cfc6060bb034505",
+  "originHash" : "84ae5134a45eec0bb4bf99d08214fd089e7e44df5b082a263c104b8ba0c055dc",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -16,6 +16,15 @@
       "location" : "https://github.com/rajatslakhina/agent-memory-kit.git",
       "state" : {
         "revision" : "b3a6bd3edb06e193d0dd42582ac1910432a7477c",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "answerability-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/answerability-kit.git",
+      "state" : {
+        "revision" : "db1192d8cfffbc6fe6cfecf60e8652520038abdd",
         "version" : "1.0.0"
       }
     },
