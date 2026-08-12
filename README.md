@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-one packages in this
+A single runnable demo that wires together all thirty-two packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -83,6 +83,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`CitationBindingKit`](https://github.com/rajatslakhina/citation-binding-kit) | The question every verifier above skips: not *which document supports this claim best*, but *does the document the answer actually named support it*. A verifier that keeps the best-scoring source has no opinion about what was cited, and the finer a claim gets the more of its wording it shares with a near neighbour. Honours the citation over the score, and reports the divergence rather than silently rebinding. Scenario 29 runs it over the exact claims scenario 28 produced |
 | [`ClaimDecontextualizerKit`](https://github.com/rajatslakhina/claim-decontextualizer-kit) | The step before every verifier above, and the one that decides whether they had anything to work with. A claim lifted out of a paragraph often has no subject — `It is not shared across sessions` cannot be scored correctly, only scored. Rewrites what a decisive antecedent justifies, and refuses in two directions: when candidates are too close to choose between, and when a correct-but-long antecedent would narrow the claim beyond what the sentence asserted. `standaloneText(at:)` returns `nil` for every refusal, so an unresolved claim cannot be forwarded by accident. Scenario 30 |
 | [`AnswerabilityKit`](https://github.com/rajatslakhina/answerability-kit) | The only gate in this table that runs *before* the provider call. Every verifier above it judges an answer already paid for; this one judges whether the question was answerable from the retrieved evidence at all. Splits the question into aspects and checks each against the corpus, separating a gap (`insufficient` — retrieve more) from a contradiction (`contested` — retrieving more makes it worse) from the gate having no opinion (`undetermined` — it could not read the question, or was handed nothing to read). `approvedQuestion` is `nil` for every verdict but approval, so a caller that forgets to switch cannot spend money. Scenario 31 |
+| [`MorphologyMatchKit`](https://github.com/rajatslakhina/morphology-match-kit) | The recall floor underneath the gate above it. `AnswerabilityKit` refuses when nothing in the corpus speaks to an aspect — but that is an inference from a matcher finding no overlap, and it is worth exactly what the matcher's recall is worth. Keys inflectional families onto one bucket so a question about `requests` that were `retried` matches a corpus saying a client `retries` a `request`. Inflectional rules only: no `-er`, no `-ation`, length floors, and no key may land on a function word, because `note` keying to `not` would make every clause mentioning a note read as a denial. Every refused conflation is reported as a rule rather than a silence. Scenario 32 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -518,7 +519,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-one scenarios, $0.0510115 metered total**. `architecture.svg`
+The current run is **thirty-two scenarios, $0.0511975 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -680,12 +681,51 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     Cost: **$0.00021 ungated, $0 gated.** The metered total moved from $0.0508015
     to $0.0510115, and the delta is exactly that one hop.
 
+32. **`MorphologyMatchKit`** adds the thirty-second scenario, and it is the
+    failure mode that arrives with scenario 31. The gate refuses when nothing
+    in the corpus speaks to an aspect. But "nothing speaks to it" is an
+    inference drawn from a matcher finding no overlap, and that inference is
+    worth exactly as much as the matcher's recall.
+
+    The question asks about `requests` that were `retried`. The corpus says a
+    client `retries` a `request`. Every word matches and none of them matches:
+
+    ```
+      lexical matcher:    BLOCKED insufficient - missing: requests retried
+        subject    requests retried          affirm 0.00   <- reported as absent
+        approvedQuestion: nil
+      morphology matcher: ANSWERABLE
+        subject    requests retried          affirm 1.00
+    ```
+
+    Same gate, same policy, same corpus — one matcher swapped underneath it.
+    The conflations that earned the admission are printed rather than assumed,
+    because an unauditable change of mind in a refusal path is not an
+    improvement:
+
+    ```
+      retry      <- retried, retries, retry
+      request    <- request, requests
+    ```
+
+    And the refusals matter as much as the merges. `note` keys to `note`, not
+    `not`, under `guardedStem` — a key landing on a negation cue would make
+    every clause mentioning a note read as a denial, which is an invented
+    contradiction rather than a missed match.
+
+    The line worth keeping from this scenario is the cost comparison. The
+    lexical refusal cost **$0**; the correct answer cost **$0.000186**. A
+    meter records hops that happened, so **a gate that refuses too much looks
+    cheaper than one that is right**, and nothing in this demo's cost report
+    would ever have surfaced the bug. It took a user asking a reasonable
+    question and being told no.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-one
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-two
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-one packages together; the output above is a genuine capture,
+  of all thirty-two packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -696,7 +736,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-one real packages compose and run," which the sample output
+means "the thirty-two real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

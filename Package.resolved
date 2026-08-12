@@ -1,5 +1,5 @@
 {
-  "originHash" : "84ae5134a45eec0bb4bf99d08214fd089e7e44df5b082a263c104b8ba0c055dc",
+  "originHash" : "6ce68ee760f852e720b3ecbb62df1b36ab62ce32dbf45e9a5904cf717892f49d",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -124,6 +124,15 @@
       "location" : "https://github.com/rajatslakhina/idempotency-kit.git",
       "state" : {
         "revision" : "58e429cdd41a6e96611092d93acd93661eba263d",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "morphology-match-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/morphology-match-kit.git",
+      "state" : {
+        "revision" : "3a41e047ea5ec59fd7311989077cd808022590b8",
         "version" : "1.0.0"
       }
     },
