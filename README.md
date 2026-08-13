@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-two packages in this
+A single runnable demo that wires together all thirty-three packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -84,6 +84,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ClaimDecontextualizerKit`](https://github.com/rajatslakhina/claim-decontextualizer-kit) | The step before every verifier above, and the one that decides whether they had anything to work with. A claim lifted out of a paragraph often has no subject — `It is not shared across sessions` cannot be scored correctly, only scored. Rewrites what a decisive antecedent justifies, and refuses in two directions: when candidates are too close to choose between, and when a correct-but-long antecedent would narrow the claim beyond what the sentence asserted. `standaloneText(at:)` returns `nil` for every refusal, so an unresolved claim cannot be forwarded by accident. Scenario 30 |
 | [`AnswerabilityKit`](https://github.com/rajatslakhina/answerability-kit) | The only gate in this table that runs *before* the provider call. Every verifier above it judges an answer already paid for; this one judges whether the question was answerable from the retrieved evidence at all. Splits the question into aspects and checks each against the corpus, separating a gap (`insufficient` — retrieve more) from a contradiction (`contested` — retrieving more makes it worse) from the gate having no opinion (`undetermined` — it could not read the question, or was handed nothing to read). `approvedQuestion` is `nil` for every verdict but approval, so a caller that forgets to switch cannot spend money. Scenario 31 |
 | [`MorphologyMatchKit`](https://github.com/rajatslakhina/morphology-match-kit) | The recall floor underneath the gate above it. `AnswerabilityKit` refuses when nothing in the corpus speaks to an aspect — but that is an inference from a matcher finding no overlap, and it is worth exactly what the matcher's recall is worth. Keys inflectional families onto one bucket so a question about `requests` that were `retried` matches a corpus saying a client `retries` a `request`. Inflectional rules only: no `-er`, no `-ation`, length floors, and no key may land on a function word, because `note` keying to `not` would make every clause mentioning a note read as a denial. Every refused conflation is reported as a rule rather than a silence. Scenario 32 |
+| [`EvidenceSensitivityKit`](https://github.com/rajatslakhina/evidence-sensitivity-kit) | Asks how close a verdict came to being a different verdict, before anyone acts on it. Re-runs any judge over subsets of its own evidence: leave-one-passage-out, leave-one-document-out, and distance to the threshold. The document pass is the load-bearing half — three chunks of one page defeat passage-level leave-one-out entirely, since removing any one leaves two more. Also names the two coincidences: two weak sides landing inside `conflictMargin` because two different recall failures cancelled, and apparent corroboration that is one source read several times. Only `robust` is `isTrustworthy`; `undetermined` deliberately is not, so "not measured" cannot pass for "measured fine". Scenario 33 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -519,7 +520,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-two scenarios, $0.0511975 metered total**. `architecture.svg`
+The current run is **thirty-three scenarios, $0.0514915 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -720,12 +721,35 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     would ever have surfaced the bug. It took a user asking a reasonable
     question and being told no.
 
+33. **`EvidenceSensitivityKit`** adds the thirty-third scenario, and it asks
+    the question scenarios 31 and 32 both stop one step short of. Both of
+    them end with the gate saying yes. Neither asks *yes on the strength of
+    what?*
+
+    One question, two retrieval outcomes, same gate and same matcher. Both
+    report the identical `answerable (affirm 1.00 / deny 0.00)` — the gate
+    genuinely cannot tell them apart. In A the answer survives losing any
+    passage and any document, and the analysis returns `robust`. In B
+    retrieval happened to return only chunks of the runbook, so what reads as
+    two confirmations is one source read twice.
+
+    Passage-level leave-one-out is **structurally blind** to B: remove either
+    chunk and the other still answers, so nothing pivots. Only the
+    document-level pass sees that there was never a second source, and it
+    reports `coincidental(2 passages, all from runbook)`.
+
+    The hop is spent on A and withheld on B, which inverts scenario 32's cost
+    lesson. There a false refusal was free, so an over-refusing gate looked
+    cheap. Here the meter records not "an answer" but **an answer worth
+    paying for** — $0.000294 for the stable one, $0 and a review queue for
+    the other.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-two
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-three
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-two packages together; the output above is a genuine capture,
+  of all thirty-three packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -736,7 +760,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-two real packages compose and run," which the sample output
+means "the thirty-three real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

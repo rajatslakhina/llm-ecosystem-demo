@@ -1,5 +1,5 @@
 {
-  "originHash" : "6ce68ee760f852e720b3ecbb62df1b36ab62ce32dbf45e9a5904cf717892f49d",
+  "originHash" : "642821cdf9ac14d5d080544215726ed6d5e292f16bc62b579a24a5406c071c3e",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -88,6 +88,15 @@
       "location" : "https://github.com/rajatslakhina/cost-estimator-kit.git",
       "state" : {
         "revision" : "826b1a3c02befd01bba271511ea6137ae07a2f94",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "evidence-sensitivity-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/evidence-sensitivity-kit.git",
+      "state" : {
+        "revision" : "e2eae2153373c3944c069ad96fd322d74435d9cf",
         "version" : "1.0.0"
       }
     },
