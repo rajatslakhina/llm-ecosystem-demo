@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/evidence-sensitivity-kit.git",
       "state" : {
-        "revision" : "e2eae2153373c3944c069ad96fd322d74435d9cf",
-        "version" : "1.0.0"
+        "revision" : "11658e1a9b89cb73382c1d20cc41f7b6d0769c89",
+        "version" : "1.0.1"
       }
     },
     {
