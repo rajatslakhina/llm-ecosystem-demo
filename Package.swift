@@ -43,7 +43,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/claim-decontextualizer-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/answerability-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/morphology-match-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/evidence-sensitivity-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/evidence-sensitivity-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/source-independence-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -83,7 +84,9 @@ let package = Package(
                 .product(name: "MorphologyMatchKit", package: "morphology-match-kit"),
                 .product(name: "MorphologyMatchAnswerability", package: "morphology-match-kit"),
                 .product(name: "EvidenceSensitivityKit", package: "evidence-sensitivity-kit"),
-                .product(name: "EvidenceSensitivityAnswerability", package: "evidence-sensitivity-kit")
+                .product(name: "EvidenceSensitivityAnswerability", package: "evidence-sensitivity-kit"),
+                .product(name: "SourceIndependenceKit", package: "source-independence-kit"),
+                .product(name: "SourceIndependenceSensitivity", package: "source-independence-kit")
             ]
         )
     ]

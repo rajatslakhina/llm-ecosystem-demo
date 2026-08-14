@@ -1,5 +1,5 @@
 {
-  "originHash" : "642821cdf9ac14d5d080544215726ed6d5e292f16bc62b579a24a5406c071c3e",
+  "originHash" : "bcc60bf66b35c0d6738f1f5c31367a3cae456f4302115eb5c304d3df59756a3f",
   "pins" : [
     {
       "identity" : "agent-loop-kit",
@@ -232,6 +232,15 @@
       "location" : "https://github.com/rajatslakhina/source-conflict-kit.git",
       "state" : {
         "revision" : "773430fbe5984c3f8c1a852b2b973fc7c6a353bf",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "source-independence-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/source-independence-kit.git",
+      "state" : {
+        "revision" : "e199bc2a365d0c30fa52b65d9662569726edfe10",
         "version" : "1.0.0"
       }
     },

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-three packages in this
+A single runnable demo that wires together all thirty-four packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -85,6 +85,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`AnswerabilityKit`](https://github.com/rajatslakhina/answerability-kit) | The only gate in this table that runs *before* the provider call. Every verifier above it judges an answer already paid for; this one judges whether the question was answerable from the retrieved evidence at all. Splits the question into aspects and checks each against the corpus, separating a gap (`insufficient` — retrieve more) from a contradiction (`contested` — retrieving more makes it worse) from the gate having no opinion (`undetermined` — it could not read the question, or was handed nothing to read). `approvedQuestion` is `nil` for every verdict but approval, so a caller that forgets to switch cannot spend money. Scenario 31 |
 | [`MorphologyMatchKit`](https://github.com/rajatslakhina/morphology-match-kit) | The recall floor underneath the gate above it. `AnswerabilityKit` refuses when nothing in the corpus speaks to an aspect — but that is an inference from a matcher finding no overlap, and it is worth exactly what the matcher's recall is worth. Keys inflectional families onto one bucket so a question about `requests` that were `retried` matches a corpus saying a client `retries` a `request`. Inflectional rules only: no `-er`, no `-ation`, length floors, and no key may land on a function word, because `note` keying to `not` would make every clause mentioning a note read as a denial. Every refused conflation is reported as a rule rather than a silence. Scenario 32 |
 | [`EvidenceSensitivityKit`](https://github.com/rajatslakhina/evidence-sensitivity-kit) | Asks how close a verdict came to being a different verdict, before anyone acts on it. Re-runs any judge over subsets of its own evidence: leave-one-passage-out, leave-one-document-out, and distance to the threshold. The document pass is the load-bearing half — three chunks of one page defeat passage-level leave-one-out entirely, since removing any one leaves two more. Also names the two coincidences: two weak sides landing inside `conflictMargin` because two different recall failures cancelled, and apparent corroboration that is one source read several times. Only `robust` is `isTrustworthy`; `undetermined` deliberately is not, so "not measured" cannot pass for "measured fine". Scenario 33 |
+| [`SourceIndependenceKit`](https://github.com/rajatslakhina/source-independence-kit) | Counts how many independent sources are actually behind an evidence set, which every judge here assumes and none can check. Four merge signals, each reported with its reason: a declared document id, a canonicalised locator (tracking parameters, `www.`, AMP, `index.html`, fragments), textual redundancy by 5-word shingle containment rather than Jaccard — a chunk is 100% inside its own page — and declared derivation, because a faithful summary shares no wording with its source and is still not a second voice. `establishedSourceCount` is a floor and safe to threshold against; `corroboratedSourceCount` is `nil` whenever a passage went unplaced, because a count taken with provenance missing was never a measurement. Scenario 34 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -520,7 +521,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-three scenarios, $0.0514915 metered total**. `architecture.svg`
+The current run is **thirty-four scenarios, $0.0517735 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -744,12 +745,46 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     paying for** — $0.000294 for the stable one, $0 and a review queue for
     the other.
 
+34. **`SourceIndependenceKit`** adds the thirty-fourth scenario, and it turns
+    scenario 33's rule back on scenario 33's own assumption.
+
+    Scenario 33 established how this ecosystem now spends money: pay for a
+    verdict only if it survives its own evidence being taken apart. To apply
+    that rule it has to know which document each passage came from, and it
+    knew because `SensitivityPassage` carries a hand-written `document`
+    field. Its own doc comment says so — *provenance has to be carried
+    alongside.* Carried from where? A retriever returns URLs.
+
+    The same four passages, question and judge run twice, changing nothing
+    but where the document identifier comes from. Pass A takes it from the
+    passage id, which is what a caller without one reaches for. Four
+    documents, nothing pivots, `robust` — and under scenario 33's rule the
+    hop is **authorised and paid**. Three of those four passages are one page
+    reached three ways: a link with `utm_` parameters, an AMP copy, and an
+    `index.html`.
+
+    Pass B derives the key instead. Two sources, `pivotal` on
+    `example.com/docs/rollback`, $0 and a review queue.
+
+    `itemPivots` is empty in **both** passes, which is the part worth
+    keeping. Passage-level leave-one-out was never going to catch this, and
+    scenario 33 already knew that — it is why the document pass exists. What
+    scenario 33 could not know is that the document identifiers it was handed
+    might be fiction.
+
+    The cost line inverts scenario 33's in turn. There the meter recorded an
+    answer worth paying for. Here it records $0.000282 for the hop that
+    should not have happened and nothing at all for the analysis that
+    prevented it — **the correct pass is invisible to the meter, and the
+    mistaken one shows up as spend.** No cost report in this demo would ever
+    have surfaced this.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-three
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-four
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-three packages together; the output above is a genuine capture,
+  of all thirty-four packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -760,7 +795,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-three real packages compose and run," which the sample output
+means "the thirty-four real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

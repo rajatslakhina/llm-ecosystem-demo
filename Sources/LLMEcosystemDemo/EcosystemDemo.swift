@@ -65,11 +65,12 @@ struct EcosystemDemo {
         await runAnswerabilityScenario(meter: meter)
         await runMorphologyMatchScenario(meter: meter)
         await runEvidenceSensitivityScenario(meter: meter)
+        await runSourceIndependenceScenario(meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all thirty-three scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all thirty-four scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside

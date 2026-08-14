@@ -48,7 +48,8 @@ extension EcosystemDemo {
             (.decontextHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.answerabilityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.morphologyHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.sensitivityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.sensitivityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.independenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }
