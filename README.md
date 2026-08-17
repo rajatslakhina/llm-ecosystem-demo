@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-four packages in this
+A single runnable demo that wires together all thirty-five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -86,6 +86,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`MorphologyMatchKit`](https://github.com/rajatslakhina/morphology-match-kit) | The recall floor underneath the gate above it. `AnswerabilityKit` refuses when nothing in the corpus speaks to an aspect — but that is an inference from a matcher finding no overlap, and it is worth exactly what the matcher's recall is worth. Keys inflectional families onto one bucket so a question about `requests` that were `retried` matches a corpus saying a client `retries` a `request`. Inflectional rules only: no `-er`, no `-ation`, length floors, and no key may land on a function word, because `note` keying to `not` would make every clause mentioning a note read as a denial. Every refused conflation is reported as a rule rather than a silence. Scenario 32 |
 | [`EvidenceSensitivityKit`](https://github.com/rajatslakhina/evidence-sensitivity-kit) | Asks how close a verdict came to being a different verdict, before anyone acts on it. Re-runs any judge over subsets of its own evidence: leave-one-passage-out, leave-one-document-out, and distance to the threshold. The document pass is the load-bearing half — three chunks of one page defeat passage-level leave-one-out entirely, since removing any one leaves two more. Also names the two coincidences: two weak sides landing inside `conflictMargin` because two different recall failures cancelled, and apparent corroboration that is one source read several times. Only `robust` is `isTrustworthy`; `undetermined` deliberately is not, so "not measured" cannot pass for "measured fine". Scenario 33 |
 | [`SourceIndependenceKit`](https://github.com/rajatslakhina/source-independence-kit) | Counts how many independent sources are actually behind an evidence set, which every judge here assumes and none can check. Four merge signals, each reported with its reason: a declared document id, a canonicalised locator (tracking parameters, `www.`, AMP, `index.html`, fragments), textual redundancy by 5-word shingle containment rather than Jaccard — a chunk is 100% inside its own page — and declared derivation, because a faithful summary shares no wording with its source and is still not a second voice. `establishedSourceCount` is a floor and safe to threshold against; `corroboratedSourceCount` is `nil` whenever a passage went unplaced, because a count taken with provenance missing was never a measurement. Scenario 34 |
+| [`TemporalValidityKit`](https://github.com/rajatslakhina/temporal-validity-kit) | Decides which retrieved passages are entitled to speak, as of the instant the question was asked. Every other judge here scores content and none knows what time it is, so a passage from a 2023 snapshot counts exactly as much as one written this morning. Four readings rather than a boolean — `valid`, `expired`, `superseded`, `undetermined` — and `undetermined` is never entitled, because a reading that did not run is not a reading that passed. Supersession is checked *before* a volatility window is required: a later reading of the same fact demotes an earlier one whether or not anybody declared how fast that fact changes. A passage dated after the question is `undetermined` rather than fresh, since `asOf - observedAt` is negative and a negative age sits inside every window. Scenario 35 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -521,7 +522,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-four scenarios, $0.0517735 metered total**. `architecture.svg`
+The current run is **thirty-five scenarios, $0.0517735 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -781,10 +782,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-four
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-five
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-four packages together; the output above is a genuine capture,
+  of all thirty-five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -795,7 +796,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-four real packages compose and run," which the sample output
+means "the thirty-five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
