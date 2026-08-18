@@ -50,7 +50,8 @@ extension EcosystemDemo {
             (.morphologyHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.sensitivityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.independenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.temporalHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.temporalHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.abstentionHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

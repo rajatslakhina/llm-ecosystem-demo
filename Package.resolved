@@ -1,6 +1,15 @@
 {
-  "originHash" : "f4e2a426d232479ec108f53e3959ba71f6a908682802a40e10ce01eeb7c5a965",
+  "originHash" : "1c21ec4cc90c53de73a54070d70bee790a9c56ec27298bcbd5cb8a916d39093f",
   "pins" : [
+    {
+      "identity" : "abstention-policy-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/abstention-policy-kit.git",
+      "state" : {
+        "revision" : "4058ae9763538e9dae99d4bf87c86e2e4cfc49b7",
+        "version" : "1.0.0"
+      }
+    },
     {
       "identity" : "agent-loop-kit",
       "kind" : "remoteSourceControl",
