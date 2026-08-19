@@ -1,5 +1,5 @@
 {
-  "originHash" : "1c21ec4cc90c53de73a54070d70bee790a9c56ec27298bcbd5cb8a916d39093f",
+  "originHash" : "74a0817a9990ff5d48f00e8a9c7351a216ee7e566c1bf715cd7f56b6f2a80252",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -232,6 +232,15 @@
       "location" : "https://github.com/rajatslakhina/semantic-router-kit.git",
       "state" : {
         "revision" : "fdb33b94eb889d1fd810a150225ba44043fc2e94",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "signal-dependence-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/signal-dependence-kit.git",
+      "state" : {
+        "revision" : "8ea8ef64b2375ad7c0defde4daa26434a3418967",
         "version" : "1.0.0"
       }
     },

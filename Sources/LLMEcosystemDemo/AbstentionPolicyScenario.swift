@@ -60,7 +60,7 @@ extension EcosystemDemo {
     /// `AnswerabilitySignalMapper`; the other two are derived from what those analysers actually
     /// returned for this corpus, which is the only way the scenario can be wrong in a way that
     /// shows up rather than one that reads well.
-    private static func abstentionSignals(for corpus: AbstentionCorpus) async -> [AbstentionSignal] {
+    static func abstentionSignals(for corpus: AbstentionCorpus) async -> [AbstentionSignal] {
         let report = AnswerabilityEngine().assess(Question(corpus.question), against: corpus.evidence)
         let gateSignal = AnswerabilitySignalMapper().signal(for: report)
 
@@ -120,7 +120,7 @@ extension EcosystemDemo {
         return String(format: "%.1f%%", value * 100)
     }
 
-    private static func spendIfAnswerable(
+    static func spendIfAnswerable(
         _ ruling: AbstentionRuling,
         meter: TokenMeter,
         label: String

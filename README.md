@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-six packages in this
+A single runnable demo that wires together all thirty-seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -88,6 +88,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SourceIndependenceKit`](https://github.com/rajatslakhina/source-independence-kit) | Counts how many independent sources are actually behind an evidence set, which every judge here assumes and none can check. Four merge signals, each reported with its reason: a declared document id, a canonicalised locator (tracking parameters, `www.`, AMP, `index.html`, fragments), textual redundancy by 5-word shingle containment rather than Jaccard — a chunk is 100% inside its own page — and declared derivation, because a faithful summary shares no wording with its source and is still not a second voice. `establishedSourceCount` is a floor and safe to threshold against; `corroboratedSourceCount` is `nil` whenever a passage went unplaced, because a count taken with provenance missing was never a measurement. Scenario 34 |
 | [`TemporalValidityKit`](https://github.com/rajatslakhina/temporal-validity-kit) | Decides which retrieved passages are entitled to speak, as of the instant the question was asked. Every other judge here scores content and none knows what time it is, so a passage from a 2023 snapshot counts exactly as much as one written this morning. Four readings rather than a boolean — `valid`, `expired`, `superseded`, `undetermined` — and `undetermined` is never entitled, because a reading that did not run is not a reading that passed. Supersession is checked *before* a volatility window is required: a later reading of the same fact demotes an earlier one whether or not anybody declared how fast that fact changes. A passage dated after the question is `undetermined` rather than fresh, since `asOf - observedAt` is negative and a negative age sits inside every window. Scenario 35 |
 | [`AbstentionPolicyKit`](https://github.com/rajatslakhina/abstention-policy-kit) | Arbitrates between the eleven judges above, which each rule alone and cannot hear each other. First-refusal-wins handles one judge being certain; it has nothing to say about three judges each being *uneasy*, and a judge unwilling to block on its own finding currently discards the finding entirely. `SignalReading` has four cases rather than three: `unavailable` is not `clear`, because folding them together makes a pipeline more confident the more of its judges fail to run. Concurrence is tested *before* the coverage floor — if three judges each found something the turn is already not one to answer, and reporting a coverage shortfall instead sends the caller to fetch more sources when the evidence it has is the problem. Counts origins, not signals. Never overturns a refusal. Scenario 36 |
+| [`SignalDependenceKit`](https://github.com/rajatslakhina/signal-dependence-kit) | Asks how many of the judges above are the same judge. A panel that counts its members counts wrong: two gates sharing a corpus agree because they read the same thing, two sharing an embedding fail together, and a gate computed from another agrees by construction — every one of those is one opinion arriving twice, and an aggregator counting origins reads it as corroboration. `derived` edges close transitively; everything else merges by *complete* linkage, so A sharing a corpus with B and B a model with C never collapses all three. Mechanisms combine as `1 - product(1 - s)` rather than as a maximum, because two judges sharing both a corpus and a model are more entangled than two sharing only the corpus. Clean findings deflate on exactly the same terms as concerns, so the reduction can *tighten* a coverage floor and is not a device for loosening gates; refusals are never deflated at all. `DependenceRegistry` audits the declared graph against observed co-firing, because the entanglement nobody declared is the kind that hurts. Scenario 37 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -523,7 +524,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-six scenarios, $0.0520585 metered total**. `architecture.svg`
+The current run is **thirty-seven scenarios, $0.0523435 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -781,12 +782,44 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     mistaken one shows up as spend.** No cost report in this demo would ever
     have surfaced this.
 
+37. **`SignalDependenceKit`** adds the thirty-seventh scenario, and it asks the
+    question scenario 36 could not: **were those judges separate judges?**
+
+    Scenario 36 declined a turn because three origins each raised something.
+    Counting origins is how it got there, and counting is exactly what cannot
+    tell you whether two of them were one. Here the same corpus goes through
+    four judges and the demo does not assert their entanglement — it derives it.
+    The morphology judge *is* the answerability engine with its matcher swapped,
+    which is how scenario 31 wires it, so their agreement is one technique
+    agreeing with itself. The independence and temporal judges were handed
+    passages carrying the same document ids, so the shared-input edge is
+    computed by intersecting those ids rather than written down by hand.
+
+    **Four judges, two voices, 2.38 effective votes.** The abstention survives —
+    two voices still concur — but it now rests on a number that means something.
+    Note which judge represents the first voice: `answerability` reported
+    *clean*, and it speaks for a voice holding a concern, because a merged voice
+    takes the more serious of its members' readings. A voice half of which found
+    something has found something.
+
+    Part F is the case that keeps this honest. A corpus with nothing against it
+    goes through the same deflation and **answers**, and pays for the turn. A
+    reduction that could only ever narrow the panel would be a way of never
+    answering rather than a way of counting.
+
+    Part E is the one a declared graph cannot reach. Over six rounds the registry
+    reports `independence + temporal` co-firing **100%** of the time against the
+    **67%** the graph declares. The edge was not missing; it was
+    *under*-declared, which is the failure mode nobody looks for — a pipeline
+    that has correctly identified its entangled pair and still overestimates how
+    much daylight is between them.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-six
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-seven
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-six packages together; the output above is a genuine capture,
+  of all thirty-seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -797,7 +830,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-six real packages compose and run," which the sample output
+means "the thirty-seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
