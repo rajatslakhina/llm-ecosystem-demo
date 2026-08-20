@@ -1,5 +1,5 @@
 {
-  "originHash" : "74a0817a9990ff5d48f00e8a9c7351a216ee7e566c1bf715cd7f56b6f2a80252",
+  "originHash" : "3f58cc7c33723beca908e80c7e8e60593f60c91fce33290ada08bc64cc0cfdf6",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -80,6 +80,15 @@
       "state" : {
         "revision" : "3661a7a9b152d02f788f285eab38bad59bfa5e11",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "conformal-gate-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/conformal-gate-kit.git",
+      "state" : {
+        "revision" : "50da4b6a2201fc1d7d68ee2896365b7dca1a2fa3",
+        "version" : "1.0.0"
       }
     },
     {

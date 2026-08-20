@@ -47,7 +47,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/source-independence-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/temporal-validity-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/abstention-policy-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/signal-dependence-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/signal-dependence-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/conformal-gate-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -95,7 +96,9 @@ let package = Package(
                 .product(name: "AbstentionPolicyKit", package: "abstention-policy-kit"),
                 .product(name: "AbstentionPolicyAnswerability", package: "abstention-policy-kit"),
                 .product(name: "SignalDependenceKit", package: "signal-dependence-kit"),
-                .product(name: "SignalDependenceAbstention", package: "signal-dependence-kit")
+                .product(name: "SignalDependenceAbstention", package: "signal-dependence-kit"),
+                .product(name: "ConformalGateKit", package: "conformal-gate-kit"),
+                .product(name: "ConformalGateAbstention", package: "conformal-gate-kit")
             ]
         )
     ]

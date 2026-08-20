@@ -69,11 +69,12 @@ struct EcosystemDemo {
         await runTemporalValidityScenario(meter: meter)
         await runAbstentionPolicyScenario(meter: meter)
         await runSignalDependenceScenario(meter: meter)
+        await runConformalGateScenario(meter: meter)
 
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all thirty-seven scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all thirty-eight scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-seven packages in this
+A single runnable demo that wires together all thirty-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -89,6 +89,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`TemporalValidityKit`](https://github.com/rajatslakhina/temporal-validity-kit) | Decides which retrieved passages are entitled to speak, as of the instant the question was asked. Every other judge here scores content and none knows what time it is, so a passage from a 2023 snapshot counts exactly as much as one written this morning. Four readings rather than a boolean — `valid`, `expired`, `superseded`, `undetermined` — and `undetermined` is never entitled, because a reading that did not run is not a reading that passed. Supersession is checked *before* a volatility window is required: a later reading of the same fact demotes an earlier one whether or not anybody declared how fast that fact changes. A passage dated after the question is `undetermined` rather than fresh, since `asOf - observedAt` is negative and a negative age sits inside every window. Scenario 35 |
 | [`AbstentionPolicyKit`](https://github.com/rajatslakhina/abstention-policy-kit) | Arbitrates between the eleven judges above, which each rule alone and cannot hear each other. First-refusal-wins handles one judge being certain; it has nothing to say about three judges each being *uneasy*, and a judge unwilling to block on its own finding currently discards the finding entirely. `SignalReading` has four cases rather than three: `unavailable` is not `clear`, because folding them together makes a pipeline more confident the more of its judges fail to run. Concurrence is tested *before* the coverage floor — if three judges each found something the turn is already not one to answer, and reporting a coverage shortfall instead sends the caller to fetch more sources when the evidence it has is the problem. Counts origins, not signals. Never overturns a refusal. Scenario 36 |
 | [`SignalDependenceKit`](https://github.com/rajatslakhina/signal-dependence-kit) | Asks how many of the judges above are the same judge. A panel that counts its members counts wrong: two gates sharing a corpus agree because they read the same thing, two sharing an embedding fail together, and a gate computed from another agrees by construction — every one of those is one opinion arriving twice, and an aggregator counting origins reads it as corroboration. `derived` edges close transitively; everything else merges by *complete* linkage, so A sharing a corpus with B and B a model with C never collapses all three. Mechanisms combine as `1 - product(1 - s)` rather than as a maximum, because two judges sharing both a corpus and a model are more entangled than two sharing only the corpus. Clean findings deflate on exactly the same terms as concerns, so the reduction can *tighten* a coverage floor and is not a device for loosening gates; refusals are never deflated at all. `DependenceRegistry` audits the declared graph against observed co-firing, because the entanglement nobody declared is the kind that hurts. Scenario 37 |
+| [`ConformalGateKit`](https://github.com/rajatslakhina/conformal-gate-kit) | Derives the thresholds every gate above was given by hand. Split conformal risk control takes labelled outcomes and a risk budget and returns the most permissive threshold whose empirical loss still leaves room for the one draw you have not seen: `(w(tau) + 1) / (n + 1) <= alpha`, a finite-sample bound with no assumption about the score distribution. The `+ 1` prices that unseen draw, which is why a thin calibration set is refused outright rather than given a loose number — at `alpha = 0.05`, 18 outcomes buy nothing at all, even with zero observed errors. Only the joint loss is certified: selective risk is not monotone in the threshold, so it is reported beside the certificate labelled uncertified and never folded into the promise. Stratified certification names the slice an aggregate bound is quietly failing. The `AbstentionPolicyKit` bridge has four arms, two of them `unavailable` — an infeasible outcome and a valid certificate that admits nothing are both facts about the gate, and reading either as a per-item verdict builds a gate that refuses every request it will ever see. Scenario 38 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -524,7 +525,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-seven scenarios, $0.0523435 metered total**. `architecture.svg`
+The current run is **thirty-eight scenarios, $0.0526285 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -814,12 +815,49 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     that has correctly identified its entangled pair and still overestimates how
     much daylight is between them.
 
+38. **`ConformalGateKit`** adds the thirty-eighth scenario, and it asks the
+    question underneath both of the last two: **what error rate does any of
+    this actually hold?**
+
+    Scenario 36 abstained because two judges concurred. Scenario 37 asked
+    whether those two were separate. Neither asked where the number *2* came
+    from. It was chosen because it seemed reasonable, and thirty-seven
+    scenarios later nothing in this demo could say what it buys.
+
+    Part A puts the demo's own labelled turns through the gate and gets a
+    refusal: **two calibration points cannot certify `alpha = 0.05`; nineteen
+    are needed.** That is not a failure of the scenario. It is the honest state
+    of a pipeline that has been judging carefully for thirty-seven scenarios and
+    labelling nothing.
+
+    So part B labels some. Every non-empty subset of each corpus, asked at three
+    instants — a real turn each time, since retrieval returning two of three
+    passages is the ordinary case and a question asked later is a question the
+    temporal judge answers differently. Thirty turns, scored by the same three
+    analysers the rest of this demo uses, and **labelled by subtracting two
+    dates rather than by asking a judge**: a calibration set graded by the gate
+    it is protecting measures the gate's agreement with itself, which is 100% by
+    construction. **Answering everything carries 53.3% selective risk; the
+    certified threshold of 0.167 holds a joint bound of 0.0323 and costs 60% of
+    the turns.**
+
+    Part C is the finding worth the scenario. Promised per corpus instead of on
+    average, the `strong` slice **breaches with a perfect record** — nine turns,
+    six answered, none wrong, and still over budget, because `1/10` exceeds
+    `0.05` however clean those nine were. Per-slice control costs a full
+    calibration set per slice, not one between them, and no threshold holds in
+    both corpora at once.
+
+    Part D stands the certified gate beside the judges it was derived from. It
+    clears the strong corpus, which is paid for; it refuses the weak one on its
+    own authority, with the number it refused on attached.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-eight
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-seven packages together; the output above is a genuine capture,
+  of all thirty-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -830,7 +868,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-seven real packages compose and run," which the sample output
+means "the thirty-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
