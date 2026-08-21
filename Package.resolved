@@ -1,5 +1,5 @@
 {
-  "originHash" : "3f58cc7c33723beca908e80c7e8e60593f60c91fce33290ada08bc64cc0cfdf6",
+  "originHash" : "f318b3ea46710cf7da45cc47603fca8935d90d6a30558ce4a0aabe6dd6e5502b",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -43,6 +43,15 @@
       "location" : "https://github.com/rajatslakhina/batch-inference-kit.git",
       "state" : {
         "revision" : "18b73c53857719e23f646c904151e11f4d0f0fa2",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "censored-feedback-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/censored-feedback-kit.git",
+      "state" : {
+        "revision" : "0e0fa82246bc631a175b1cab0a34b187ce12ea21",
         "version" : "1.0.0"
       }
     },

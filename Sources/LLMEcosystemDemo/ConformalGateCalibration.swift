@@ -54,11 +54,11 @@ extension EcosystemDemo {
         return points
     }
 
-    private static var conformalCorpora: [(String, AbstentionCorpus)] {
+    static var conformalCorpora: [(String, AbstentionCorpus)] {
         [("strong", Self.strongCorpus), ("weak", Self.weakCorpus)]
     }
 
-    private static func conformalSubsets(of ids: [String]) -> [Set<String>] {
+    static func conformalSubsets(of ids: [String]) -> [Set<String>] {
         guard !ids.isEmpty else { return [] }
         return (1..<(1 << ids.count)).map { mask in
             Set(ids.enumerated().filter { mask & (1 << $0.offset) != 0 }.map(\.element))

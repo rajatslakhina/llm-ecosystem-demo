@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-eight packages in this
+A single runnable demo that wires together all thirty-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -90,6 +90,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`AbstentionPolicyKit`](https://github.com/rajatslakhina/abstention-policy-kit) | Arbitrates between the eleven judges above, which each rule alone and cannot hear each other. First-refusal-wins handles one judge being certain; it has nothing to say about three judges each being *uneasy*, and a judge unwilling to block on its own finding currently discards the finding entirely. `SignalReading` has four cases rather than three: `unavailable` is not `clear`, because folding them together makes a pipeline more confident the more of its judges fail to run. Concurrence is tested *before* the coverage floor — if three judges each found something the turn is already not one to answer, and reporting a coverage shortfall instead sends the caller to fetch more sources when the evidence it has is the problem. Counts origins, not signals. Never overturns a refusal. Scenario 36 |
 | [`SignalDependenceKit`](https://github.com/rajatslakhina/signal-dependence-kit) | Asks how many of the judges above are the same judge. A panel that counts its members counts wrong: two gates sharing a corpus agree because they read the same thing, two sharing an embedding fail together, and a gate computed from another agrees by construction — every one of those is one opinion arriving twice, and an aggregator counting origins reads it as corroboration. `derived` edges close transitively; everything else merges by *complete* linkage, so A sharing a corpus with B and B a model with C never collapses all three. Mechanisms combine as `1 - product(1 - s)` rather than as a maximum, because two judges sharing both a corpus and a model are more entangled than two sharing only the corpus. Clean findings deflate on exactly the same terms as concerns, so the reduction can *tighten* a coverage floor and is not a device for loosening gates; refusals are never deflated at all. `DependenceRegistry` audits the declared graph against observed co-firing, because the entanglement nobody declared is the kind that hurts. Scenario 37 |
 | [`ConformalGateKit`](https://github.com/rajatslakhina/conformal-gate-kit) | Derives the thresholds every gate above was given by hand. Split conformal risk control takes labelled outcomes and a risk budget and returns the most permissive threshold whose empirical loss still leaves room for the one draw you have not seen: `(w(tau) + 1) / (n + 1) <= alpha`, a finite-sample bound with no assumption about the score distribution. The `+ 1` prices that unseen draw, which is why a thin calibration set is refused outright rather than given a loose number — at `alpha = 0.05`, 18 outcomes buy nothing at all, even with zero observed errors. Only the joint loss is certified: selective risk is not monotone in the threshold, so it is reported beside the certificate labelled uncertified and never folded into the promise. Stratified certification names the slice an aggregate bound is quietly failing. The `AbstentionPolicyKit` bridge has four arms, two of them `unavailable` — an infeasible outcome and a valid certificate that admits nothing are both facts about the gate, and reading either as a per-item verdict builds a gate that refuses every request it will ever see. Scenario 38 |
+| [`CensoredFeedbackKit`](https://github.com/rajatslakhina/censored-feedback-kit) | Audits the population the row above was calibrated on. A gate only ever learns about the requests it let through, so a calibration set drawn from production is drawn from the gate's own admissions and the conformal guarantee — arithmetically correct — is a guarantee about the wrong population. This reports partial-identification bounds over all the traffic, separates refusals whose loss is pinned by the loss definition from refusals that are genuinely unknown, and refuses to reweight a deterministic gate at all: a threshold admits with probability 1 or 0, so no finite inverse-probability weight exists for the refused region. Where a real exploration rate was logged it reports Horvitz–Thompson beside self-normalised with the Kish effective sample size, so weight explosion is visible rather than clamped. `ExplorationPlan` prices the fix in the same inequality the row above refuses on. `CertificateQualifier` reads a certificate against the log behind it and withdraws enforcement when the promise is unsupported. Scenario 39 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -525,7 +526,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-eight scenarios, $0.0526285 metered total**. `architecture.svg`
+The current run is **thirty-nine scenarios, $0.0529135 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -852,12 +853,56 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     clears the strong corpus, which is paid for; it refuses the weak one on its
     own authority, with the number it refused on attached.
 
+39. **`CensoredFeedbackKit`** adds the thirty-ninth scenario, and it asks where
+    the row above got its labels.
+
+    Scenario 38 enumerated every non-empty subset of each corpus at three
+    instants and graded all thirty by subtracting two dates — a completeness no
+    deployed gate has ever had. In production a label exists only for a turn
+    that was **answered**: a turn this stack refuses is never sent, never
+    verified and never graded, so it cannot be in the set the gate is
+    calibrated on.
+
+    Part A asks scenario 36's arbiter which of the thirty it would have let
+    through. **Fifteen.** And **nothing is censored** — which is not
+    reassurance. The nonconformity score is computed from those same three
+    readings, so a turn they refuse sits at the top of the scale by
+    construction and the gate would never have answered it either. Every
+    refusal is pinned at zero by the loss definition and none is unknown. A
+    certificate whose admissions are a function of the arbiter's own inputs is
+    measuring itself — scenario 37's finding, one level up.
+
+    Part B rules on the merged panel instead, which is the app's real pipeline
+    order: `signalDependence` collapses entangled voices before the arbiter
+    counts them. Admission moves — **seventeen answered rather than fifteen,
+    and the observed risk falls from 0.2000 to 0.1765 on a population that has
+    not changed.** It still censors nothing, and the direction is why: merging
+    can only remove a concurring voice, so it loosens rather than refusing
+    anything new. Censoring needs a gate that refuses for a reason the score
+    cannot see, and every judge in this panel feeds the score. The `ai-chat-app`
+    in this series has four such gates and does produce it. This demo, stated
+    plainly rather than manufactured, does not.
+
+    Part C is the finding, and the bias runs the other way. **Nothing was
+    censored and the promise still does not hold.** Scenario 38 certified
+    `0.0323` over a population containing thirteen turns the arbiter would never
+    have sent — and those are the easy ones, which is why they were refused.
+    Restricted to the turns this stack would actually answer, **the labelled
+    loss alone is 0.1000, double the budget, with no unknowns in it at all.**
+    A calibration set is not made honest by being complete.
+
+    Part D shows what withdrawing enforcement does. The certificate is
+    `unsupported`, so it is not enforced, and the strong corpus is answered on
+    the judges alone. This is the only stage in the stack whose effect is to
+    stop a gate refusing, and it is allowed to for one reason: the refusals it
+    withdraws rested on a guarantee that was never supported.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all thirty-nine
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-eight packages together; the output above is a genuine capture,
+  of all thirty-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -868,7 +913,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-eight real packages compose and run," which the sample output
+means "the thirty-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
