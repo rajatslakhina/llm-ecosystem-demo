@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all thirty-nine packages in this
+A single runnable demo that wires together all forty packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -91,6 +91,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SignalDependenceKit`](https://github.com/rajatslakhina/signal-dependence-kit) | Asks how many of the judges above are the same judge. A panel that counts its members counts wrong: two gates sharing a corpus agree because they read the same thing, two sharing an embedding fail together, and a gate computed from another agrees by construction — every one of those is one opinion arriving twice, and an aggregator counting origins reads it as corroboration. `derived` edges close transitively; everything else merges by *complete* linkage, so A sharing a corpus with B and B a model with C never collapses all three. Mechanisms combine as `1 - product(1 - s)` rather than as a maximum, because two judges sharing both a corpus and a model are more entangled than two sharing only the corpus. Clean findings deflate on exactly the same terms as concerns, so the reduction can *tighten* a coverage floor and is not a device for loosening gates; refusals are never deflated at all. `DependenceRegistry` audits the declared graph against observed co-firing, because the entanglement nobody declared is the kind that hurts. Scenario 37 |
 | [`ConformalGateKit`](https://github.com/rajatslakhina/conformal-gate-kit) | Derives the thresholds every gate above was given by hand. Split conformal risk control takes labelled outcomes and a risk budget and returns the most permissive threshold whose empirical loss still leaves room for the one draw you have not seen: `(w(tau) + 1) / (n + 1) <= alpha`, a finite-sample bound with no assumption about the score distribution. The `+ 1` prices that unseen draw, which is why a thin calibration set is refused outright rather than given a loose number — at `alpha = 0.05`, 18 outcomes buy nothing at all, even with zero observed errors. Only the joint loss is certified: selective risk is not monotone in the threshold, so it is reported beside the certificate labelled uncertified and never folded into the promise. Stratified certification names the slice an aggregate bound is quietly failing. The `AbstentionPolicyKit` bridge has four arms, two of them `unavailable` — an infeasible outcome and a valid certificate that admits nothing are both facts about the gate, and reading either as a per-item verdict builds a gate that refuses every request it will ever see. Scenario 38 |
 | [`CensoredFeedbackKit`](https://github.com/rajatslakhina/censored-feedback-kit) | Audits the population the row above was calibrated on. A gate only ever learns about the requests it let through, so a calibration set drawn from production is drawn from the gate's own admissions and the conformal guarantee — arithmetically correct — is a guarantee about the wrong population. This reports partial-identification bounds over all the traffic, separates refusals whose loss is pinned by the loss definition from refusals that are genuinely unknown, and refuses to reweight a deterministic gate at all: a threshold admits with probability 1 or 0, so no finite inverse-probability weight exists for the refused region. Where a real exploration rate was logged it reports Horvitz–Thompson beside self-normalised with the Kish effective sample size, so weight explosion is visible rather than clamped. `ExplorationPlan` prices the fix in the same inequality the row above refuses on. `CertificateQualifier` reads a certificate against the log behind it and withdraws enforcement when the promise is unsupported. Scenario 39 |
+| [`ExplorationChannelKit`](https://github.com/rajatslakhina/exploration-channel-kit) | Produces the labels the row above can only quote a price for. A deterministic gate cannot be corrected after the fact, so the only route to an estimate is to admit some would-be refusals deliberately — and this is the one component here whose job is to let a refusal through. `ExplorationChannel` is an actor that cannot overspend, cannot reach past its region however much budget remains, and cannot admit anything the gate did not refuse; every declining arm carries its reason, because a channel that quietly explores nothing looks exactly like one that is working. `RegionPlanner` splits the bound into an irreducible term that falls as the band widens and a sampling term that rises, and returns nothing rather than recommending a band that only ties not-exploring. `ChannelFeedbackBridge` keeps the band's records apart from the population's: exploration makes the *band* correctable, never the gate. Scenario 40 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -526,7 +527,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **thirty-nine scenarios, $0.0529135 metered total**. `architecture.svg`
+The current run is **forty scenarios, $0.0544255 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -897,12 +898,53 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     stop a gate refusing, and it is allowed to for one reason: the refusals it
     withdraws rested on a guarantee that was never supported.
 
+
+40. **`ExplorationChannelKit`** adds the fortieth scenario, and it tries to buy
+    what scenario 39 could only quote a price for.
+
+    Scenario 39 left a number sitting there — nineteen labelled refusals to
+    certify `alpha = 0.05` — with nothing in the ecosystem able to produce one.
+    Producing them is not a question about censoring. It is a question about
+    which refusals you can afford to admit.
+
+    Part A's finding is not about exploration at all. **Eighteen of the thirty
+    turns the conformal gate is calibrated on score above its own threshold**,
+    so the gate would refuse the majority of the set that certifies it. That is
+    scenario 39's finding read from the other end, and it is the reason there is
+    anything here to explore. Their depths run from 0.0333 to 0.3333 below the
+    cut.
+
+    Part B runs a channel over them at frequency 0.5 with a budget of $0.0100.
+    **Three labels for three admissions, the budget spent to the cent.** The
+    whole refused set stays `not correctable` — fifteen of the eighteen sit
+    below the region's floor and could never have been admitted at any budget.
+    The band alone becomes `correctable` at admission probability 0.5000. That
+    split is the package's central claim and its limit: exploration made the
+    band correctable, not the gate. The two estimates over it disagree loudly —
+    **Horvitz–Thompson 0.4286 against self-normalised 1.0000** — because all
+    three labels came back wrong. Self-normalised reports what was seen;
+    Horvitz–Thompson divides it across the band it stands for. On an effective
+    sample size of **3.00** both are honest and neither is worth acting on.
+
+    Part C sweeps the bands and reproduces, on the gate's real calibration
+    scores, the regime switch the package's own demo shows on synthetic depths.
+    At $0.0100 the optimum is **interior**: the band reaching 0.1667 bounds at
+    **0.8421**, while the band covering every refusal bounds at **0.9703** — a
+    worse bound, on two labels rather than three, for less money. Raise the
+    budget to $0.2000 and it stops binding: the widest band wins outright at
+    **0.3301**. More exploration is better exactly until you cannot afford the
+    whole band.
+
+    Neither band gets near nineteen labels. The honest reading is that a band
+    worth buying exists and the certificate is still out of reach — which is a
+    more useful answer than "explore more".
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all thirty-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all forty
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all thirty-nine packages together; the output above is a genuine capture,
+  of all forty packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -913,7 +955,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the thirty-nine real packages compose and run," which the sample output
+means "the forty real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

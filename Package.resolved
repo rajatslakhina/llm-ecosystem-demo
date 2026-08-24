@@ -1,5 +1,5 @@
 {
-  "originHash" : "f318b3ea46710cf7da45cc47603fca8935d90d6a30558ce4a0aabe6dd6e5502b",
+  "originHash" : "63c15e6c7309fa95cfb0b0a077e8379b9e3ea2f253d804278f30c24c0db061a7",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "11658e1a9b89cb73382c1d20cc41f7b6d0769c89",
         "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "exploration-channel-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/exploration-channel-kit.git",
+      "state" : {
+        "revision" : "d025f7b9d64e3d1e56bf123f3df351b73e8e1ec0",
+        "version" : "1.0.0"
       }
     },
     {
