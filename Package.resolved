@@ -1,5 +1,5 @@
 {
-  "originHash" : "63c15e6c7309fa95cfb0b0a077e8379b9e3ea2f253d804278f30c24c0db061a7",
+  "originHash" : "8a9e9310ec0efaed1c14b120e4456501fca005d8535cdd4df213da05e0665b36",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -169,6 +169,15 @@
       "location" : "https://github.com/rajatslakhina/idempotency-kit.git",
       "state" : {
         "revision" : "58e429cdd41a6e96611092d93acd93661eba263d",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "label-return-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/label-return-kit.git",
+      "state" : {
+        "revision" : "54d5436b5cbbe38dfcf439877c7cc865aa33d87b",
         "version" : "1.0.0"
       }
     },

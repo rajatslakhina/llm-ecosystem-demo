@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty packages in this
+A single runnable demo that wires together all forty-one packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -92,6 +92,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ConformalGateKit`](https://github.com/rajatslakhina/conformal-gate-kit) | Derives the thresholds every gate above was given by hand. Split conformal risk control takes labelled outcomes and a risk budget and returns the most permissive threshold whose empirical loss still leaves room for the one draw you have not seen: `(w(tau) + 1) / (n + 1) <= alpha`, a finite-sample bound with no assumption about the score distribution. The `+ 1` prices that unseen draw, which is why a thin calibration set is refused outright rather than given a loose number — at `alpha = 0.05`, 18 outcomes buy nothing at all, even with zero observed errors. Only the joint loss is certified: selective risk is not monotone in the threshold, so it is reported beside the certificate labelled uncertified and never folded into the promise. Stratified certification names the slice an aggregate bound is quietly failing. The `AbstentionPolicyKit` bridge has four arms, two of them `unavailable` — an infeasible outcome and a valid certificate that admits nothing are both facts about the gate, and reading either as a per-item verdict builds a gate that refuses every request it will ever see. Scenario 38 |
 | [`CensoredFeedbackKit`](https://github.com/rajatslakhina/censored-feedback-kit) | Audits the population the row above was calibrated on. A gate only ever learns about the requests it let through, so a calibration set drawn from production is drawn from the gate's own admissions and the conformal guarantee — arithmetically correct — is a guarantee about the wrong population. This reports partial-identification bounds over all the traffic, separates refusals whose loss is pinned by the loss definition from refusals that are genuinely unknown, and refuses to reweight a deterministic gate at all: a threshold admits with probability 1 or 0, so no finite inverse-probability weight exists for the refused region. Where a real exploration rate was logged it reports Horvitz–Thompson beside self-normalised with the Kish effective sample size, so weight explosion is visible rather than clamped. `ExplorationPlan` prices the fix in the same inequality the row above refuses on. `CertificateQualifier` reads a certificate against the log behind it and withdraws enforcement when the promise is unsupported. Scenario 39 |
 | [`ExplorationChannelKit`](https://github.com/rajatslakhina/exploration-channel-kit) | Produces the labels the row above can only quote a price for. A deterministic gate cannot be corrected after the fact, so the only route to an estimate is to admit some would-be refusals deliberately — and this is the one component here whose job is to let a refusal through. `ExplorationChannel` is an actor that cannot overspend, cannot reach past its region however much budget remains, and cannot admit anything the gate did not refuse; every declining arm carries its reason, because a channel that quietly explores nothing looks exactly like one that is working. `RegionPlanner` splits the bound into an irreducible term that falls as the band widens and a sampling term that rises, and returns nothing rather than recommending a band that only ties not-exploring. `ChannelFeedbackBridge` keeps the band's records apart from the population's: exploration makes the *band* correctable, never the gate. Scenario 40 |
+| [`LabelReturnKit`](https://github.com/rajatslakhina/label-return-kit) | Puts a clock on the row above. The channel records that an admission had a chance; nothing until now asked what came back, or what the admissions still outstanding do to a figure computed from the rest. `ReturnLedger` is an actor that refuses four kinds of label an id-matching ledger would accept — unmatched, duplicate, a label naming a threshold that has since moved, and one dated at or before its own admission. `CorrectedRisk` returns an interval whose **floor is exactly what closing the books right now reports**, so the most optimistic reading is named rather than quoted as the answer; the point estimate is withheld outright when returns are selective by region. `WaitCurve` reads the same ledger at a series of cutoffs, which is what turns a risk number back into a function of when somebody looked. Scenario 41 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -527,7 +528,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty scenarios, $0.0544255 metered total**. `architecture.svg`
+The current run is **forty-one scenarios, $0.0559555 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -939,12 +940,56 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     worth buying exists and the certificate is still out of reach — which is a
     more useful answer than "explore more".
 
+41. **`LabelReturnKit`** adds the forty-first scenario, and it asks where
+    scenario 40's three labels came from — specifically, *when*.
+
+    Scenario 40 could label an admission in the same statement that admitted it,
+    because this demo holds every turn's ground truth in memory. No deployed
+    system has that. Outcomes arrive later, incompletely, and the ones that
+    arrive first are not a random half: a clean answer is confirmed quickly, and
+    a wrong one surfaces through a complaint or a correction, which is slower.
+    The delay here is built from the demo's own data — a turn's nonconformity
+    score plus a six-tick penalty for having been wrong.
+
+    Part A is the population: **12 turns the gate admitted at `p = 1.00`, plus
+    the 3 refusals the channel bought at `p = 0.50`**. The refusals nobody
+    answered are deliberately absent — there is no outcome to wait for, and
+    their absence is scenario 39's censoring rather than this scenario's
+    incompleteness.
+
+    Part B reads it at eight cutoffs. **The floor sits at `0.0000` for nine
+    ticks and the promise looks kept the whole way.** Every loss lands at t10
+    together, and the verdict goes straight from `undetermined` to `withdrawn`
+    against a budget of `0.0500` on a measured `0.3333`. Nothing changed at t10
+    except that the evidence arrived.
+
+    Part C is the finding, and it runs against the package's own headline.
+    **The pooled figure withdraws a certificate the gate never broke.** Split by
+    region, the twelve turns the gate chose to answer contain **not one loss** —
+    `[0.0000, 0.0000]`, holds with the full `0.0500` to spare. All three losses
+    are refusals the channel bought, at `[1.0000, 1.0000]`, and it bought them
+    precisely because the gate was unsure. They are enriched for exactly the
+    outcome being counted.
+
+    So comparing the pooled rate to `alpha` compares a promise about answered
+    traffic against a population deliberately stocked with the refused kind.
+    **Exploration does not only cost money — it makes the naive risk figure
+    worse by construction**, and an audit that cannot say which region a loss
+    came from will read that as a gate failing. Scenario 40 bought the labels;
+    this one shows that where you put them decides what they mean.
+
+    Part D bands the three admissions by depth and reports that it cannot: all
+    three sit at exactly `0.1667`, so there is nothing for the selectivity check
+    to compare. Left in rather than tuned away — the check is only as good as
+    the spread of what was bought, and a channel that drew three turns from one
+    depth bought no ability to detect a depth-selective return.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-one
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty packages together; the output above is a genuine capture,
+  of all forty-one packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -955,7 +1000,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty real packages compose and run," which the sample output
+means "the forty-one real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

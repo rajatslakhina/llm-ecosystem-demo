@@ -52,7 +52,8 @@ extension EcosystemDemo {
             (.independenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.temporalHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.abstentionHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.explorationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.explorationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.labelReturnHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }
