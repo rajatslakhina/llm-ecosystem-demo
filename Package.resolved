@@ -1,5 +1,5 @@
 {
-  "originHash" : "8a9e9310ec0efaed1c14b120e4456501fca005d8535cdd4df213da05e0665b36",
+  "originHash" : "f2e8d634d8034e4d12b25caaf6f49c984902eac06ca319e210e9ff980a629c1f",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -115,6 +115,15 @@
       "location" : "https://github.com/rajatslakhina/cost-estimator-kit.git",
       "state" : {
         "revision" : "826b1a3c02befd01bba271511ea6137ae07a2f94",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "delay-signal-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/delay-signal-kit.git",
+      "state" : {
+        "revision" : "5befe44e37eb51e673e9a67414c7bf5a7290feea",
         "version" : "1.0.0"
       }
     },

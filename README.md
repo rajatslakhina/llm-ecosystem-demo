@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-one packages in this
+A single runnable demo that wires together all forty-two packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -93,6 +93,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`CensoredFeedbackKit`](https://github.com/rajatslakhina/censored-feedback-kit) | Audits the population the row above was calibrated on. A gate only ever learns about the requests it let through, so a calibration set drawn from production is drawn from the gate's own admissions and the conformal guarantee — arithmetically correct — is a guarantee about the wrong population. This reports partial-identification bounds over all the traffic, separates refusals whose loss is pinned by the loss definition from refusals that are genuinely unknown, and refuses to reweight a deterministic gate at all: a threshold admits with probability 1 or 0, so no finite inverse-probability weight exists for the refused region. Where a real exploration rate was logged it reports Horvitz–Thompson beside self-normalised with the Kish effective sample size, so weight explosion is visible rather than clamped. `ExplorationPlan` prices the fix in the same inequality the row above refuses on. `CertificateQualifier` reads a certificate against the log behind it and withdraws enforcement when the promise is unsupported. Scenario 39 |
 | [`ExplorationChannelKit`](https://github.com/rajatslakhina/exploration-channel-kit) | Produces the labels the row above can only quote a price for. A deterministic gate cannot be corrected after the fact, so the only route to an estimate is to admit some would-be refusals deliberately — and this is the one component here whose job is to let a refusal through. `ExplorationChannel` is an actor that cannot overspend, cannot reach past its region however much budget remains, and cannot admit anything the gate did not refuse; every declining arm carries its reason, because a channel that quietly explores nothing looks exactly like one that is working. `RegionPlanner` splits the bound into an irreducible term that falls as the band widens and a sampling term that rises, and returns nothing rather than recommending a band that only ties not-exploring. `ChannelFeedbackBridge` keeps the band's records apart from the population's: exploration makes the *band* correctable, never the gate. Scenario 40 |
 | [`LabelReturnKit`](https://github.com/rajatslakhina/label-return-kit) | Puts a clock on the row above. The channel records that an admission had a chance; nothing until now asked what came back, or what the admissions still outstanding do to a figure computed from the rest. `ReturnLedger` is an actor that refuses four kinds of label an id-matching ledger would accept — unmatched, duplicate, a label naming a threshold that has since moved, and one dated at or before its own admission. `CorrectedRisk` returns an interval whose **floor is exactly what closing the books right now reports**, so the most optimistic reading is named rather than quoted as the answer; the point estimate is withheld outright when returns are selective by region. `WaitCurve` reads the same ledger at a series of cutoffs, which is what turns a risk number back into a function of when somebody looked. Scenario 41 |
+| [`DelaySignalKit`](https://github.com/rajatslakhina/delay-signal-kit) | Reads the thing the row above holds and does not use: **how long each label took**. Losses verify slower than clean answers, so at any cutoff the labels you have are enriched for clean ones and every figure quoted off them is optimistic. `DelaySignalEstimator` fits a two-class exponential delay mixture by expectation-maximisation over a panel that is still half censored, splitting each outstanding request between the classes by how plausible its silence is under each. `SeparationTest` is the identifiability condition rather than a quality check — with equal rates the fit returns the naive count exactly — and it carries a likelihood-ratio test as well as a ratio threshold, because the threshold alone cleared its bar on a fixture with no signal in it. `DelaySignalReturn` reconciles the correction against `LabelReturnKit`'s bracket and calls a correction outside it a contradiction rather than averaging the two. Scenario 42 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -528,7 +529,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-one scenarios, $0.0559555 metered total**. `architecture.svg`
+The current run is **forty-two scenarios, $0.0571705 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -986,10 +987,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-one
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-two
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-one packages together; the output above is a genuine capture,
+  of all forty-two packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1000,7 +1001,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-one real packages compose and run," which the sample output
+means "the forty-two real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

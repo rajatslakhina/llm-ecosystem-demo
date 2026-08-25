@@ -51,7 +51,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/conformal-gate-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/censored-feedback-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/exploration-channel-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/label-return-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/label-return-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/delay-signal-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -107,7 +108,9 @@ let package = Package(
                 .product(name: "ExplorationChannelKit", package: "exploration-channel-kit"),
                 .product(name: "ExplorationChannelCensored", package: "exploration-channel-kit"),
                 .product(name: "LabelReturnKit", package: "label-return-kit"),
-                .product(name: "LabelReturnExploration", package: "label-return-kit")
+                .product(name: "LabelReturnExploration", package: "label-return-kit"),
+                .product(name: "DelaySignalKit", package: "delay-signal-kit"),
+                .product(name: "DelaySignalReturn", package: "delay-signal-kit")
             ]
         )
     ]
