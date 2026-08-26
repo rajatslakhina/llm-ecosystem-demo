@@ -83,7 +83,12 @@ extension EcosystemDemo {
             print("[stream-aggregator scenario] FAILED: tool dispatch did not succeed: \(dispatch.outcome)")
             return
         }
-        let encoded = (try? JSONEncoder().encode(toolOutput)) ?? Data()
+        // Sorted keys because this line is compared byte-for-byte between a fresh clone and the
+        // working copy on every run. A dictionary's encoding order is not stable across processes,
+        // which made the demo look non-reproducible when the only thing moving was the key order.
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let encoded = (try? encoder.encode(toolOutput)) ?? Data()
         let toolOutputJSON = String(data: encoded, encoding: .utf8) ?? "{}"
         print("[stream-aggregator scenario] dispatched \(call.name) -> \(toolOutputJSON)")
     }
