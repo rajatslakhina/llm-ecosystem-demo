@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-two packages in this
+A single runnable demo that wires together all forty-three packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -94,6 +94,8 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ExplorationChannelKit`](https://github.com/rajatslakhina/exploration-channel-kit) | Produces the labels the row above can only quote a price for. A deterministic gate cannot be corrected after the fact, so the only route to an estimate is to admit some would-be refusals deliberately — and this is the one component here whose job is to let a refusal through. `ExplorationChannel` is an actor that cannot overspend, cannot reach past its region however much budget remains, and cannot admit anything the gate did not refuse; every declining arm carries its reason, because a channel that quietly explores nothing looks exactly like one that is working. `RegionPlanner` splits the bound into an irreducible term that falls as the band widens and a sampling term that rises, and returns nothing rather than recommending a band that only ties not-exploring. `ChannelFeedbackBridge` keeps the band's records apart from the population's: exploration makes the *band* correctable, never the gate. Scenario 40 |
 | [`LabelReturnKit`](https://github.com/rajatslakhina/label-return-kit) | Puts a clock on the row above. The channel records that an admission had a chance; nothing until now asked what came back, or what the admissions still outstanding do to a figure computed from the rest. `ReturnLedger` is an actor that refuses four kinds of label an id-matching ledger would accept — unmatched, duplicate, a label naming a threshold that has since moved, and one dated at or before its own admission. `CorrectedRisk` returns an interval whose **floor is exactly what closing the books right now reports**, so the most optimistic reading is named rather than quoted as the answer; the point estimate is withheld outright when returns are selective by region. `WaitCurve` reads the same ledger at a series of cutoffs, which is what turns a risk number back into a function of when somebody looked. Scenario 41 |
 | [`DelaySignalKit`](https://github.com/rajatslakhina/delay-signal-kit) | Reads the thing the row above holds and does not use: **how long each label took**. Losses verify slower than clean answers, so at any cutoff the labels you have are enriched for clean ones and every figure quoted off them is optimistic. `DelaySignalEstimator` fits a two-class exponential delay mixture by expectation-maximisation over a panel that is still half censored, splitting each outstanding request between the classes by how plausible its silence is under each. `SeparationTest` is the identifiability condition rather than a quality check — with equal rates the fit returns the naive count exactly — and it carries a likelihood-ratio test as well as a ratio threshold, because the threshold alone cleared its bar on a fixture with no signal in it. `DelaySignalReturn` reconciles the correction against `LabelReturnKit`'s bracket and calls a correction outside it a contradiction rather than averaging the two. Scenario 42 |
+
+| [`DelayShapeKit`](https://github.com/rajatslakhina/delay-shape-kit) | Answers the question the row above assumes away: **what shape is that delay, actually?** `DelaySignalKit` models each class's delay as a constant hazard and argues the case honestly — an outstanding request carries one bit and a second parameter would fit it two ways. That is true of the censored half and silent about the other one: a label that *came back* carries its whole delay and its class, and several parameters are identifiable from a pile of those. `ShapeFitting` ranks four families by AIC over an interval-censored likelihood, `AdequacyCheck` asks whether the winner describes the data at all, and `ShapeVerdict` has three arms that hand back nothing and mean different things — the exponential holding is a finding, not a fallback. The sample declares whether it is censored or truncated because the two need different likelihoods and applying both lands further from the truth than applying neither. Scenario 43 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -529,7 +531,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-two scenarios, $0.0571705 metered total**. `architecture.svg`
+The current run is **forty-three scenarios, $0.0913705 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -987,10 +989,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-two
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-three
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-two packages together; the output above is a genuine capture,
+  of all forty-three packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1001,7 +1003,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-two real packages compose and run," which the sample output
+means "the forty-three real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
