@@ -1,5 +1,5 @@
 {
-  "originHash" : "8c37d1a6a82a248a6fbff1288bcaadf692c9c1caa87e865ccf0a169dfbf9e19e",
+  "originHash" : "fd283d59d88bd9f9003836e51cc7d7795657db8d78607c3108b24b06000dab2b",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/delay-shape-kit.git",
       "state" : {
-        "revision" : "e7e73bf2ac844f92503315cc6c447f042368ba24",
-        "version" : "1.0.0"
+        "revision" : "4e5e4ae87276de3b14a4520d13b7c310068141bc",
+        "version" : "1.0.1"
       }
     },
     {
