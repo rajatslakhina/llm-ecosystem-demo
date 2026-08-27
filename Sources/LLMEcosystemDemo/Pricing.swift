@@ -55,7 +55,8 @@ extension EcosystemDemo {
             (.explorationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.labelReturnHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.delaySignalHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.delayShapeHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.delayShapeHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.delayCurveHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

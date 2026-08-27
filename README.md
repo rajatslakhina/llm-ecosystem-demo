@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-three packages in this
+A single runnable demo that wires together all forty-four packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -96,6 +96,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`DelaySignalKit`](https://github.com/rajatslakhina/delay-signal-kit) | Reads the thing the row above holds and does not use: **how long each label took**. Losses verify slower than clean answers, so at any cutoff the labels you have are enriched for clean ones and every figure quoted off them is optimistic. `DelaySignalEstimator` fits a two-class exponential delay mixture by expectation-maximisation over a panel that is still half censored, splitting each outstanding request between the classes by how plausible its silence is under each. `SeparationTest` is the identifiability condition rather than a quality check — with equal rates the fit returns the naive count exactly — and it carries a likelihood-ratio test as well as a ratio threshold, because the threshold alone cleared its bar on a fixture with no signal in it. `DelaySignalReturn` reconciles the correction against `LabelReturnKit`'s bracket and calls a correction outside it a contradiction rather than averaging the two. Scenario 42 |
 
 | [`DelayShapeKit`](https://github.com/rajatslakhina/delay-shape-kit) | Answers the question the row above assumes away: **what shape is that delay, actually?** `DelaySignalKit` models each class's delay as a constant hazard and argues the case honestly — an outstanding request carries one bit and a second parameter would fit it two ways. That is true of the censored half and silent about the other one: a label that *came back* carries its whole delay and its class, and several parameters are identifiable from a pile of those. `ShapeFitting` ranks four families by AIC over an interval-censored likelihood, `AdequacyCheck` asks whether the winner describes the data at all, and `ShapeVerdict` has three arms that hand back nothing and mean different things — the exponential holding is a finding, not a fallback. The sample declares whether it is censored or truncated because the two need different likelihoods and applying both lands further from the truth than applying neither. Scenario 43 |
+| [`DelayCurveKit`](https://github.com/rajatslakhina/delay-curve-kit) | The non-parametric answer to the row above. `DelayShapeKit` picks a family and declines when none fits; a correction that needed a survival curve then gets nothing. This assumes no family at all — a Kaplan-Meier product-limit estimate straight from the labels that returned and the requests still waiting — and pays for it with a hard right edge: `survival(at:)` returns `nil` past the last observation unless every request reported, and `RestrictedMean.over(_:horizon:)` **throws** rather than clamping a horizon that runs past the data. Bands are built on the log(-log) scale so they stay inside `(0,1)` without clamping, and thin risk sets are marked rather than deleted because Greenwood understates the tails. `LogRank` is computed, reported, and deliberately not used to decide: it assumes proportional hazards and cancels exactly where this ecosystem's hazards cross. `HorizonSweep` exists because the intended replacement failed the same way first. Scenario 44 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -531,7 +532,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-three scenarios, $0.0913705 metered total**. `architecture.svg`
+The current run is **forty-four scenarios, $0.1147705 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -989,10 +990,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-three
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-four
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-three packages together; the output above is a genuine capture,
+  of all forty-four packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1003,7 +1004,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-three real packages compose and run," which the sample output
+means "the forty-four real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

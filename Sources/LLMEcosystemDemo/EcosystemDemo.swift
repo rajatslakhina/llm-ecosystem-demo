@@ -69,17 +69,25 @@ struct EcosystemDemo {
         await runTemporalValidityScenario(meter: meter)
         await runAbstentionPolicyScenario(meter: meter)
         await runSignalDependenceScenario(meter: meter)
+        await runFeedbackScenarios(meter: meter)
+
+        print()
+        let report = await meter.report()
+        print(report.formatted())
+        print("Total metered cost across all forty-four scenarios: $\(await meter.totalCost())")
+    }
+
+    /// The scenarios about what happens after an answer ships: whether it was gated, whether a
+    /// label ever came back, and how long that took. Grouped out of `main()` for the same reason
+    /// the banner was — that function has a 50-line body limit and this series keeps adding to it.
+    private static func runFeedbackScenarios(meter: TokenMeter) async {
         await runConformalGateScenario(meter: meter)
         await runCensoredFeedbackScenario(meter: meter)
         await runExplorationChannelScenario(meter: meter)
         await runLabelReturnScenario(meter: meter)
         await runDelaySignalScenario(meter: meter)
         await runDelayShapeScenario(meter: meter)
-
-        print()
-        let report = await meter.report()
-        print(report.formatted())
-        print("Total metered cost across all forty-three scenarios: $\(await meter.totalCost())")
+        await runDelayCurveScenario(meter: meter)
     }
 
     /// The banner, lifted out of `main()` so that function stays inside
