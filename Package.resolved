@@ -1,5 +1,5 @@
 {
-  "originHash" : "65b61a54f6fdf6217ad5d1f593b785abd45d28b0d2742f655ebd1675563aa00b",
+  "originHash" : "5db4b11c2dc45aa21af8510c4bb14d4ff547a8e0ed46f3999e3dbd45b1fc67fb",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -116,6 +116,15 @@
       "state" : {
         "revision" : "826b1a3c02befd01bba271511ea6137ae07a2f94",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "curve-divergence-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/curve-divergence-kit.git",
+      "state" : {
+        "revision" : "9b2dadd3a51901a6cad9f2748c3c293bbf192922",
+        "version" : "1.0.2"
       }
     },
     {

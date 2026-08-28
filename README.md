@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-four packages in this
+A single runnable demo that wires together all forty-five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -97,6 +97,7 @@ one bad reply isolated to its own item instead of taking the job down.
 
 | [`DelayShapeKit`](https://github.com/rajatslakhina/delay-shape-kit) | Answers the question the row above assumes away: **what shape is that delay, actually?** `DelaySignalKit` models each class's delay as a constant hazard and argues the case honestly — an outstanding request carries one bit and a second parameter would fit it two ways. That is true of the censored half and silent about the other one: a label that *came back* carries its whole delay and its class, and several parameters are identifiable from a pile of those. `ShapeFitting` ranks four families by AIC over an interval-censored likelihood, `AdequacyCheck` asks whether the winner describes the data at all, and `ShapeVerdict` has three arms that hand back nothing and mean different things — the exponential holding is a finding, not a fallback. The sample declares whether it is censored or truncated because the two need different likelihoods and applying both lands further from the truth than applying neither. Scenario 43 |
 | [`DelayCurveKit`](https://github.com/rajatslakhina/delay-curve-kit) | The non-parametric answer to the row above. `DelayShapeKit` picks a family and declines when none fits; a correction that needed a survival curve then gets nothing. This assumes no family at all — a Kaplan-Meier product-limit estimate straight from the labels that returned and the requests still waiting — and pays for it with a hard right edge: `survival(at:)` returns `nil` past the last observation unless every request reported, and `RestrictedMean.over(_:horizon:)` **throws** rather than clamping a horizon that runs past the data. Bands are built on the log(-log) scale so they stay inside `(0,1)` without clamping, and thin risk sets are marked rather than deleted because Greenwood understates the tails. `LogRank` is computed, reported, and deliberately not used to decide: it assumes proportional hazards and cancels exactly where this ecosystem's hazards cross. `HorizonSweep` exists because the intended replacement failed the same way first. Scenario 44 |
+| [`CurveDivergenceKit`](https://github.com/rajatslakhina/curve-divergence-kit) | The supremum under the row above. `DelayCurveKit`'s horizon sweep asks at every horizon and still reduces each one to a single difference, so it has to be asked in the right place; a supremum does not. `sup|S1-S2|` and the Kuiper sum come out of one scan over the shared window, each carrying **the tick it was attained at** — the part no scalar summary can produce. `SeparationShape` tells dominance from a crossing, which an area difference of zero cannot, since zero arises both from identical curves and from evenly crossing ones. The null is a permutation rather than a table, because the supremum between two Kaplan-Meier curves is not distribution-free under censoring; exchangeability is flagged via the censoring gap and not corrected for. `RenyiSupremum` is reported and deliberately not used to decide. Scenario 45 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -532,7 +533,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-four scenarios, $0.1147705 metered total**. `architecture.svg`
+The current run is **forty-five scenarios, $0.1363705 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -988,12 +989,49 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     the spread of what was bought, and a channel that drew three turns from one
     depth bought no ability to detect a depth-selective return.
 
+45. **`CurveDivergenceKit`** adds the forty-fifth scenario, and it is the first
+    one in this series whose honest result is *"this is not the case the package
+    was built for."*
+
+    Scenario 44 part C established that the two label classes separate on delay
+    without fitting anything, using a log-rank statistic and a sweep of
+    restricted means. Both are areas, and an area over a window that contains a
+    crossing is a positive region added to a negative one. A supremum is a
+    height: it takes the largest disagreement anywhere in the shared window and
+    cannot cancel, and it reports **the tick it happened at** without being
+    asked about any horizon.
+
+    On this panel the two curves do not cross. The loss class has produced
+    **nothing** by t8 while the clean class has almost entirely resolved, so the
+    loss curve is flat at one against a curve at zero: `KS 1.0000 at t8`,
+    permutation `p 0.0010`, shape `first stays above throughout`. Log-rank
+    reports `chi2 216.1638` on the same pair. **They agree, and they agree
+    because dominance is the geometry where an area and a height say the same
+    thing.** The scenario says so in its own output rather than implying the
+    supremum rescued something.
+
+    It did find a real defect, though — not in this repository. `CurveDivergenceKit`
+    1.0.0 *declined* this comparison: it refused whenever one arm had no label
+    inside the shared window, on the reasoning that there was no tick to compare
+    at. Running it here fired that refusal on this demo's strongest result. A
+    flat line at one against a fallen curve is the largest gap two survival
+    curves can have. The refusal was removed in 1.0.1, and this scenario is the
+    reason the shared demo exists: no unit test in that package disagreed with
+    it, because every one of them had been written by the same person who
+    believed it.
+
+    The `48.89%` censoring gap is printed next to the verdict and not corrected
+    for. A permutation null assumes the class labels are exchangeable, which is
+    a claim about how the two classes were *observed* and not only about how
+    fast they resolve — and nothing in this panel can tell a slow class from a
+    class read late.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-four
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-five
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-four packages together; the output above is a genuine capture,
+  of all forty-five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1004,7 +1042,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-four real packages compose and run," which the sample output
+means "the forty-five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

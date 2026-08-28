@@ -54,7 +54,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/label-return-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/delay-signal-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/delay-shape-kit.git", from: "1.0.1"),
-        .package(url: "https://github.com/rajatslakhina/delay-curve-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/delay-curve-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/curve-divergence-kit.git", from: "1.0.2")
     ],
     targets: [
         .executableTarget(
@@ -116,7 +117,8 @@ let package = Package(
                 .product(name: "DelayShapeKit", package: "delay-shape-kit"),
                 .product(name: "DelayShapeSignal", package: "delay-shape-kit"),
                 .product(name: "DelayCurveKit", package: "delay-curve-kit"),
-                .product(name: "DelayCurveShape", package: "delay-curve-kit")
+                .product(name: "DelayCurveShape", package: "delay-curve-kit"),
+                .product(name: "CurveDivergenceKit", package: "curve-divergence-kit")
             ]
         )
     ]
