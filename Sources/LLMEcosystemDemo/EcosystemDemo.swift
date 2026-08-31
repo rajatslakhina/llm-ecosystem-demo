@@ -74,7 +74,7 @@ struct EcosystemDemo {
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all forty-five scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all forty-six scenarios: $\(await meter.totalCost())")
     }
 
     /// The scenarios about what happens after an answer ships: whether it was gated, whether a
@@ -89,6 +89,7 @@ struct EcosystemDemo {
         await runDelayShapeScenario(meter: meter)
         await runDelayCurveScenario(meter: meter)
         await runCurveDivergenceScenario(meter: meter)
+        await runLabelClockScenario(meter: meter)
     }
 
     /// The banner, lifted out of `main()` so that function stays inside

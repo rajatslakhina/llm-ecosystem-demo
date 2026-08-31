@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-five packages in this
+A single runnable demo that wires together all forty-six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -26,7 +26,8 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`QuotaGovernorKit`](https://github.com/rajatslakhina/quota-governor-kit), and
 [`CostEstimatorKit`](https://github.com/rajatslakhina/cost-estimator-kit), and
 [`WorkloadProfilerKit`](https://github.com/rajatslakhina/workload-profiler-kit), and
-[`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit)
+[`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit), and
+[`LabelClockKit`](https://github.com/rajatslakhina/label-clock-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -98,6 +99,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`DelayShapeKit`](https://github.com/rajatslakhina/delay-shape-kit) | Answers the question the row above assumes away: **what shape is that delay, actually?** `DelaySignalKit` models each class's delay as a constant hazard and argues the case honestly — an outstanding request carries one bit and a second parameter would fit it two ways. That is true of the censored half and silent about the other one: a label that *came back* carries its whole delay and its class, and several parameters are identifiable from a pile of those. `ShapeFitting` ranks four families by AIC over an interval-censored likelihood, `AdequacyCheck` asks whether the winner describes the data at all, and `ShapeVerdict` has three arms that hand back nothing and mean different things — the exponential holding is a finding, not a fallback. The sample declares whether it is censored or truncated because the two need different likelihoods and applying both lands further from the truth than applying neither. Scenario 43 |
 | [`DelayCurveKit`](https://github.com/rajatslakhina/delay-curve-kit) | The non-parametric answer to the row above. `DelayShapeKit` picks a family and declines when none fits; a correction that needed a survival curve then gets nothing. This assumes no family at all — a Kaplan-Meier product-limit estimate straight from the labels that returned and the requests still waiting — and pays for it with a hard right edge: `survival(at:)` returns `nil` past the last observation unless every request reported, and `RestrictedMean.over(_:horizon:)` **throws** rather than clamping a horizon that runs past the data. Bands are built on the log(-log) scale so they stay inside `(0,1)` without clamping, and thin risk sets are marked rather than deleted because Greenwood understates the tails. `LogRank` is computed, reported, and deliberately not used to decide: it assumes proportional hazards and cancels exactly where this ecosystem's hazards cross. `HorizonSweep` exists because the intended replacement failed the same way first. Scenario 44 |
 | [`CurveDivergenceKit`](https://github.com/rajatslakhina/curve-divergence-kit) | The supremum under the row above. `DelayCurveKit`'s horizon sweep asks at every horizon and still reduces each one to a single difference, so it has to be asked in the right place; a supremum does not. `sup|S1-S2|` and the Kuiper sum come out of one scan over the shared window, each carrying **the tick it was attained at** — the part no scalar summary can produce. `SeparationShape` tells dominance from a crossing, which an area difference of zero cannot, since zero arises both from identical curves and from evenly crossing ones. The null is a permutation rather than a table, because the supremum between two Kaplan-Meier curves is not distribution-free under censoring; exchangeability is flagged via the censoring gap and not corrected for. `RenyiSupremum` is reported and deliberately not used to decide. Scenario 45 |
+| [`LabelClockKit`](https://github.com/rajatslakhina/label-clock-kit) | Upstream of every row above it in the delay family, and the one that asks who could have built their arms. A record that stores one optional for both *has anything come back?* and *what did it say?* cannot form a censored arm: a unit carries a class exactly when its label has returned, and the landmark method excludes exactly those units, so **every landmark arm is empty at every landmark** — by proof, not by scarcity. `SeparationTable` measures whether the two facts are recorded for the same units (one cell, classified-and-outstanding, is the sole source of censoring) and `ClockSeparation` whether they are recorded at the same ticks. `ArmFormer` applies the landmark procedure and refuses by name. Scenario 46 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -533,7 +535,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-five scenarios, $0.1363705 metered total**. `architecture.svg`
+The current run is **forty-six scenarios, $0.1579705 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1026,12 +1028,46 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     fast they resolve — and nothing in this panel can tell a slow class from a
     class read late.
 
+46. **`LabelClockKit`** adds the forty-sixth scenario, and what it measures is
+    the two scenarios before it.
+
+    `delayCurveSample(_:asOf:wrong:)` splits the population on `wasWrong` and
+    *then* marks a turn outstanding when its delay runs past the cut-off. Read
+    those two steps in order. The second says the label has not come back. The
+    first says which class the turn is in — and for an outstanding turn that is
+    knowable here only because the fixture generated it. A service holding real
+    traffic has exactly the outstanding turns and none of their classes, so the
+    censored observations in scenarios 44 and 45 are honest arithmetic over a
+    class assignment nothing in production could make. The statistics were never
+    wrong; the claim that a live gate could reproduce them was.
+
+    The audit puts a number on it. Cohort taken from `wasWrong`, timestamped
+    when the label returned: `phi 1.0000`, `censorable 0/480`, all 325 paired
+    turns simultaneous. **Seventeen landmarks across the whole follow-up, 17
+    refusals, 0 arms formed** — and not from scarcity. A turn carries a cohort
+    exactly when its label has come back, and the landmark method excludes
+    exactly those, so the surviving set is empty by construction at every
+    landmark rather than by luck.
+
+    Then it runs the comparison a gate actually can. The conformal
+    nonconformity score exists before any answer is judged, which is the whole
+    qualification for being a cohort. Banding on it gives `separated (155
+    censorable units)`, a longest lead of 15 ticks, and two arms at t+1 —
+    `flagged: 160 units, 84 outstanding` against `unflagged: 320 units, 71
+    outstanding`. Handed to the same `DelayCurveKit` and `CurveDivergenceKit`
+    as scenario 45: `KS 0.6646, p 0.0010`, first stays above throughout. The
+    band is the coarse one — any nonconformity, or none — because this scorer
+    emits three distinct values across these turns and its median is its
+    minimum, so a quantile split would put every turn on one side. That is
+    stated in the output rather than smoothed over.
+
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-five
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-six
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-five packages together; the output above is a genuine capture,
+  of all forty-six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1042,7 +1078,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-five real packages compose and run," which the sample output
+means "the forty-six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
