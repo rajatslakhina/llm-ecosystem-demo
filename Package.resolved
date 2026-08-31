@@ -1,5 +1,5 @@
 {
-  "originHash" : "59cc5de731e895b598ba90cb9f1576ee43ceb2de5733ab040074044d032d4ff7",
+  "originHash" : "421ff3223c369f59023666213ecaa5075cfbe73c9adbc077f31c6d1ca7bce221",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -304,6 +304,15 @@
       "location" : "https://github.com/rajatslakhina/schema-migration-kit.git",
       "state" : {
         "revision" : "8c161694357e0c19cf886b17fd956be9a0dc012d",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "selection-trust-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/selection-trust-kit.git",
+      "state" : {
+        "revision" : "3ab21fb322e4e11975492b826c980558f5cc1973",
         "version" : "1.0.0"
       }
     },
