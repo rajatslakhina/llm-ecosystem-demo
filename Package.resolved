@@ -1,5 +1,5 @@
 {
-  "originHash" : "f8841a09c0fe329bb36917073cfe41228847644d883d00f3a53484193c454d70",
+  "originHash" : "d74a0e8009724fc52c4095708bd1a4653ce47e44c6a01a95d3a417a0ab5f5c4e",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -160,6 +160,15 @@
       "location" : "https://github.com/rajatslakhina/delay-signal-kit.git",
       "state" : {
         "revision" : "5befe44e37eb51e673e9a67414c7bf5a7290feea",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "effective-vote-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/effective-vote-kit.git",
+      "state" : {
+        "revision" : "b937bedf1b7f7ed1a5a0518aa57e450ef181f54b",
         "version" : "1.0.0"
       }
     },

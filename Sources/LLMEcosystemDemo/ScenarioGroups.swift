@@ -25,5 +25,6 @@ extension EcosystemDemo {
         await runCurveDivergenceScenario(meter: meter)
         await runLabelClockScenario(meter: meter)
         await runArgumentAttributionScenario(meter: meter)
+        await runEffectiveVoteScenario(meter: meter)
     }
 }

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-eight packages in this
+A single runnable demo that wires together all forty-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -30,6 +30,7 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`LabelClockKit`](https://github.com/rajatslakhina/label-clock-kit)
 [`SelectionTrustKit`](https://github.com/rajatslakhina/selection-trust-kit)
 [`ArgumentAttributionKit`](https://github.com/rajatslakhina/argument-attribution-kit)
+[`EffectiveVoteKit`](https://github.com/rajatslakhina/effective-vote-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -104,6 +105,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`LabelClockKit`](https://github.com/rajatslakhina/label-clock-kit) | Upstream of every row above it in the delay family, and the one that asks who could have built their arms. A record that stores one optional for both *has anything come back?* and *what did it say?* cannot form a censored arm: a unit carries a class exactly when its label has returned, and the landmark method excludes exactly those units, so **every landmark arm is empty at every landmark** — by proof, not by scarcity. `SeparationTable` measures whether the two facts are recorded for the same units (one cell, classified-and-outstanding, is the sole source of censoring) and `ClockSeparation` whether they are recorded at the same ticks. `ArmFormer` applies the landmark procedure and refuses by name. Scenario 46 |
 | [`SelectionTrustKit`](https://github.com/rajatslakhina/selection-trust-kit) | The second axis under `ToolAuthorityKit`. That package refuses a call whose **arguments** came from a poisoned passage, which is content trust and works. This one is the case a ceiling cannot see: the planner reads the passage and then proposes refunding a **real** order, read out of the app's own table. `ToolAuthorityKit`'s ladder is `operatorAuthored < modelAuthored < untrusted` and has no case for *our data, their choice* — the nearest is `.modelAuthored`, which sits under the refund ceiling — so it returns the **same verdict whether the planner or the user picked the order**. `TaintFloor` is a monotone session high-water mark inherited across a baton pass, so a downstream agent cannot launder taint by authoring a fresh value; `.userConfirmed` values are exempt from it and `.appDerived` values deliberately are not. `ConfirmationReceipt` binds a digest over the resolved parameters rather than a boolean, blast radius included. The commit slot is reserved *before* the confirmation `await`, because actor isolation does not survive a suspension point: budget 1 and four concurrent invocations raise four prompts in the naive order and one in the correct one. Scenario 47 |
 | [`ArgumentAttributionKit`](https://github.com/rajatslakhina/argument-attribution-kit) | The granularity under both of the two above. A taint floor marks every argument untrusted once any untrusted passage has been read, and cannot separate an argument whose **bytes** came out of that passage from one that merely followed it in time. Five rungs find the candidate — `exact`, `normalized`, `numeric` (a number written in words is still the number), `tokenSubset`, and a `semantic` rung that is **not installed by default** — and a specificity model prices whatever they located in bits, words against the corpus unigram and numbers by their written length, so a match on a `5` is `.weak` rather than attribution. There is no `.notDerived` case and `OverTaintReport` has no `overTaint` property: it carries a lower bound on derived arguments and an upper bound on over-tainting and refuses to name a point between them, because a value can come from a passage and share no key with it. Scenario 48 |
+| [`EffectiveVoteKit`](https://github.com/rajatslakhina/effective-vote-kit) | The number every panel in this demo assumes and none of them measures. `SignalDependenceKit` deflates a panel using dependence strengths a caller **declares**; this measures them from what the judges actually did, as a design effect on the mean pairwise correlation with a Fisher interval. Two bases with opposite blind spots — agreement between **votes** is always computable and runs high because judges agree on easy items, agreement between **mistakes** needs labels and is the quantity that governs panel size — and neither is silently substituted for the other. `PanelAudit` has **no combined `effectiveVotes` property**: it reports the corpus and the one-vote-margin subset as separate populations, because selecting on margin conditions on the sum of the votes being correlated and drags the measurement down on its own, so only one direction of difference survives as a finding. Refusals carry the figure they withheld. Scenario 49 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -539,7 +541,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-eight scenarios, $0.1655305 metered total**. `architecture.svg`
+The current run is **forty-nine scenarios, $0.1695205 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1098,12 +1100,34 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     upper bound and refuses to name a number between them, because a value can
     come from a passage and share no key with it.
 
+
+49. **`EffectiveVoteKit`** adds the forty-ninth scenario, and it is the first one
+    that audits a number an earlier scenario has been publishing for twelve runs.
+    Scenario 37 deflates a four-judge panel using a `DependenceGraph` whose
+    strengths are **declared**: `answerability` and `morphology` share a heuristic,
+    `independence` and `temporal` share an input. Both declarations are right in
+    kind. Neither has ever been checked in degree, because nothing here could
+    measure a degree. Scenario 49 runs those same four analysers over ninety-six
+    constructed corpora, labels each corpus by **how it was built** rather than by
+    what any judge said about it, and measures what the four actually did.
+    Both declarations turn out to be wrong, in opposite directions. The shared
+    heuristic is declared `0.70` and measures `1.0000`: those two are not
+    correlated, they are the same judge on this corpus, and swapping the matcher
+    changed nothing. The shared input is declared `0.60` and measures `0.0000`:
+    reading the same document ids produced no shared mistake at all. And the
+    aggregate hides both — `2.42` effective votes declared against `2.67`
+    measured, close enough to read as agreement while every component underneath
+    it is wrong. The pivotal stratum reports `4.00 of 4`, which is not credible
+    and is not meant to be: selecting a one-vote margin conditions on the sum of
+    the votes being correlated, so the library refuses to call that direction a
+    finding.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-nine
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-eight packages together; the output above is a genuine capture,
+  of all forty-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1114,7 +1138,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-eight real packages compose and run," which the sample output
+means "the forty-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
