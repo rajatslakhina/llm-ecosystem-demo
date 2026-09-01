@@ -24,5 +24,6 @@ extension EcosystemDemo {
         await runDelayCurveScenario(meter: meter)
         await runCurveDivergenceScenario(meter: meter)
         await runLabelClockScenario(meter: meter)
+        await runArgumentAttributionScenario(meter: meter)
     }
 }

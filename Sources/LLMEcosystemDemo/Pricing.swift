@@ -59,7 +59,8 @@ extension EcosystemDemo {
             (.delayCurveHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.curveDivergenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.labelClockHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.selectionTrustHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.selectionTrustHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.argumentAttributionHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

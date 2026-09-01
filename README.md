@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-seven packages in this
+A single runnable demo that wires together all forty-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -29,6 +29,7 @@ ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation
 [`ClaimConsistencyKit`](https://github.com/rajatslakhina/claim-consistency-kit), and
 [`LabelClockKit`](https://github.com/rajatslakhina/label-clock-kit)
 [`SelectionTrustKit`](https://github.com/rajatslakhina/selection-trust-kit)
+[`ArgumentAttributionKit`](https://github.com/rajatslakhina/argument-attribution-kit)
 — against each other's real, tagged `1.0.0` releases. Where each package's
 own demo shows that package in isolation, this one shows the seams between
 them: a routed call that gets decoded into a typed value, metered for cost,
@@ -102,6 +103,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`CurveDivergenceKit`](https://github.com/rajatslakhina/curve-divergence-kit) | The supremum under the row above. `DelayCurveKit`'s horizon sweep asks at every horizon and still reduces each one to a single difference, so it has to be asked in the right place; a supremum does not. `sup|S1-S2|` and the Kuiper sum come out of one scan over the shared window, each carrying **the tick it was attained at** — the part no scalar summary can produce. `SeparationShape` tells dominance from a crossing, which an area difference of zero cannot, since zero arises both from identical curves and from evenly crossing ones. The null is a permutation rather than a table, because the supremum between two Kaplan-Meier curves is not distribution-free under censoring; exchangeability is flagged via the censoring gap and not corrected for. `RenyiSupremum` is reported and deliberately not used to decide. Scenario 45 |
 | [`LabelClockKit`](https://github.com/rajatslakhina/label-clock-kit) | Upstream of every row above it in the delay family, and the one that asks who could have built their arms. A record that stores one optional for both *has anything come back?* and *what did it say?* cannot form a censored arm: a unit carries a class exactly when its label has returned, and the landmark method excludes exactly those units, so **every landmark arm is empty at every landmark** — by proof, not by scarcity. `SeparationTable` measures whether the two facts are recorded for the same units (one cell, classified-and-outstanding, is the sole source of censoring) and `ClockSeparation` whether they are recorded at the same ticks. `ArmFormer` applies the landmark procedure and refuses by name. Scenario 46 |
 | [`SelectionTrustKit`](https://github.com/rajatslakhina/selection-trust-kit) | The second axis under `ToolAuthorityKit`. That package refuses a call whose **arguments** came from a poisoned passage, which is content trust and works. This one is the case a ceiling cannot see: the planner reads the passage and then proposes refunding a **real** order, read out of the app's own table. `ToolAuthorityKit`'s ladder is `operatorAuthored < modelAuthored < untrusted` and has no case for *our data, their choice* — the nearest is `.modelAuthored`, which sits under the refund ceiling — so it returns the **same verdict whether the planner or the user picked the order**. `TaintFloor` is a monotone session high-water mark inherited across a baton pass, so a downstream agent cannot launder taint by authoring a fresh value; `.userConfirmed` values are exempt from it and `.appDerived` values deliberately are not. `ConfirmationReceipt` binds a digest over the resolved parameters rather than a boolean, blast radius included. The commit slot is reserved *before* the confirmation `await`, because actor isolation does not survive a suspension point: budget 1 and four concurrent invocations raise four prompts in the naive order and one in the correct one. Scenario 47 |
+| [`ArgumentAttributionKit`](https://github.com/rajatslakhina/argument-attribution-kit) | The granularity under both of the two above. A taint floor marks every argument untrusted once any untrusted passage has been read, and cannot separate an argument whose **bytes** came out of that passage from one that merely followed it in time. Five rungs find the candidate — `exact`, `normalized`, `numeric` (a number written in words is still the number), `tokenSubset`, and a `semantic` rung that is **not installed by default** — and a specificity model prices whatever they located in bits, words against the corpus unigram and numbers by their written length, so a match on a `5` is `.weak` rather than attribution. There is no `.notDerived` case and `OverTaintReport` has no `overTaint` property: it carries a lower bound on derived arguments and an upper bound on over-tainting and refuses to name a point between them, because a value can come from a passage and share no key with it. Scenario 48 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -537,7 +539,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-seven scenarios, $0.1619905 metered total**. `architecture.svg`
+The current run is **forty-eight scenarios, $0.1655305 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1079,12 +1081,29 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     stated in the output rather than smoothed over.
 
 
+48. **`ArgumentAttributionKit`** adds the forty-eighth scenario, and it is the one
+    that asks scenarios 21 and 47 a question neither of them can answer about
+    itself: *which argument did the passage actually touch?* Both of those
+    refusals are stamped on a whole call. Scenario 48 runs both calls through an
+    attribution ladder against the passages `RetrievalKit` really returned, and
+    the two answers come out opposite. Scenario 47's refund — `orderId 9001`,
+    `amount 40` — attributes to **nothing**, which is correct: those bytes came
+    out of the app's order table, and what the passage supplied was the choice,
+    not the value. Scenario 21's injected send attributes **2 of 3**: the
+    recipient `audit-backup@example.net` is found verbatim at `21.97` bits and
+    `customer-list` is found across a punctuation boundary at `10.98`, while
+    `orders/1234` is ours and is tainted only by proximity. Three packages, three
+    different questions, and the pair of verdicts is the evidence that none of
+    them subsumes another. The report it prints carries a lower bound and an
+    upper bound and refuses to name a number between them, because a value can
+    come from a passage and share no key with it.
+
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all forty-eight
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-seven packages together; the output above is a genuine capture,
+  of all forty-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1095,7 +1114,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-seven real packages compose and run," which the sample output
+means "the forty-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

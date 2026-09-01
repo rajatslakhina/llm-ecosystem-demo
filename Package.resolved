@@ -1,5 +1,5 @@
 {
-  "originHash" : "421ff3223c369f59023666213ecaa5075cfbe73c9adbc077f31c6d1ca7bce221",
+  "originHash" : "f8841a09c0fe329bb36917073cfe41228847644d883d00f3a53484193c454d70",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -34,6 +34,15 @@
       "location" : "https://github.com/rajatslakhina/answerability-kit.git",
       "state" : {
         "revision" : "db1192d8cfffbc6fe6cfecf60e8652520038abdd",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "argument-attribution-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/argument-attribution-kit.git",
+      "state" : {
+        "revision" : "0749baefc2266736389de8c4be6dba4fab7fb3e6",
         "version" : "1.0.0"
       }
     },
