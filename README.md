@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all forty-nine packages in this
+A single runnable demo that wires together all fifty packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -106,6 +106,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SelectionTrustKit`](https://github.com/rajatslakhina/selection-trust-kit) | The second axis under `ToolAuthorityKit`. That package refuses a call whose **arguments** came from a poisoned passage, which is content trust and works. This one is the case a ceiling cannot see: the planner reads the passage and then proposes refunding a **real** order, read out of the app's own table. `ToolAuthorityKit`'s ladder is `operatorAuthored < modelAuthored < untrusted` and has no case for *our data, their choice* — the nearest is `.modelAuthored`, which sits under the refund ceiling — so it returns the **same verdict whether the planner or the user picked the order**. `TaintFloor` is a monotone session high-water mark inherited across a baton pass, so a downstream agent cannot launder taint by authoring a fresh value; `.userConfirmed` values are exempt from it and `.appDerived` values deliberately are not. `ConfirmationReceipt` binds a digest over the resolved parameters rather than a boolean, blast radius included. The commit slot is reserved *before* the confirmation `await`, because actor isolation does not survive a suspension point: budget 1 and four concurrent invocations raise four prompts in the naive order and one in the correct one. Scenario 47 |
 | [`ArgumentAttributionKit`](https://github.com/rajatslakhina/argument-attribution-kit) | The granularity under both of the two above. A taint floor marks every argument untrusted once any untrusted passage has been read, and cannot separate an argument whose **bytes** came out of that passage from one that merely followed it in time. Five rungs find the candidate — `exact`, `normalized`, `numeric` (a number written in words is still the number), `tokenSubset`, and a `semantic` rung that is **not installed by default** — and a specificity model prices whatever they located in bits, words against the corpus unigram and numbers by their written length, so a match on a `5` is `.weak` rather than attribution. There is no `.notDerived` case and `OverTaintReport` has no `overTaint` property: it carries a lower bound on derived arguments and an upper bound on over-tainting and refuses to name a point between them, because a value can come from a passage and share no key with it. Scenario 48 |
 | [`EffectiveVoteKit`](https://github.com/rajatslakhina/effective-vote-kit) | The number every panel in this demo assumes and none of them measures. `SignalDependenceKit` deflates a panel using dependence strengths a caller **declares**; this measures them from what the judges actually did, as a design effect on the mean pairwise correlation with a Fisher interval. Two bases with opposite blind spots — agreement between **votes** is always computable and runs high because judges agree on easy items, agreement between **mistakes** needs labels and is the quantity that governs panel size — and neither is silently substituted for the other. `PanelAudit` has **no combined `effectiveVotes` property**: it reports the corpus and the one-vote-margin subset as separate populations, because selecting on margin conditions on the sum of the votes being correlated and drags the measurement down on its own, so only one direction of difference survives as a finding. Refusals carry the figure they withheld. Scenario 49 |
+| [`ProxyLabelKit`](https://github.com/rajatslakhina/proxy-label-kit) | The label the row above needs and no deployment has. `EffectiveVoteKit` measures agreement between **mistakes**, which requires knowing which judge was wrong; scenario 49 can only do that because `PanelSpec.isSafeToAnswer` is a fact about how each corpus was *built*. A running system has a downstream outcome instead — a later contradiction, a user correction — and a decision to treat it as a label. That decision is priced here against a small audited subset, and the pricing is the easy half. The hard half is that an outcome arrives against an **item**, not a judge, so one mislabelled item flips every judge on it together: correlated label noise does not blur an error correlation toward zero the way independent noise does, it **manufactures one**. `NoiseRegime` is detected from the labels' provenance and never chosen by a caller, because on the same table the two regimes land on opposite sides of the measurement. `FeasibleAssociation` has **no `correctedPhi`**: an audit buys an interval, every rate inside it inverts to a different truth, and a midpoint would sell a precision nobody paid for. Scenario 50 |
 
 ![Architecture](Screenshots/architecture.svg)
 
@@ -541,7 +542,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **forty-nine scenarios, $0.1695205 metered total**. `architecture.svg`
+The current run is **fifty scenarios, $0.1737805 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1124,10 +1125,36 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 ## Quality
 
-- **Build:** `swift build` — clean, zero warnings, resolving all forty-nine
+50. **`ProxyLabelKit`** adds the fiftieth scenario, and it takes away the one
+    thing scenario 49 was handed for free. That scenario measures error agreement
+    between four analysers, which it can only do because each corpus carries a
+    label describing how it was **built**. No deployment has that. It has a
+    downstream outcome and a decision to call it a label.
+
+    Scenario 50 runs the same ninety-six corpora twice — once with the
+    construction label, once with a proxy derived from an item-scoped outcome
+    that is wrong 12% of the time — and no judge changes a single verdict
+    between the two runs. The aggregate barely moves: **2.6667 effective votes
+    to 2.7747**, close enough that every check anyone would run on it passes.
+
+    Underneath, four pairs whose true association is exactly **0.0000** move to
+    -0.0819, -0.0090, -0.0090 and +0.0650. That correlation was not measured. It
+    was manufactured by the label, on a panel where nothing about the judges
+    changed.
+
+    The audit prices the proxy at `0.1000 [0.0466, 0.2015]`, which contains the
+    real 0.12. And then the fiftieth scenario reports a bound that **misses**:
+    `independence x temporal` is bounded to `[0.0815, 0.2565]` against a truth of
+    `0.0000`. That is not a defect in the deconvolution — the interval carries
+    the flip rate's uncertainty and not the table's, and ninety-six items put
+    roughly 0.10 of sampling error on a phi near zero. The scenario says so on
+    the line beneath, because a bound printed without the assumption it rests on
+    is worse than no bound.
+
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all forty-nine packages together; the output above is a genuine capture,
+  of all fifty packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1138,7 +1165,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the forty-nine real packages compose and run," which the sample output
+means "the fifty real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

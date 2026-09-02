@@ -61,7 +61,8 @@ extension EcosystemDemo {
             (.labelClockHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.selectionTrustHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.argumentAttributionHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.effectiveVoteHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.effectiveVoteHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.proxyLabelHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

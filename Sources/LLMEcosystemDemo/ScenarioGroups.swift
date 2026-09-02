@@ -26,5 +26,6 @@ extension EcosystemDemo {
         await runLabelClockScenario(meter: meter)
         await runArgumentAttributionScenario(meter: meter)
         await runEffectiveVoteScenario(meter: meter)
+        await runProxyLabelScenario(meter: meter)
     }
 }

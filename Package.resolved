@@ -1,5 +1,5 @@
 {
-  "originHash" : "d74a0e8009724fc52c4095708bd1a4653ce47e44c6a01a95d3a417a0ab5f5c4e",
+  "originHash" : "aee313bf74f890f034c87716eca13b47dc8a471a17c86acc81e8feae6775ba99",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -268,6 +268,15 @@
       "location" : "https://github.com/rajatslakhina/prompt-template-kit.git",
       "state" : {
         "revision" : "eea4b794a1ea5e9e78343003265ca12c818b9ba7",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "proxy-label-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/proxy-label-kit.git",
+      "state" : {
+        "revision" : "74c648e9a7f4af58addaa461bb706491a647baf6",
         "version" : "1.0.0"
       }
     },
