@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty packages in this
+A single runnable demo that wires together all fifty-one packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -108,6 +108,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`EffectiveVoteKit`](https://github.com/rajatslakhina/effective-vote-kit) | The number every panel in this demo assumes and none of them measures. `SignalDependenceKit` deflates a panel using dependence strengths a caller **declares**; this measures them from what the judges actually did, as a design effect on the mean pairwise correlation with a Fisher interval. Two bases with opposite blind spots — agreement between **votes** is always computable and runs high because judges agree on easy items, agreement between **mistakes** needs labels and is the quantity that governs panel size — and neither is silently substituted for the other. `PanelAudit` has **no combined `effectiveVotes` property**: it reports the corpus and the one-vote-margin subset as separate populations, because selecting on margin conditions on the sum of the votes being correlated and drags the measurement down on its own, so only one direction of difference survives as a finding. Refusals carry the figure they withheld. Scenario 49 |
 | [`ProxyLabelKit`](https://github.com/rajatslakhina/proxy-label-kit) | The label the row above needs and no deployment has. `EffectiveVoteKit` measures agreement between **mistakes**, which requires knowing which judge was wrong; scenario 49 can only do that because `PanelSpec.isSafeToAnswer` is a fact about how each corpus was *built*. A running system has a downstream outcome instead — a later contradiction, a user correction — and a decision to treat it as a label. That decision is priced here against a small audited subset, and the pricing is the easy half. The hard half is that an outcome arrives against an **item**, not a judge, so one mislabelled item flips every judge on it together: correlated label noise does not blur an error correlation toward zero the way independent noise does, it **manufactures one**. `NoiseRegime` is detected from the labels' provenance and never chosen by a caller, because on the same table the two regimes land on opposite sides of the measurement. `FeasibleAssociation` has **no `correctedPhi`**: an audit buys an interval, every rate inside it inverts to a different truth, and a midpoint would sell a precision nobody paid for. Scenario 50 |
 
+| [`SampleWidthKit`](https://github.com/rajatslakhina/sample-width-kit) | The half of the interval the row above does not carry. Scenario 50 ends by reporting a bound that **missed** — `independence x temporal` bounded to `[0.0815, 0.2565]` against a truth of `0.0000` — and naming the reason: the bound prices the audit's uncertainty about the flip rate and nothing about the ninety-six items the table came from. This package supplies the other half. `MarginFeasibleRange` is **exact**: phi is linear in the top-left cell once the margins are fixed, so a table where ten of a hundred items carry a signal cannot express a phi above `0.3333`, and an interval quoting past that is quoting values no sample could produce. `IntervalPropagation` sweeps the sampling interval through the same de-noising rather than handing it a point, and the bound that missed becomes `[-0.2110, 0.4320]`, which contains the truth. `SampleSufficiency` asks the question a pipeline actually asks and refuses when the corpus cannot answer it. Scenario 51 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -542,7 +543,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty scenarios, $0.1737805 metered total**. `architecture.svg`
+The current run is **fifty-one scenarios, $0.1777705 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1151,10 +1152,31 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     the line beneath, because a bound printed without the assumption it rests on
     is worse than no bound.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty
+51. **`SampleWidthKit`** adds the fifty-first scenario, and it answers the
+    question the fiftieth ended on. Scenario 50 reported four pairs moving off a
+    true association of exactly `0.0000`, and a bound that excluded that truth.
+    Both readings come from ninety-six items, and neither scenario asked what
+    ninety-six items can support.
+
+    Scenario 51 asks. **Five of the six movements are unresolved** — the interval
+    around each straddles the value it moved away from, and the counts that would
+    settle them run from 574 items to 47,617. The sixth is not a movement at all:
+    `answerability x morphology` sits at a phi of exactly `1.0000`, where the
+    Fisher transform is unbounded, and the scenario prints that refusal rather
+    than dropping the row. An earlier draft of this scenario used `try?` and
+    quietly showed five pairs where six existed, which is the failure this whole
+    series keeps finding: **a gap that looks like an absence is worse than a
+    refusal that looks like a problem.**
+
+    Then it repairs the bound. The same de-noising, handed the sampling interval
+    `[-0.2233, 0.3428]` instead of the single number `0.0650`, returns
+    `[-0.2110, 0.4320]` — **0.4680 wider, and it contains the truth**. Nothing
+    about the de-noising changed. It was handed both uncertainties instead of one.
+
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-one
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty packages together; the output above is a genuine capture,
+  of all fifty-one packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1165,7 +1187,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty real packages compose and run," which the sample output
+means "the fifty-one real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture

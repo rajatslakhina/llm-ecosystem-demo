@@ -27,5 +27,6 @@ extension EcosystemDemo {
         await runArgumentAttributionScenario(meter: meter)
         await runEffectiveVoteScenario(meter: meter)
         await runProxyLabelScenario(meter: meter)
+        await runSampleWidthScenario(meter: meter)
     }
 }

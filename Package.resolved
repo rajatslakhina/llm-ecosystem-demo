@@ -1,5 +1,5 @@
 {
-  "originHash" : "aee313bf74f890f034c87716eca13b47dc8a471a17c86acc81e8feae6775ba99",
+  "originHash" : "0dd0bbd4326765628d30c6777a8442705c449c20da0f78f5335bbc5d59fd965a",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -276,8 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/proxy-label-kit.git",
       "state" : {
-        "revision" : "74c648e9a7f4af58addaa461bb706491a647baf6",
-        "version" : "1.0.0"
+        "revision" : "3c923f259bfc8c6b9da20233d43f95027b47f4d2",
+        "version" : "1.0.1"
       }
     },
     {
@@ -322,6 +322,15 @@
       "location" : "https://github.com/rajatslakhina/retry-policy-kit.git",
       "state" : {
         "revision" : "7532f7100c90d8acf2a1386690e6c0cab6519bc4",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "sample-width-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/sample-width-kit.git",
+      "state" : {
+        "revision" : "c8453a1f5dc69c32da48ce7030c041edb4eff808",
         "version" : "1.0.0"
       }
     },
