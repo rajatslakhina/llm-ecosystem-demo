@@ -63,7 +63,8 @@ extension EcosystemDemo {
             (.argumentAttributionHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.effectiveVoteHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.proxyLabelHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.sampleWidthHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.sampleWidthHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.familyErrorHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "0dd0bbd4326765628d30c6777a8442705c449c20da0f78f5335bbc5d59fd965a",
+  "originHash" : "001dc9ec9ab1c658f53cdd0e049b13e6a242e75be23427d62665337bef69f72c",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -187,6 +187,15 @@
       "location" : "https://github.com/rajatslakhina/exploration-channel-kit.git",
       "state" : {
         "revision" : "d025f7b9d64e3d1e56bf123f3df351b73e8e1ec0",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "family-error-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/family-error-kit.git",
+      "state" : {
+        "revision" : "3c7220a5a3a6ea6fb0c3a70f0c8dd2e59df05d89",
         "version" : "1.0.0"
       }
     },

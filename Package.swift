@@ -61,7 +61,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/argument-attribution-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/effective-vote-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/proxy-label-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/sample-width-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/sample-width-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/family-error-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -130,7 +131,8 @@ let package = Package(
                 .product(name: "ArgumentAttributionKit", package: "argument-attribution-kit"),
                 .product(name: "EffectiveVoteKit", package: "effective-vote-kit"),
                 .product(name: "ProxyLabelKit", package: "proxy-label-kit"),
-                .product(name: "SampleWidthKit", package: "sample-width-kit")
+                .product(name: "SampleWidthKit", package: "sample-width-kit"),
+                .product(name: "FamilyErrorKit", package: "family-error-kit")
             ]
         )
     ]
