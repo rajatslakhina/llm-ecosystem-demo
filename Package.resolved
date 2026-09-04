@@ -1,5 +1,5 @@
 {
-  "originHash" : "001dc9ec9ab1c658f53cdd0e049b13e6a242e75be23427d62665337bef69f72c",
+  "originHash" : "56c08f0fc8496a8e27ef9cccabbdf13100762d3d3087a2b74faad9095136dd85",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -160,6 +160,15 @@
       "location" : "https://github.com/rajatslakhina/delay-signal-kit.git",
       "state" : {
         "revision" : "5befe44e37eb51e673e9a67414c7bf5a7290feea",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "effective-comparison-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/effective-comparison-kit.git",
+      "state" : {
+        "revision" : "a6433537654043059052efc1bf6e9c6b5d3beda5",
         "version" : "1.0.0"
       }
     },

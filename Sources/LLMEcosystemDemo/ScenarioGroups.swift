@@ -29,5 +29,6 @@ extension EcosystemDemo {
         await runProxyLabelScenario(meter: meter)
         await runSampleWidthScenario(meter: meter)
         await runFamilyErrorScenario(meter: meter)
+        await runEffectiveComparisonScenario(meter: meter)
     }
 }

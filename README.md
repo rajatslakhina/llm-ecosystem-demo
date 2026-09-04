@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-two packages in this
+A single runnable demo that wires together all fifty-three packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -110,6 +110,7 @@ one bad reply isolated to its own item instead of taking the job down.
 
 | [`SampleWidthKit`](https://github.com/rajatslakhina/sample-width-kit) | The half of the interval the row above does not carry. Scenario 50 ends by reporting a bound that **missed** — `independence x temporal` bounded to `[0.0815, 0.2565]` against a truth of `0.0000` — and naming the reason: the bound prices the audit's uncertainty about the flip rate and nothing about the ninety-six items the table came from. This package supplies the other half. `MarginFeasibleRange` is **exact**: phi is linear in the top-left cell once the margins are fixed, so a table where ten of a hundred items carry a signal cannot express a phi above `0.3333`, and an interval quoting past that is quoting values no sample could produce. `IntervalPropagation` sweeps the sampling interval through the same de-noising rather than handing it a point, and the bound that missed becomes `[-0.2110, 0.4320]`, which contains the truth. `SampleSufficiency` asks the question a pipeline actually asks and refuses when the corpus cannot answer it. Scenario 51 |
 | [`FamilyErrorKit`](https://github.com/rajatslakhina/family-error-kit) | The level every row above was quoted at, and none of them held. Scenarios 49 through 51 publish a coefficient, an interval and a sufficiency verdict for **every pair** of the four-judge panel — six readings, each correct alone, each at a nominal 95%. The chance that all six cover is not 95%, and the largest of the six was selected out of six candidates by the quantity being quoted. `FamilyErrorKit` corrects for the six. `PairOverlapGraph` shows independence was never available — **12 of the 15 pairings of those pairs share a judge, 80% overlap** — so `BenjaminiYekutieli` is the default and pays `H(6) = 2.4500` for it. `SimultaneousInterval` re-quotes `answerability x temporal` from `[-0.3577, 0.2071]` to `[-0.4425, 0.3015]`, **0.1793 wider**, widening on the `atanh` scale the interval is actually symmetric on rather than on the one it is printed in. `NullMaximum` says what six null readings over ninety-six items produce at the top of a page. And `FamilyLedger` **refuses** a family that never declared its size — the failure that makes a filtered report look better than the run that produced it. Scenario 52 |
+| [`EffectiveComparisonKit`](https://github.com/rajatslakhina/effective-comparison-kit) | The denominator scenario 52 divided by. Benjamini-Yekutieli charged `H(6) = 2.4500` because a panel's overlapping pairs do not satisfy positive regression dependence — a price for *arbitrary* dependence, paid by a family whose dependence is a count. `PanelDesign` derives the correlation structure of the six comparisons from the panel's own shape; the permutation estimator measures what it is worth. **BY's multiplier is 14.7000x and this panel's measured dependence is 4.7930x.** The scenario also records the distinction the package exists for: the spectral estimators return the panel's **rank** (Li-Ji: 4.0000, the four judge effects behind all six comparisons) and a threshold needs its **tail count** (4.8912). `MultiplicityBudget` **refuses** to be built from a rank, and the ledger **refuses** to spend a correlation matrix nobody declared. On this page the calibration publishes the same one finding BY does, and the scenario says so rather than manufacturing a difference. Scenario 53 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -544,7 +545,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-two scenarios, $0.1817605 metered total**. `architecture.svg`
+The current run is **fifty-three scenarios, $0.1853005 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1200,10 +1201,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-two
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-three
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-two packages together; the output above is a genuine capture,
+  of all fifty-three packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1214,7 +1215,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-two real packages compose and run," which the sample output
+means "the fifty-three real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1425,3 +1426,34 @@ says so.
 ## License
 
 MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
+
+
+53. **`EffectiveComparisonKit`** adds the fifty-third scenario, and it measures
+    the number scenario 52 had to assume. Benjamini-Yekutieli is valid under
+    arbitrary dependence and charges `H(6) = 2.4500` for the privilege. That is
+    the right default when you cannot see the dependence. This panel's
+    dependence is visible: **12 of the 15 pairings share a judge**, and the
+    design fixes the correlation between two comparisons that do at exactly a
+    half, which is also the largest value the geometry admits.
+
+    Measured rather than assumed, **BY's multiplier of 14.7000x becomes
+    4.7930x**. The threshold moves from `8.512e-03` to `1.043e-02` and the
+    critical reading from a family-wide bar to `|z| = 2.5612`.
+
+    The scenario's more useful half is the mistake it does not make. Four of the
+    five estimators return the panel's **rank** — Li-Ji lands on `4.0000`, the
+    four judge effects every one of the six comparisons is built from — and a
+    multiplicity threshold is a statement about the family's **maximum**, whose
+    count here is `4.8912`. On a ten-judge panel those two numbers are `10` and
+    `32.65`, and the rank is the flattering one. So `EffectiveCount` carries the
+    question it answers, `MultiplicityBudget` throws `rankSpentAsThreshold`
+    rather than dividing by a rank, and the ledger throws
+    `creditFromAssumedCorrelation` rather than spending independence nobody
+    measured. Both refusals are exercised in part D with a headline, a reason and
+    a recovery action.
+
+    **On this page the calibration changes nothing**: one finding survives under
+    Benjamini-Yekutieli and the same one survives under `m_eff = 4.8912`. That is
+    reported rather than dressed up. A correction that would have made a
+    difference on some other page is not a correction that made one here, and the
+    scenario that pretends otherwise is the one this series is written against.
