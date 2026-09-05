@@ -30,5 +30,6 @@ extension EcosystemDemo {
         await runSampleWidthScenario(meter: meter)
         await runFamilyErrorScenario(meter: meter)
         await runEffectiveComparisonScenario(meter: meter)
+        await runObservedNullScenario(meter: meter)
     }
 }

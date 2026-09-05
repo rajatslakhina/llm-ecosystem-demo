@@ -63,7 +63,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/proxy-label-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/sample-width-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/family-error-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/effective-comparison-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/effective-comparison-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/observed-null-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -134,7 +135,8 @@ let package = Package(
                 .product(name: "ProxyLabelKit", package: "proxy-label-kit"),
                 .product(name: "SampleWidthKit", package: "sample-width-kit"),
                 .product(name: "FamilyErrorKit", package: "family-error-kit"),
-                .product(name: "EffectiveComparisonKit", package: "effective-comparison-kit")
+                .product(name: "EffectiveComparisonKit", package: "effective-comparison-kit"),
+                .product(name: "ObservedNullKit", package: "observed-null-kit")
             ]
         )
     ]

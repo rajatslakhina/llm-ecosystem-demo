@@ -74,7 +74,7 @@ struct EcosystemDemo {
         print()
         let report = await meter.report()
         print(report.formatted())
-        print("Total metered cost across all fifty-three scenarios: $\(await meter.totalCost())")
+        print("Total metered cost across all fifty-four scenarios: $\(await meter.totalCost())")
     }
 
     /// The banner, lifted out of `main()` so that function stays inside

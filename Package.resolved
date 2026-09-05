@@ -1,5 +1,5 @@
 {
-  "originHash" : "56c08f0fc8496a8e27ef9cccabbdf13100762d3d3087a2b74faad9095136dd85",
+  "originHash" : "416813fc8cef8cc5d54950e836b2e6bb978abfb15048470d556f74e00f1e2e37",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -268,6 +268,15 @@
       "location" : "https://github.com/rajatslakhina/morphology-match-kit.git",
       "state" : {
         "revision" : "3a41e047ea5ec59fd7311989077cd808022590b8",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "observed-null-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/observed-null-kit.git",
+      "state" : {
+        "revision" : "60f7063816571a2e54fc84daa1ca19c1d4b8aa57",
         "version" : "1.0.0"
       }
     },
