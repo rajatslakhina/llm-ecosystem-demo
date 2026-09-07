@@ -1,5 +1,5 @@
 {
-  "originHash" : "0134b842b390520831d947a718d801d623e65b1a3f7d80afdb28169d3b6e124a",
+  "originHash" : "16356e203eb8a45e96a97d03ef97d27ada4b30624bfca08080a2c743aad6aa82",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -430,6 +430,15 @@
       "location" : "https://github.com/rajatslakhina/source-independence-kit.git",
       "state" : {
         "revision" : "e199bc2a365d0c30fa52b65d9662569726edfe10",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "square-design-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/square-design-kit.git",
+      "state" : {
+        "revision" : "e86507bbe73ffe21e12e636336f8e521929dba99",
         "version" : "1.0.0"
       }
     },

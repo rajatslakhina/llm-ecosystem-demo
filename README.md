@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-six packages in this
+A single runnable demo that wires together all fifty-seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -113,6 +113,8 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`EffectiveComparisonKit`](https://github.com/rajatslakhina/effective-comparison-kit) | The denominator scenario 52 divided by. Benjamini-Yekutieli charged `H(6) = 2.4500` because a panel's overlapping pairs do not satisfy positive regression dependence — a price for *arbitrary* dependence, paid by a family whose dependence is a count. `PanelDesign` derives the correlation structure of the six comparisons from the panel's own shape; the permutation estimator measures what it is worth. **BY's multiplier is 14.7000x and this panel's measured dependence is 4.7930x.** The scenario also records the distinction the package exists for: the spectral estimators return the panel's **rank** (Li-Ji: 4.0000, the four judge effects behind all six comparisons) and a threshold needs its **tail count** (4.8912). `MultiplicityBudget` **refuses** to be built from a rank, and the ledger **refuses** to spend a correlation matrix nobody declared. On this page the calibration publishes the same one finding BY does, and the scenario says so rather than manufacturing a difference. Scenario 53 |
 | [`ObservedNullKit`](https://github.com/rajatslakhina/observed-null-kit) | The distribution scenario 53 draws its threshold from, checked against the panel that produced it. Scenario 53 fits a Gaussian copula to a structural correlation matrix; this one resamples the gates' own grades. On this page the fitted route **cannot run at all** — `answerability` and `morphology` agreed on all **96** items, so a constant indicator leaves no matrix to fit and no Frechet bound to check. **The bootstrap needs neither**, pricing the tail at `2.4495` across the **199** readings a 96-item lattice admits. The scheme decides the question and travels with the answer: an item bootstrap is a family tail and spendable, a judge-label permutation is a chance baseline and **refused**, an item permutation leaves every count invariant so its null is a point mass and is **refused**. Scenario 54 |
 | [`ChanceAgreementKit`](https://github.com/rajatslakhina/chance-agreement-kit) | The chance question scenario 54 declines to spend. A chance baseline is the **mean of a resampling scheme**, and Cohen's, Scott's and Bennett's terms are each exactly that for one scheme; `ExactChanceMoments` supplies the **variance** none of them carries. On this page it finds something four scenarios above could not: **every distinct pair of gates has an association of exactly nil**. `PanelSpec.all` is a fully crossed design, so every joint count equals `a_j * b_k / n` to `0.000000` and every kappa is exactly `0.0000`. The one nonzero coefficient is `answerability` against `morphology` at `1.0000` — two judges that are one judge. It also pins an identity on the real panel: the finite-population term Scott drops is `(c-1)` times Gwet's whole chance term over `(2n-1)`, all three reading `0.002454188482`. Scenario 55 |
+| [`PanelDesignKit`](https://github.com/rajatslakhina/panel-design-kit) | The fixture every coefficient above is computed over, treated as an input that can be wrong. `PanelSpec.all` crosses every level of every axis, which makes the corpus reproducible on every machine and makes every joint count the product of its marginals — so its true association is not small, it is **exactly zero**, and five scenarios of coefficients over it were estimating nil. `DesignDiagnosis` measures that as `max |observed - expected|`, `certify()` is the only call that refuses, and `AttainableAgreement` prices the range two marginals allow before either judge speaks. Above two categories it **declines to say** which counts inside that range exist, and `BinaryPanelBuilder` throws `constructionRequiresBinary`. Scenario 56 |
+| [`SquareDesignKit`](https://github.com/rajatslakhina/square-design-kit) | The refusal scenario 56 leaves standing, answered. These judges cast **three-way** verdicts, so the panel that needs repairing is square and the sibling can only repair binary ones. Fixing the trace at `t` leaves a transportation problem with a forbidden diagonal, feasible exactly when `(a_k - d_k) + (b_k - d_k) <= n - t`, which solves to a per-category floor and makes attainability the one-line test `sum_k floor_k(t) <= t <= sum_k min(a_k, b_k)`. On this panel that turns `nil` into `false` and prints what nothing here could previously ask for: `answerability / independence` reaches only **25 of the 49** counts in its range, and the 24 it misses are every odd number. `SquarePanelBuilder` then builds the repair — same two judges, same verdict rates, **kappa moved from `0.0000` to `-0.5000` and `0.5000`** with nothing changed but which item each verdict landed on. Scenario 57 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -547,7 +549,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-six scenarios, $0.1946005 metered total**. `architecture.svg`
+The current run is **fifty-seven scenarios, $0.1977205 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1203,10 +1205,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-six
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-seven
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-six packages together; the output above is a genuine capture,
+  of all fifty-seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1217,7 +1219,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-six real packages compose and run," which the sample output
+means "the fifty-seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1543,3 +1545,44 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     test and leaves every agreement count invariant, so its null is a point mass
     sitting exactly on the reading it claims to judge. Measuring either is free.
     Spending them is the operation that gets gated.
+
+57. **`SquareDesignKit`** adds the fifty-seventh scenario, and it is the call
+    scenario 56 declines. `PanelDesignKit` prices the attainable agreement range
+    exactly at every category count and then stops: above two categories
+    `admits(count:)` returns `nil` and `BinaryPanelBuilder` throws
+    `constructionRequiresBinary`, on the grounds that the general case is a
+    transportation problem with a forbidden diagonal and a prescribed trace. It
+    is. It also has a closed form, and these judges cast **three-way** verdicts,
+    so the panel that actually needs repairing here is one the sibling cannot
+    build.
+
+    Fixing the trace at `t` means choosing a diagonal that sums to `t` and
+    leaving a transportation problem on `n - t` items. A row may send to every
+    column but its own, and any two rows between them may send anywhere, so the
+    singletons are the only subsets Hall's condition binds on — the remainder is
+    feasible exactly when `(a_k - d_k) + (b_k - d_k) <= n - t`. Solving that for
+    `d_k` gives a per-category floor, and a trace is attainable exactly when
+    `sum_k floor_k(t) <= t <= sum_k min(a_k, b_k)`. Each floor climbs at half the
+    target's rate and there are `k` of them, which is why the sum can overtake
+    `t` and fall back: **that is a hole, and it is the thing this demo could not
+    previously ask about.**
+
+    On this panel the answer is not marginal. `answerability / independence`
+    ranges over `24...72` and reaches **25 of the 49** integers in it; the 24 it
+    misses are every odd number, because one of the three categories is unused
+    and a panel with two live categories moves in steps of two. Part B puts the
+    two calls side by side on the same margins: `PanelDesignKit.admits(count:
+    71)` returns `nil`, `SquareDesignKit.admits(trace: 71)` returns `false`, and
+    the refusal names the neighbours `70 / 72` rather than rounding onto one of
+    them silently.
+
+    Part C then does what scenario 56 could only do in binary. Same two judges,
+    the same three-way verdict rates, rebuilt at the floor, the observed count
+    and the ceiling: `kappa` moves `-0.5000`, `0.0000`, `0.5000` and the deviate
+    `-5.627`, `0.000`, `5.627`. **Nothing changed but which item each verdict
+    landed on.** Part D checks the identical-margins theorem on the one pair of
+    this panel that has identical margins — `answerability` against
+    `morphology`, which agreed on all **96** items because it is one judge
+    counted twice. At `t = n - 1` every per-category floor reads `a_k`, so their
+    sum is `n`, which is never at most `n - 1`: a pair with the same rates can
+    agree on everything, and cannot agree on all but one.
