@@ -1,5 +1,5 @@
 {
-  "originHash" : "416813fc8cef8cc5d54950e836b2e6bb978abfb15048470d556f74e00f1e2e37",
+  "originHash" : "7d6a38e00f97a058a7c8cbc20dc9e243dec72d10e68d2a722becae17ed99cb5c",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -61,6 +61,15 @@
       "location" : "https://github.com/rajatslakhina/censored-feedback-kit.git",
       "state" : {
         "revision" : "0e0fa82246bc631a175b1cab0a34b187ce12ea21",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "chance-agreement-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/chance-agreement-kit.git",
+      "state" : {
+        "revision" : "58a37bbe2fa72a8f923d2aa759f83943703ed55a",
         "version" : "1.0.0"
       }
     },

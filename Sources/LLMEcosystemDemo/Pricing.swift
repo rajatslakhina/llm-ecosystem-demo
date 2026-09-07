@@ -66,7 +66,8 @@ extension EcosystemDemo {
             (.sampleWidthHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.familyErrorHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.effectiveComparisonHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.observedNullHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.observedNullHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.chanceAgreementHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

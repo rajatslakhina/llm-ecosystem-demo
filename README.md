@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-four packages in this
+A single runnable demo that wires together all fifty-five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -112,6 +112,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`FamilyErrorKit`](https://github.com/rajatslakhina/family-error-kit) | The level every row above was quoted at, and none of them held. Scenarios 49 through 51 publish a coefficient, an interval and a sufficiency verdict for **every pair** of the four-judge panel — six readings, each correct alone, each at a nominal 95%. The chance that all six cover is not 95%, and the largest of the six was selected out of six candidates by the quantity being quoted. `FamilyErrorKit` corrects for the six. `PairOverlapGraph` shows independence was never available — **12 of the 15 pairings of those pairs share a judge, 80% overlap** — so `BenjaminiYekutieli` is the default and pays `H(6) = 2.4500` for it. `SimultaneousInterval` re-quotes `answerability x temporal` from `[-0.3577, 0.2071]` to `[-0.4425, 0.3015]`, **0.1793 wider**, widening on the `atanh` scale the interval is actually symmetric on rather than on the one it is printed in. `NullMaximum` says what six null readings over ninety-six items produce at the top of a page. And `FamilyLedger` **refuses** a family that never declared its size — the failure that makes a filtered report look better than the run that produced it. Scenario 52 |
 | [`EffectiveComparisonKit`](https://github.com/rajatslakhina/effective-comparison-kit) | The denominator scenario 52 divided by. Benjamini-Yekutieli charged `H(6) = 2.4500` because a panel's overlapping pairs do not satisfy positive regression dependence — a price for *arbitrary* dependence, paid by a family whose dependence is a count. `PanelDesign` derives the correlation structure of the six comparisons from the panel's own shape; the permutation estimator measures what it is worth. **BY's multiplier is 14.7000x and this panel's measured dependence is 4.7930x.** The scenario also records the distinction the package exists for: the spectral estimators return the panel's **rank** (Li-Ji: 4.0000, the four judge effects behind all six comparisons) and a threshold needs its **tail count** (4.8912). `MultiplicityBudget` **refuses** to be built from a rank, and the ledger **refuses** to spend a correlation matrix nobody declared. On this page the calibration publishes the same one finding BY does, and the scenario says so rather than manufacturing a difference. Scenario 53 |
 | [`ObservedNullKit`](https://github.com/rajatslakhina/observed-null-kit) | The distribution scenario 53 draws its threshold from, checked against the panel that produced it. Scenario 53 fits a Gaussian copula to a structural correlation matrix; this one resamples the gates' own grades. On this page the fitted route **cannot run at all** — `answerability` and `morphology` agreed on all **96** items, so a constant indicator leaves no matrix to fit and no Frechet bound to check. **The bootstrap needs neither**, pricing the tail at `2.4495` across the **199** readings a 96-item lattice admits. The scheme decides the question and travels with the answer: an item bootstrap is a family tail and spendable, a judge-label permutation is a chance baseline and **refused**, an item permutation leaves every count invariant so its null is a point mass and is **refused**. Scenario 54 |
+| [`ChanceAgreementKit`](https://github.com/rajatslakhina/chance-agreement-kit) | The chance question scenario 54 declines to spend. A chance baseline is the **mean of a resampling scheme**, and Cohen's, Scott's and Bennett's terms are each exactly that for one scheme; `ExactChanceMoments` supplies the **variance** none of them carries. On this page it finds something four scenarios above could not: **every distinct pair of gates has an association of exactly nil**. `PanelSpec.all` is a fully crossed design, so every joint count equals `a_j * b_k / n` to `0.000000` and every kappa is exactly `0.0000`. The one nonzero coefficient is `answerability` against `morphology` at `1.0000` — two judges that are one judge. It also pins an identity on the real panel: the finite-population term Scott drops is `(c-1)` times Gwet's whole chance term over `(2n-1)`, all three reading `0.002454188482`. Scenario 55 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -546,7 +547,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-four scenarios, $0.1886605 metered total**. `architecture.svg`
+The current run is **fifty-five scenarios, $0.1917805 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1202,10 +1203,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-four
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-five
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-four packages together; the output above is a genuine capture,
+  of all fifty-five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1216,7 +1217,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-four real packages compose and run," which the sample output
+means "the fifty-five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1474,6 +1475,29 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     needs neither and answers anyway**, pricing the tail at `2.4495` over the
     **199** readings a 96-item lattice admits, where the raw quantile happened
     to land on the grid already.
+
+55. **`ChanceAgreementKit`** adds the fifty-fifth scenario, one level below
+    scenario 54. `ObservedNullKit` prices the *family tail* and its ledger
+    refuses anything that is not one, because a judge-label permutation destroys
+    exactly the dependence a multiplicity denominator exists to price. That left
+    a question standing: for one pair, is this reading above chance at all, and
+    what is "chance" here?
+
+    The answer is that **a chance baseline is the mean of a resampling scheme**,
+    and picking a coefficient is picking an assumption you did not state. Cohen
+    holds each judge's own rate fixed; Scott treats the judges as
+    interchangeable; Bennett discards both rates. Their chance terms are the
+    exact means of those three schemes, and Gwet's is the mean of none of them.
+
+    **On this page the finding is about the page.** Every distinct pair of gates
+    has an association of exactly nil: `PanelSpec.all` is a fully crossed design,
+    so each joint count equals the product of its marginals over `n` to
+    `0.000000`, and every coefficient is exactly `0.0000` with a deviate of
+    `0.000`. Four scenarios above publish coefficients, intervals, corrections
+    and thresholds over this panel; this is the first one able to say that the
+    true pairwise association underneath all of them is zero by construction, and
+    that the single nonzero reading — `answerability` against `morphology` at
+    `1.0000` — is a coefficient of one between two judges that are one judge.
 
     Part D also exercises the two refusals the package exists for. A
     **judge-label permutation** — the construction recent panel-reliability work

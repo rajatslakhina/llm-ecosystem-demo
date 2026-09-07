@@ -31,5 +31,6 @@ extension EcosystemDemo {
         await runFamilyErrorScenario(meter: meter)
         await runEffectiveComparisonScenario(meter: meter)
         await runObservedNullScenario(meter: meter)
+        await runChanceAgreementScenario(meter: meter)
     }
 }
