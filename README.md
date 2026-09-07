@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-seven packages in this
+A single runnable demo that wires together all fifty-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -549,7 +549,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-seven scenarios, $0.1977205 metered total**. `architecture.svg`
+The current run is **fifty-eight scenarios, $0.2007505 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1205,10 +1205,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-eight
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-seven packages together; the output above is a genuine capture,
+  of all fifty-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1219,7 +1219,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-seven real packages compose and run," which the sample output
+means "the fifty-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1426,6 +1426,39 @@ another one (conditionCode -> conditions, lossless) or genuinely discarded
 says so.
 
 ```
+
+
+58. **`AssociationFitKit`** adds the fifty-eighth scenario, and it is the other half of the
+    specification scenario 57 completed. `SquareDesignKit` fixes a panel's **trace**; on a
+    three-category panel that pins one number and leaves eight cells to whatever the
+    construction happens to do. This package fixes the **association** instead — as a
+    structure rather than a scalar — and lets the trace be the consequence.
+
+    Iterative proportional fitting is the method the applied literature already uses, and
+    what makes it right here is what it cannot change: scaling a row multiplies every cell
+    in it by one factor, and a local odds ratio takes two cells from each of two rows and
+    two columns, so every factor cancels. On this demo's own margins the fit moved the
+    margins into place and changed the nine odds ratios by **4.441e-16**.
+
+    Four structures on one set of margins give four different panels — agreement `0.5000`,
+    `0.5986` and `0.7254` for independence, uniform association at 3, and a diagonal weight
+    of 6 — which is the point: **the agreement rate was never a free parameter, it is what
+    the margins and the structure leave.** Quasi-independence is refused outright on this
+    panel, and the refusal names why: forbidding the diagonal leaves judge one's 72
+    affirmations only 48 columns to land in.
+
+    **The scenario's sharpest result is a negative one.** Asked to compare its panel against
+    `SquareDesignKit`'s at the same trace, the two came back **identical cell for cell** —
+    because no judge in this corpus has ever abstained, so the third category is empty and
+    the panel is really two-by-two, where one free cell means any single requirement fixes
+    the whole table. That is `PanelDesignKit`'s finding arrived at from the opposite
+    direction, and it is a fact about the fixture rather than about either package.
+
+    Then it prices the last step. A fit is real-valued and a panel is made of whole verdicts,
+    and the rounding keeps **every margin exact on every structure** while moving the
+    association by up to `2.011e-01` here and `7.500e-01` in the package's own demo. A page
+    that quotes a designed odds ratio and computes over the rounded panel is quoting a number
+    the panel does not have.
 
 ## License
 

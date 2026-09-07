@@ -1,5 +1,5 @@
 {
-  "originHash" : "16356e203eb8a45e96a97d03ef97d27ada4b30624bfca08080a2c743aad6aa82",
+  "originHash" : "82d15e01169a5912e2e3b1dd43e36ff5b3da98e9fb1de4bf7669c74997208fcf",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -43,6 +43,15 @@
       "location" : "https://github.com/rajatslakhina/argument-attribution-kit.git",
       "state" : {
         "revision" : "0749baefc2266736389de8c4be6dba4fab7fb3e6",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "association-fit-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/association-fit-kit.git",
+      "state" : {
+        "revision" : "aa11fc304b62917f9a30b8b54fa3b1c332f19c48",
         "version" : "1.0.0"
       }
     },
