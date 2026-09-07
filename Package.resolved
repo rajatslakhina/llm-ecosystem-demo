@@ -1,5 +1,5 @@
 {
-  "originHash" : "7d6a38e00f97a058a7c8cbc20dc9e243dec72d10e68d2a722becae17ed99cb5c",
+  "originHash" : "94f11e5195127d7f220a2ce635486308b61f0a77dbdaeb56394ed352e19a7405",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -296,6 +296,15 @@
       "state" : {
         "revision" : "e2a25fe1df01d0eabe4139a4b8e7dc7465ebd52d",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "panel-design-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/panel-design-kit.git",
+      "state" : {
+        "revision" : "d6588341795918543d50fd688275e5ad7a1cd887",
+        "version" : "1.0.1"
       }
     },
     {

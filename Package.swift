@@ -65,7 +65,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/family-error-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/effective-comparison-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/observed-null-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/chance-agreement-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/chance-agreement-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/panel-design-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -138,7 +139,8 @@ let package = Package(
                 .product(name: "FamilyErrorKit", package: "family-error-kit"),
                 .product(name: "EffectiveComparisonKit", package: "effective-comparison-kit"),
                 .product(name: "ObservedNullKit", package: "observed-null-kit"),
-                .product(name: "ChanceAgreementKit", package: "chance-agreement-kit")
+                .product(name: "ChanceAgreementKit", package: "chance-agreement-kit"),
+                .product(name: "PanelDesignKit", package: "panel-design-kit")
             ]
         )
     ]

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-five packages in this
+A single runnable demo that wires together all fifty-six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -547,7 +547,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-five scenarios, $0.1917805 metered total**. `architecture.svg`
+The current run is **fifty-six scenarios, $0.1946005 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1203,10 +1203,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-five
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-six
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-five packages together; the output above is a genuine capture,
+  of all fifty-six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1217,7 +1217,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-five real packages compose and run," which the sample output
+means "the fifty-six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1498,6 +1498,42 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     true pairwise association underneath all of them is zero by construction, and
     that the single nonzero reading — `answerability` against `morphology` at
     `1.0000` — is a coefficient of one between two judges that are one judge.
+
+56. **`PanelDesignKit`** adds the fifty-sixth scenario, and it is the answer to
+    what scenario 55 found rather than another reading of it. Scenario 55 noticed
+    that this demo's panel carries no association; this one treats that as a
+    property of the **fixture** — the thing every coefficient above is computed
+    over, and the one input nobody checks.
+
+    Three readings come out of it. **The agreement rates two judges can produce
+    are bounded on both sides**: `answerability` and `temporal` can agree on
+    between 8.33% and 41.67% of items whatever either of them knows, so a fixture
+    asked for anything outside that is asked for a panel they forbid. **Inside the
+    range most rates do not exist either** — a two-category panel with fixed
+    margins has one free cell, so the agreement count steps by two and only 25 of
+    the 49 integers between floor and ceiling are reachable. And **`certify` is
+    the only call that refuses**: diagnosing a fixture is arithmetic, certifying
+    one is a claim that it had association in it to find.
+
+    **The whole-panel test passes, and that is the finding.** Five of the six
+    pairs sit at exactly `0.000000`; the sixth is `answerability` against
+    `morphology`, which is one judge counted twice. Certify the panel as a whole
+    and it is accepted — a single duplicated judge is enough to answer "does any
+    pair carry something". Certify each pair on its own and every distinct pair
+    refuses. Two more things were not the expected answer: the affirm grid of a
+    fully crossed design is **not itself fully crossed**, because these judges are
+    functions of the axes rather than the axes, and identical marginals forbid an
+    agreement count of `n - 1` at every category count, since the item that leaves
+    a category leaves it one short and something has to move in.
+
+    Then it builds the panel the last six scenarios have needed. Same two judges,
+    same rates — 72 and 48 affirmations of 96 — repaired to an odds ratio of six.
+    As the corpus built it: `kappa 0.0000`, deviate `0.000`, `p = 5.00e-01`.
+    Designed: `kappa 0.2917`, deviate `3.283`, `p = 5.14e-04`. **Only the pairing
+    changed.** The first row cannot show a coefficient because there is none to
+    show; the second is a fixture, not a finding, which is what a control panel is
+    supposed to be.
+
 
     Part D also exercises the two refusals the package exists for. A
     **judge-label permutation** — the construction recent panel-reliability work

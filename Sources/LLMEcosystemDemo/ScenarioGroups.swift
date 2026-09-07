@@ -32,5 +32,6 @@ extension EcosystemDemo {
         await runEffectiveComparisonScenario(meter: meter)
         await runObservedNullScenario(meter: meter)
         await runChanceAgreementScenario(meter: meter)
+        await runPanelDesignScenario(meter: meter)
     }
 }
