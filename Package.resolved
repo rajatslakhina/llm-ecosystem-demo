@@ -1,5 +1,5 @@
 {
-  "originHash" : "82d15e01169a5912e2e3b1dd43e36ff5b3da98e9fb1de4bf7669c74997208fcf",
+  "originHash" : "d2e906c82f25d59f59a5c8225ca7d07a6f46158aa97a632bb526c6dc5b0596e8",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -51,8 +51,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/association-fit-kit.git",
       "state" : {
-        "revision" : "aa11fc304b62917f9a30b8b54fa3b1c332f19c48",
-        "version" : "1.0.0"
+        "revision" : "fee2382b8254022176e4f33aa95ba2276813a8a7",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "association-transport-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/association-transport-kit.git",
+      "state" : {
+        "revision" : "42564049b65f067c698cf80d50226d77e62225ae",
+        "version" : "1.1.0"
       }
     },
     {

@@ -35,5 +35,6 @@ extension EcosystemDemo {
         await runPanelDesignScenario(meter: meter)
         await runSquareDesignScenario(meter: meter)
         await runAssociationFitScenario(meter: meter)
+        await runAssociationTransportScenario(meter: meter)
     }
 }

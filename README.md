@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-eight packages in this
+A single runnable demo that wires together all fifty-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -115,6 +115,8 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ChanceAgreementKit`](https://github.com/rajatslakhina/chance-agreement-kit) | The chance question scenario 54 declines to spend. A chance baseline is the **mean of a resampling scheme**, and Cohen's, Scott's and Bennett's terms are each exactly that for one scheme; `ExactChanceMoments` supplies the **variance** none of them carries. On this page it finds something four scenarios above could not: **every distinct pair of gates has an association of exactly nil**. `PanelSpec.all` is a fully crossed design, so every joint count equals `a_j * b_k / n` to `0.000000` and every kappa is exactly `0.0000`. The one nonzero coefficient is `answerability` against `morphology` at `1.0000` — two judges that are one judge. It also pins an identity on the real panel: the finite-population term Scott drops is `(c-1)` times Gwet's whole chance term over `(2n-1)`, all three reading `0.002454188482`. Scenario 55 |
 | [`PanelDesignKit`](https://github.com/rajatslakhina/panel-design-kit) | The fixture every coefficient above is computed over, treated as an input that can be wrong. `PanelSpec.all` crosses every level of every axis, which makes the corpus reproducible on every machine and makes every joint count the product of its marginals — so its true association is not small, it is **exactly zero**, and five scenarios of coefficients over it were estimating nil. `DesignDiagnosis` measures that as `max |observed - expected|`, `certify()` is the only call that refuses, and `AttainableAgreement` prices the range two marginals allow before either judge speaks. Above two categories it **declines to say** which counts inside that range exist, and `BinaryPanelBuilder` throws `constructionRequiresBinary`. Scenario 56 |
 | [`SquareDesignKit`](https://github.com/rajatslakhina/square-design-kit) | The refusal scenario 56 leaves standing, answered. These judges cast **three-way** verdicts, so the panel that needs repairing is square and the sibling can only repair binary ones. Fixing the trace at `t` leaves a transportation problem with a forbidden diagonal, feasible exactly when `(a_k - d_k) + (b_k - d_k) <= n - t`, which solves to a per-category floor and makes attainability the one-line test `sum_k floor_k(t) <= t <= sum_k min(a_k, b_k)`. On this panel that turns `nil` into `false` and prints what nothing here could previously ask for: `answerability / independence` reaches only **25 of the 49** counts in its range, and the 24 it misses are every odd number. `SquarePanelBuilder` then builds the repair — same two judges, same verdict rates, **kappa moved from `0.0000` to `-0.5000` and `0.5000`** with nothing changed but which item each verdict landed on. Scenario 57 |
+| [`AssociationFitKit`](https://github.com/rajatslakhina/association-fit-kit) | The other half of the specification scenario 57 completed. `SquareDesignKit` fixes a panel's **trace**, which on a three-category panel pins one number and leaves eight cells to whatever the construction happens to do. This one states the **association** as a structure and lets the trace follow, fitting it onto required margins by iterative proportional fitting — which provably cannot move a local odds ratio, because row and column scalings cancel out of every one of them (**4.441e-16** on this demo's own margins). Four structures on one set of margins give four different panels: agreement `0.5000`, `0.5986`, `0.7254`, with quasi-independence **refused** because forbidding the diagonal leaves judge one's 72 affirmations only 48 columns to land in. Then it prices whole verdicts: **every margin exact on every structure**, association moved by up to `2.011e-01`. Scenario 58 |
+| [`AssociationTransportKit`](https://github.com/rajatslakhina/association-transport-kit) | Scenario 58 **chose** a structure. This one reads the corpus's own. Every construction in scenarios 50-58 starts from a structure somebody named; nothing here could measure one, say how precisely, or carry it elsewhere. It cross-tabulates two gates into the joint panel an association actually lives in — which scenario 58 never built, having used only margins — and **refuses** to read it undecided, because 5 of its 9 cells are empty and nothing in the counts says whether that is a rule or an absence. Read as a rule it cannot be seeded at all (`seedLineEmpty`); read as an absence it transports, agreement moving `0.5000 -> 0.5691` on balanced margins with the structure carried exactly. The finding is the interval: **0 of 4 blocks clear independence at 95% on 96 items**, the widest spanning a factor of **15766.2**, and 3 of the 4 ratios exist only because half an item was added to every cell. Scenario 59 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -549,7 +551,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-eight scenarios, $0.2007505 metered total**. `architecture.svg`
+The current run is **fifty-nine scenarios, $0.2038405 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1205,10 +1207,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all fifty-nine
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-eight packages together; the output above is a genuine capture,
+  of all fifty-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1219,7 +1221,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-eight real packages compose and run," which the sample output
+means "the fifty-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1459,6 +1461,36 @@ says so.
     association by up to `2.011e-01` here and `7.500e-01` in the package's own demo. A page
     that quotes a designed odds ratio and computes over the rounded panel is quoting a number
     the panel does not have.
+
+59. **`AssociationTransportKit`** adds the fifty-ninth scenario, and it asks the question this
+    series has only ever asked in the other direction. Scenarios 50 through 58 all start from a
+    structure somebody **named** — independence, uniform association, a diagonal weight — and
+    ask what table carries it. Nobody has asked the corpus what structure it already has.
+
+    Answering that needs something scenario 58 never built. A margin says how often each gate
+    said each thing; an association lives in how often they said them **together**, so this
+    scenario cross-tabulates the pair into a joint panel first. On this corpus that panel is
+    `[[36, 36, 0], [12, 12, 0], [0, 0, 0]]` — 96 items with **five of nine cells empty**.
+
+    **It refuses to read it undecided, and the refusal is the point.** A count of zero means
+    either "these gates cannot produce this pair" or "they have not yet", and nothing in the
+    counts distinguishes them. Read as a rule, the empty third category cannot be seeded at all
+    and the transport fails with `seedLineEmpty(index: 2, isRow: true)`. Read as an absence, the
+    same panel carries onto balanced margins without complaint and agreement moves from `0.5000`
+    to `0.5691`. Same table, same arithmetic, opposite outcomes, and the only difference is a
+    decision iterative proportional fitting normally takes silently on the caller's behalf.
+
+    **The sharpest number is the interval.** Every reading carries Woolf's standard error, and
+    on 96 items **0 of 4 blocks clear independence at 95%** — the widest spanning a factor of
+    **15766.2**, and the one block with any real precision would need **1320 items** to separate
+    its `2.9200` from nil. Scenarios 50 through 58 publish coefficients over this fixture. The
+    structure underneath them is not distinguishable from no structure at all, and three of its
+    four odds ratios exist only because half an item was added to every cell.
+
+    The scenario also found a defect in the package on its first run and it was fixed rather
+    than described. Block `(0, 0)` is `36, 36, 12, 12`, which reads `1.0000` raw and `1.0000`
+    corrected — it does not move, and `1.0.0` reported that as a move **away** from
+    independence. `CorrectionDirection` in `1.1.0` has three cases instead of two.
 
 ## License
 

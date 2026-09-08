@@ -70,7 +70,8 @@ extension EcosystemDemo {
             (.chanceAgreementHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.panelDesignHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.squareDesignHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.associationFitHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.associationFitHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.associationTransportHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }
