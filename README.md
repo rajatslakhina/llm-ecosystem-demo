@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all fifty-nine packages in this
+A single runnable demo that wires together all sixty packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -117,6 +117,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SquareDesignKit`](https://github.com/rajatslakhina/square-design-kit) | The refusal scenario 56 leaves standing, answered. These judges cast **three-way** verdicts, so the panel that needs repairing is square and the sibling can only repair binary ones. Fixing the trace at `t` leaves a transportation problem with a forbidden diagonal, feasible exactly when `(a_k - d_k) + (b_k - d_k) <= n - t`, which solves to a per-category floor and makes attainability the one-line test `sum_k floor_k(t) <= t <= sum_k min(a_k, b_k)`. On this panel that turns `nil` into `false` and prints what nothing here could previously ask for: `answerability / independence` reaches only **25 of the 49** counts in its range, and the 24 it misses are every odd number. `SquarePanelBuilder` then builds the repair — same two judges, same verdict rates, **kappa moved from `0.0000` to `-0.5000` and `0.5000`** with nothing changed but which item each verdict landed on. Scenario 57 |
 | [`AssociationFitKit`](https://github.com/rajatslakhina/association-fit-kit) | The other half of the specification scenario 57 completed. `SquareDesignKit` fixes a panel's **trace**, which on a three-category panel pins one number and leaves eight cells to whatever the construction happens to do. This one states the **association** as a structure and lets the trace follow, fitting it onto required margins by iterative proportional fitting — which provably cannot move a local odds ratio, because row and column scalings cancel out of every one of them (**4.441e-16** on this demo's own margins). Four structures on one set of margins give four different panels: agreement `0.5000`, `0.5986`, `0.7254`, with quasi-independence **refused** because forbidding the diagonal leaves judge one's 72 affirmations only 48 columns to land in. Then it prices whole verdicts: **every margin exact on every structure**, association moved by up to `2.011e-01`. Scenario 58 |
 | [`AssociationTransportKit`](https://github.com/rajatslakhina/association-transport-kit) | Scenario 58 **chose** a structure. This one reads the corpus's own. Every construction in scenarios 50-58 starts from a structure somebody named; nothing here could measure one, say how precisely, or carry it elsewhere. It cross-tabulates two gates into the joint panel an association actually lives in — which scenario 58 never built, having used only margins — and **refuses** to read it undecided, because 5 of its 9 cells are empty and nothing in the counts says whether that is a rule or an absence. Read as a rule it cannot be seeded at all (`seedLineEmpty`); read as an absence it transports, agreement moving `0.5000 -> 0.5691` on balanced margins with the structure carried exactly. The finding is the interval: **0 of 4 blocks clear independence at 95% on 96 items**, the widest spanning a factor of **15766.2**, and 3 of the 4 ratios exist only because half an item was added to every cell. Scenario 59 |
+| [`ExactAssociationKit`](https://github.com/rajatslakhina/exact-association-kit) | What scenario 59's intervals were worth. Every odds ratio above carries a **Woolf** interval — a normal approximation on the log scale, valid in the limit of large counts, on a panel of 96 items with five empty cells. Conditioning a block on all four margins leaves the odds ratio as the only parameter of Fisher's noncentral hypergeometric distribution, so the interval can be **summed rather than approximated**. On this corpus it finds something scenario 59 could not: **three of the four blocks have a zero margin**, which pins them to a single table — they never had an odds ratio to estimate, and every ratio they contributed was made by the half-item correction. The one readable block reads exact `[0.3574, 2.7979]` against Woolf's raw `[0.3970, 2.5192]`, **11.4% wider**, with a Fisher p of exactly `1.000000`. Swept over every table of at most twenty items with no empty cell, Woolf is **never** the wider of the two. Scenario 60 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -551,7 +552,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **fifty-nine scenarios, $0.2038405 metered total**. `architecture.svg`
+The current run is **sixty scenarios, $0.2068255 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1207,10 +1208,10 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all fifty-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all sixty
   dependencies from their real tagged releases.
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all fifty-nine packages together; the output above is a genuine capture,
+  of all sixty packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1221,7 +1222,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the fifty-nine real packages compose and run," which the sample output
+means "the sixty real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1491,6 +1492,41 @@ says so.
     than described. Block `(0, 0)` is `36, 36, 12, 12`, which reads `1.0000` raw and `1.0000`
     corrected — it does not move, and `1.0.0` reported that as a move **away** from
     independence. `CorrectionDirection` in `1.1.0` has three cases instead of two.
+
+60. **`ExactAssociationKit`** adds the sixtieth scenario, and it audits the one before it.
+
+    Scenario 59 measured the corpus's own structure and put an interval around every block of
+    it. That interval is **Woolf's** — the log odds ratio plus or minus `1.96` standard errors,
+    where the error is the square root of the summed reciprocals of four counts. It is the
+    standard choice and it is **asymptotic**: a normal approximation, valid in the limit of
+    large counts. This corpus has 96 items and five of its nine cells are empty.
+
+    Conditioning a two-by-two block on **all four** of its margins removes every nuisance
+    parameter and leaves the odds ratio alone, as the noncentrality parameter of Fisher's
+    noncentral hypergeometric distribution over a finite support. Probabilities can then be
+    summed rather than approximated, and an interval built by inverting two one-sided exact
+    tests needs no normal approximation and no repair for an empty cell.
+
+    **The first finding is that three of the four blocks were never estimable.** Their margins
+    contain a zero, which pins them to exactly one table: no method reads an association off
+    them, and `ExactAudit` lists them as `degenerateBlocks` rather than repairing them. Every
+    odds ratio those three blocks contributed to scenarios 50 through 59 was created by the
+    half-item correction. On the one block that is readable, both methods run on the raw counts:
+    exact `[0.3574, 2.7979]`, Woolf `[0.3970, 2.5192]`, the exact interval **11.4% wider** on
+    the log scale, and both covering `1`. Its conditional MLE is exactly `1.0000` and its Fisher
+    two-sided p is exactly `1.000000` — the corpus's one estimable block is at independence.
+
+    **The second finding is a direction, not a caveat.** "Asymptotic methods are approximate"
+    leaves open which way they err. Swept over every two-by-two table of at most twenty items
+    with no empty cell — a few thousand of them, a test in the package's own repository — the
+    exact interval was **never** the narrower of the two, and the closest Woolf came was still
+    18.2% short. Woolf is not sometimes optimistic in this range. It is optimistic on all of it.
+
+    The package also carries `midP`, the same inversion with the observed table counted half in
+    each tail, and `ExactReading.conservatism` to price the exact method's guarantee: the
+    readable block's exact interval is 9.3% wider than its mid-p one, which is what a discrete
+    support costs when it cannot place a tail probability at exactly `0.025`.
+
 
 ## License
 

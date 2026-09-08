@@ -1,5 +1,5 @@
 {
-  "originHash" : "d2e906c82f25d59f59a5c8225ca7d07a6f46158aa97a632bb526c6dc5b0596e8",
+  "originHash" : "50709fcec7e793b6248c319748858b84fe6ad050d130457794380865994b6eb0",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -215,6 +215,15 @@
       "state" : {
         "revision" : "11658e1a9b89cb73382c1d20cc41f7b6d0769c89",
         "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "exact-association-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/exact-association-kit.git",
+      "state" : {
+        "revision" : "8a67cc0896cfcfdf980adc359468eb727ae61fe1",
+        "version" : "1.0.0"
       }
     },
     {
