@@ -70,7 +70,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/square-design-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/association-fit-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/association-transport-kit.git", from: "1.1.0"),
-        .package(url: "https://github.com/rajatslakhina/exact-association-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/exact-association-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/conditioning-cost-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -149,7 +150,8 @@ let package = Package(
                 .product(name: "AssociationFitKit", package: "association-fit-kit"),
                 .product(name: "AssociationFitSquare", package: "association-fit-kit"),
                 .product(name: "AssociationTransportKit", package: "association-transport-kit"),
-                .product(name: "ExactAssociationKit", package: "exact-association-kit")
+                .product(name: "ExactAssociationKit", package: "exact-association-kit"),
+                .product(name: "ConditioningCostKit", package: "conditioning-cost-kit")
             ]
         )
     ]

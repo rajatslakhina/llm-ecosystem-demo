@@ -72,7 +72,8 @@ extension EcosystemDemo {
             (.squareDesignHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.associationFitHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.associationTransportHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.exactAssociationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.exactAssociationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.conditioningCostHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixty packages in this
+A single runnable demo that wires together all sixty-one packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -118,6 +118,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`AssociationFitKit`](https://github.com/rajatslakhina/association-fit-kit) | The other half of the specification scenario 57 completed. `SquareDesignKit` fixes a panel's **trace**, which on a three-category panel pins one number and leaves eight cells to whatever the construction happens to do. This one states the **association** as a structure and lets the trace follow, fitting it onto required margins by iterative proportional fitting — which provably cannot move a local odds ratio, because row and column scalings cancel out of every one of them (**4.441e-16** on this demo's own margins). Four structures on one set of margins give four different panels: agreement `0.5000`, `0.5986`, `0.7254`, with quasi-independence **refused** because forbidding the diagonal leaves judge one's 72 affirmations only 48 columns to land in. Then it prices whole verdicts: **every margin exact on every structure**, association moved by up to `2.011e-01`. Scenario 58 |
 | [`AssociationTransportKit`](https://github.com/rajatslakhina/association-transport-kit) | Scenario 58 **chose** a structure. This one reads the corpus's own. Every construction in scenarios 50-58 starts from a structure somebody named; nothing here could measure one, say how precisely, or carry it elsewhere. It cross-tabulates two gates into the joint panel an association actually lives in — which scenario 58 never built, having used only margins — and **refuses** to read it undecided, because 5 of its 9 cells are empty and nothing in the counts says whether that is a rule or an absence. Read as a rule it cannot be seeded at all (`seedLineEmpty`); read as an absence it transports, agreement moving `0.5000 -> 0.5691` on balanced margins with the structure carried exactly. The finding is the interval: **0 of 4 blocks clear independence at 95% on 96 items**, the widest spanning a factor of **15766.2**, and 3 of the 4 ratios exist only because half an item was added to every cell. Scenario 59 |
 | [`ExactAssociationKit`](https://github.com/rajatslakhina/exact-association-kit) | What scenario 59's intervals were worth. Every odds ratio above carries a **Woolf** interval — a normal approximation on the log scale, valid in the limit of large counts, on a panel of 96 items with five empty cells. Conditioning a block on all four margins leaves the odds ratio as the only parameter of Fisher's noncentral hypergeometric distribution, so the interval can be **summed rather than approximated**. On this corpus it finds something scenario 59 could not: **three of the four blocks have a zero margin**, which pins them to a single table — they never had an odds ratio to estimate, and every ratio they contributed was made by the half-item correction. The one readable block reads exact `[0.3574, 2.7979]` against Woolf's raw `[0.3970, 2.5192]`, **11.4% wider**, with a Fisher p of exactly `1.000000`. Swept over every table of at most twenty items with no empty cell, Woolf is **never** the wider of the two. Scenario 60 |
+| [`ConditioningCostKit`](https://github.com/rajatslakhina/conditioning-cost-kit) | What scenario 60's exactness was conditional on. That interval is exact because it conditions on **all four margins**, which removes the nuisance parameter — and that is free under exactly one of the three designs a two-by-two table can arise from. This corpus fixed neither margin: each turn is judged by two gates and nothing is chosen in advance. Coverage is a finite sum over the tables a design can produce, so the difference is measurable rather than arguable. The readable block `[36, 36; 12, 12]` covers **96.7385%** under both-margins-fixed and **97.1026%** under row-fixed — same block, same 95% claim, two answers, and the design is not an argument to any interval this demo computes. On a twelve-item panel the sharper finding lands: the exact interval covers **45.9637%** overall and **99.9994%** among the tables it agrees to read, because it declines **54.0360%** of them. The guarantee is real and it is conditional, and nothing here had said so. Enumerating the design this corpus actually has is **156849 tables**, which is why nobody had checked. Scenario 61 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -552,7 +553,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **sixty scenarios, $0.2068255 metered total**. `architecture.svg`
+The current run is **sixty-one scenarios, $0.2099155 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1208,10 +1209,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all sixty
-  dependencies from their real tagged releases.
+- **Build:** `swift build` — clean, zero warnings, resolving all sixty-one
+  dependencies from their real tagged releases. Build with
+  `--scratch-path` outside iCloud if this checkout is inside a synced
+  folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
+  SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all sixty packages together; the output above is a genuine capture,
+  of all sixty-one packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1222,7 +1226,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the sixty real packages compose and run," which the sample output
+means "the sixty-one real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1492,6 +1496,35 @@ says so.
     than described. Block `(0, 0)` is `36, 36, 12, 12`, which reads `1.0000` raw and `1.0000`
     corrected — it does not move, and `1.0.0` reported that as a move **away** from
     independence. `CorrectionDirection` in `1.1.0` has three cases instead of two.
+
+61. **`ConditioningCostKit`** adds the sixty-first scenario, and it prices the assumption
+    scenario 60 rested on.
+
+    Scenario 60 replaced an asymptotic interval with an exact one and showed the asymptotic
+    side had been too narrow on every small table anyone checked. Exactness there comes from
+    **conditioning on all four margins**: holding them fixed removes the nuisance parameter and
+    leaves a distribution whose only unknown is the odds ratio, which is why probabilities can
+    be summed instead of approximated. That move is free when the margins really were fixed by
+    the design. This corpus fixed neither — each turn is judged by two gates, and no margin is
+    chosen before the data arrive.
+
+    Coverage is a probability over the tables a design can produce, so it can be enumerated
+    rather than simulated. The scenario prices the readable block `[36, 36; 12, 12]` under two
+    designs at the same 95% claim: **96.7385%** actual coverage under both-margins-fixed,
+    **97.1026%** under row-margins-fixed. Same block, same parameter, same level, two answers,
+    and neither is the design this corpus has — enumerating that one is **156849 tables**.
+
+    The sharper reading is on a panel the size this series usually reports on. Over a row-fixed
+    twelve-item design, the exact interval covers **45.9637%** overall and **99.9994%** among
+    the tables it agrees to read, because **54.0360%** of the time a margin comes back zero and
+    it declines. Both numbers are correct. The guarantee is real and it is **conditional**, and
+    fifty-nine scenarios of intervals never stated the condition. Woolf is the mirror image: it
+    never declines, because Haldane's correction has already turned a table carrying no
+    information into an odds ratio of exactly 1 with a wide interval around it.
+
+    Scenario 60's intervals are still the right ones to have used. What is new is that this
+    ecosystem can now say what they were conditional on, and how often the condition fails on
+    the panels it actually has.
 
 60. **`ExactAssociationKit`** adds the sixtieth scenario, and it audits the one before it.
 

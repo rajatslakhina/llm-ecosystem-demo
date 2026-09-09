@@ -37,5 +37,6 @@ extension EcosystemDemo {
         await runAssociationFitScenario(meter: meter)
         await runAssociationTransportScenario(meter: meter)
         await runExactAssociationScenario(meter: meter)
+        await runConditioningCostScenario(meter: meter)
     }
 }
