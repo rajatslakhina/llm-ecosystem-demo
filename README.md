@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixty-one packages in this
+A single runnable demo that wires together all sixty-three packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -120,6 +120,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ExactAssociationKit`](https://github.com/rajatslakhina/exact-association-kit) | What scenario 59's intervals were worth. Every odds ratio above carries a **Woolf** interval — a normal approximation on the log scale, valid in the limit of large counts, on a panel of 96 items with five empty cells. Conditioning a block on all four margins leaves the odds ratio as the only parameter of Fisher's noncentral hypergeometric distribution, so the interval can be **summed rather than approximated**. On this corpus it finds something scenario 59 could not: **three of the four blocks have a zero margin**, which pins them to a single table — they never had an odds ratio to estimate, and every ratio they contributed was made by the half-item correction. The one readable block reads exact `[0.3574, 2.7979]` against Woolf's raw `[0.3970, 2.5192]`, **11.4% wider**, with a Fisher p of exactly `1.000000`. Swept over every table of at most twenty items with no empty cell, Woolf is **never** the wider of the two. Scenario 60 |
 | [`ConditioningCostKit`](https://github.com/rajatslakhina/conditioning-cost-kit) | What scenario 60's exactness was conditional on. That interval is exact because it conditions on **all four margins**, which removes the nuisance parameter — and that is free under exactly one of the three designs a two-by-two table can arise from. This corpus fixed neither margin: each turn is judged by two gates and nothing is chosen in advance. Coverage is a finite sum over the tables a design can produce, so the difference is measurable rather than arguable. The readable block `[36, 36; 12, 12]` covers **96.7385%** under both-margins-fixed and **97.1026%** under row-fixed — same block, same 95% claim, two answers, and the design is not an argument to any interval this demo computes. On a twelve-item panel the sharper finding lands: the exact interval covers **45.9637%** overall and **99.9994%** among the tables it agrees to read, because it declines **54.0360%** of them. The guarantee is real and it is conditional, and nothing here had said so. Enumerating the design this corpus actually has is **156849 tables**, which is why nobody had checked. Scenario 61 |
 | [`UnconditionalExactKit`](https://github.com/rajatslakhina/unconditional-exact-kit) | Scenario 61 priced an assumption; this one declines to make it. Barnard's test keeps the nuisance parameter and **maximises the null probability over it** instead of conditioning it away, which costs computation rather than guarantee. On a twelve-item panel — six turns per gate, `5/6` against `1/6` — the unconditional p-value is **0.038584** and Fisher's is **0.080087**: the same data, and only one of them rejects at five percent. Auditing the level itself shows why. Fisher's actual size on that design is **0.6348%**, **12.7%** of the five percent it claims; the unconditional test spends **77.1%**; the asymptotic score test spends **135.2%** and is over its level. The unspent level was purchasable power: at a true `0.85` against `0.15` the unconditional test finds the difference **73.5818%** of the time against **44.3460%**, a gain of **29.2359 points**. It also closes what scenario 61 left open. Every method of this kind maximises on a grid, and a grid maximum is a *lower* bound on a supremum — quoting it as a p-value errs towards rejecting. The grid here is uniform in `asin(sqrt(p))`, which bounds the slope by `2*sqrt(n)` across the closed range including both endpoints, so the remainder is `sqrt(n)*pi/(2m)` and every p-value is reported as the bracket it is known to. | Scenario 62 |
+| [`TotalFixedExactKit`](https://github.com/rajatslakhina/total-fixed-exact-kit) | Scenario 62 stopped conditioning and still stopped one parameter short. Barnard's test keeps the one nuisance parameter a **row-fixed** design leaves; a panel of turns cross-classified by two gates fixes neither margin, so its null leaves **two** and the honest supremum is over a square. On the same twelve-item panel the total-fixed p-value is **0.045872** against a row-fixed **0.038584** and Fisher's **0.080087**. The tempting shortcut is measured and found unavailable: `[9, 1; 3, 7]` moves **3.2650x larger** when the second parameter is admitted and `[10, 2; 3, 5]` moves **smaller** at a ratio of **0.8773**, across five percent — so the cheaper reading is not conservative in either direction. Making it affordable is the engineering. A uniform grid needs **2,960,992,225** evaluations for a remainder of `1e-4`, and a Lipschitz branch and bound over the same rectangle exhausts **49,999** evaluations at **0.03188319**, because a first-order bound has nothing to say in the flat region around a maximum. Writing the null in the tensor-product **Bernstein** basis makes the coefficients themselves the enclosure: the same certificate lands in **23 subdivisions** and `1e-9` in **184**, with no function evaluations at all. And by Vandermonde's identity a coefficient *is* the conditional probability given one pair of margins, so the free upper bound — **1/6** here — says the worst conditional behaviour over all margins bounds the worst unconditional behaviour over all rates. At five percent on this design Fisher spends **28.04%** of its level, the asymptotic score test **116.98%** and is over it, and this one **99.36%** and holds. | Scenario 63 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -1763,3 +1764,56 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     `0.5000`, comfortably inside the interval the data give that rate. What it does buy is
     precision — a narrower range means a smaller remainder at the same resolution — which is
     why its bracket is the narrower of the two.
+
+63. **`TotalFixedExactKit`** adds the sixty-third scenario, and it admits the parameter
+    scenario 62 left out.
+
+    Scenario 62 stopped conditioning on a margin the corpus never fixed. It stopped one
+    parameter short. Barnard's test keeps the single nuisance parameter that a **row-fixed**
+    design leaves — two groups of chosen size, each observed for an outcome that was not
+    chosen. A panel of turns cross-classified by two gates chose neither margin. Its
+    independence null leaves **two** free parameters, the row rate and the column rate, and
+    the honest supremum is over a square rather than an interval. Scenario 62's own output
+    said as much and did nothing about it.
+
+    On the same twelve-item panel, `5/6` against `1/6`, the three readings are **0.045872**
+    total-fixed, **0.038584** row-fixed and **0.080087** conditional. The null likes the
+    total-fixed rejection region most at a row rate of **0.8759** and a column rate of
+    **0.8759** — both estimated, neither chosen.
+
+    The shortcut anyone would reach for is to read a total-fixed panel with the row-fixed
+    test already here and call the answer conservative. It is not. `[9, 1; 3, 7]` moves
+    **3.2650x larger** when the second parameter is admitted; `[10, 2; 3, 5]` moves
+    **smaller**, at a ratio of **0.8773** — from **0.051149** to **0.044874**, across five
+    percent in the direction that rejects when it should not. There is no direction in which
+    the cheaper reading is safe.
+
+    Making the honest reading affordable is the whole of the engineering. The uniform grid's
+    remainder formula survives the second parameter unchanged — nearest-node halving in each
+    coordinate exactly pays for the second axis, leaving `sqrt(n)*pi/(2m)` — but the same
+    resolution now buys `(m + 1)^2` points, so a remainder of `1e-4` on twelve items costs
+    **2,960,992,225** evaluations. A Lipschitz branch and bound was written first, and it
+    fails for a reason worth keeping: a first-order bound needs every cell narrower than
+    `precision / L` throughout the flat region around the maximum, and in two dimensions that
+    count is squared. It exhausts **49,999** evaluations and reaches only **0.03188319**.
+
+    Collecting the null probability by margin writes it in the tensor-product Bernstein basis,
+    where the basis functions are non-negative and sum to one in each variable — so the
+    largest coefficient bounds the function above and the smallest bounds it below, with no
+    derivative anywhere in the argument. The corner coefficients *are* the function, so
+    subdivision costs no evaluations at all. The same certificate lands in **23
+    subdivisions**, and `1e-9` in **184**.
+
+    The coefficients also mean something. By Vandermonde's identity `a[r][k]` is exactly the
+    conditional probability of the rejection region given margins `(r, k)`, so the enclosure's
+    zero-work upper bound — **0.166667** on this panel — is a checkable statement rather than
+    an abstraction: the worst conditional behaviour over every margin the panel might have
+    shown bounds the worst unconditional behaviour over every pair of rates. It is 3.63x too
+    loose to quote, and the coefficient at the *observed* margins is Fisher's own p-value.
+
+    Read as size, the design settles which of the three procedures is actually available. At a
+    claimed five percent on twelve items, Fisher's conditional test spends **28.04%** of its
+    level and finds a true `0.85` against `0.15` **50.9261%** of the time; the asymptotic score
+    test spends **116.98%**, is over its level, and finds it **75.1595%**; the total-fixed
+    unconditional test spends **99.36%**, holds, and finds it **73.7488%**. Only one of the
+    three both holds the level it claims and spends it.

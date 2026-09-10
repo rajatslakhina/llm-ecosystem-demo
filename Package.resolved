@@ -1,5 +1,5 @@
 {
-  "originHash" : "a261e6eaa566a2086bf437f32cc458cccc9ead07ca3e17b29212d4ce6143c72d",
+  "originHash" : "873034e795b21f15484df69809d1209b74441a9b9d2124a9b6fdc3c5e28db1c0",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -529,6 +529,15 @@
       "location" : "https://github.com/rajatslakhina/tool-registry-kit.git",
       "state" : {
         "revision" : "98d712b33235363097ee1779141f8e7ea0cecf8f",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "total-fixed-exact-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/total-fixed-exact-kit.git",
+      "state" : {
+        "revision" : "e415fbae29c6756130ed071863a39afa80f5df2f",
         "version" : "1.0.0"
       }
     },

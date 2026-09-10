@@ -74,7 +74,8 @@ extension EcosystemDemo {
             (.associationTransportHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.exactAssociationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.conditioningCostHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.unconditionalExactHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.unconditionalExactHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.totalFixedExactHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }
