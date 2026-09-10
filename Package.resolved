@@ -1,5 +1,5 @@
 {
-  "originHash" : "fef04cbeb070ca8e927ecd8002f5197298e814016ad363b999571bb58bf4ee6d",
+  "originHash" : "a261e6eaa566a2086bf437f32cc458cccc9ead07ca3e17b29212d4ce6143c72d",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -538,6 +538,15 @@
       "location" : "https://github.com/rajatslakhina/trace-kit.git",
       "state" : {
         "revision" : "5f7a31768adf9e35acc5b440827e2b5d950d6dcb",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "unconditional-exact-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/unconditional-exact-kit.git",
+      "state" : {
+        "revision" : "585b5e38b92bc18489cf9b98e4810d9d578c36a4",
         "version" : "1.0.0"
       }
     },

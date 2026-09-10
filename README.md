@@ -119,6 +119,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`AssociationTransportKit`](https://github.com/rajatslakhina/association-transport-kit) | Scenario 58 **chose** a structure. This one reads the corpus's own. Every construction in scenarios 50-58 starts from a structure somebody named; nothing here could measure one, say how precisely, or carry it elsewhere. It cross-tabulates two gates into the joint panel an association actually lives in — which scenario 58 never built, having used only margins — and **refuses** to read it undecided, because 5 of its 9 cells are empty and nothing in the counts says whether that is a rule or an absence. Read as a rule it cannot be seeded at all (`seedLineEmpty`); read as an absence it transports, agreement moving `0.5000 -> 0.5691` on balanced margins with the structure carried exactly. The finding is the interval: **0 of 4 blocks clear independence at 95% on 96 items**, the widest spanning a factor of **15766.2**, and 3 of the 4 ratios exist only because half an item was added to every cell. Scenario 59 |
 | [`ExactAssociationKit`](https://github.com/rajatslakhina/exact-association-kit) | What scenario 59's intervals were worth. Every odds ratio above carries a **Woolf** interval — a normal approximation on the log scale, valid in the limit of large counts, on a panel of 96 items with five empty cells. Conditioning a block on all four margins leaves the odds ratio as the only parameter of Fisher's noncentral hypergeometric distribution, so the interval can be **summed rather than approximated**. On this corpus it finds something scenario 59 could not: **three of the four blocks have a zero margin**, which pins them to a single table — they never had an odds ratio to estimate, and every ratio they contributed was made by the half-item correction. The one readable block reads exact `[0.3574, 2.7979]` against Woolf's raw `[0.3970, 2.5192]`, **11.4% wider**, with a Fisher p of exactly `1.000000`. Swept over every table of at most twenty items with no empty cell, Woolf is **never** the wider of the two. Scenario 60 |
 | [`ConditioningCostKit`](https://github.com/rajatslakhina/conditioning-cost-kit) | What scenario 60's exactness was conditional on. That interval is exact because it conditions on **all four margins**, which removes the nuisance parameter — and that is free under exactly one of the three designs a two-by-two table can arise from. This corpus fixed neither margin: each turn is judged by two gates and nothing is chosen in advance. Coverage is a finite sum over the tables a design can produce, so the difference is measurable rather than arguable. The readable block `[36, 36; 12, 12]` covers **96.7385%** under both-margins-fixed and **97.1026%** under row-fixed — same block, same 95% claim, two answers, and the design is not an argument to any interval this demo computes. On a twelve-item panel the sharper finding lands: the exact interval covers **45.9637%** overall and **99.9994%** among the tables it agrees to read, because it declines **54.0360%** of them. The guarantee is real and it is conditional, and nothing here had said so. Enumerating the design this corpus actually has is **156849 tables**, which is why nobody had checked. Scenario 61 |
+| [`UnconditionalExactKit`](https://github.com/rajatslakhina/unconditional-exact-kit) | Scenario 61 priced an assumption; this one declines to make it. Barnard's test keeps the nuisance parameter and **maximises the null probability over it** instead of conditioning it away, which costs computation rather than guarantee. On a twelve-item panel — six turns per gate, `5/6` against `1/6` — the unconditional p-value is **0.038584** and Fisher's is **0.080087**: the same data, and only one of them rejects at five percent. Auditing the level itself shows why. Fisher's actual size on that design is **0.6348%**, **12.7%** of the five percent it claims; the unconditional test spends **77.1%**; the asymptotic score test spends **135.2%** and is over its level. The unspent level was purchasable power: at a true `0.85` against `0.15` the unconditional test finds the difference **73.5818%** of the time against **44.3460%**, a gain of **29.2359 points**. It also closes what scenario 61 left open. Every method of this kind maximises on a grid, and a grid maximum is a *lower* bound on a supremum — quoting it as a p-value errs towards rejecting. The grid here is uniform in `asin(sqrt(p))`, which bounds the slope by `2*sqrt(n)` across the closed range including both endpoints, so the remainder is `sqrt(n)*pi/(2m)` and every p-value is reported as the bracket it is known to. | Scenario 62 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -1720,3 +1721,45 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     counted twice. At `t = n - 1` every per-category floor reads `a_k`, so their
     sum is `n`, which is never at most `n - 1`: a pair with the same rates can
     agree on everything, and cannot agree on all but one.
+
+
+62. **`UnconditionalExactKit`** adds the sixty-second scenario, and it stops paying the bill
+    scenario 61 itemised.
+
+    Scenario 61 established that every exact interval in this ecosystem conditions on margins
+    the corpus never fixed, and measured what that costs in coverage. The diagnosis was
+    complete and the prescription was missing. Barnard's unconditional exact test is the
+    prescription: rather than removing the nuisance parameter by conditioning on the quantity
+    that carries it, keep it and maximise the null probability of the rejection region over
+    every value it could take. The guarantee that comes back is about the design that was run.
+
+    On the twelve-item panel this series keeps reporting on — two gates, six turns each,
+    observed `5/6` against `1/6` — the two p-values are **0.038584** and **0.080087**, and at
+    a five percent level they disagree about whether there is anything there. That is not a
+    rounding difference. It is a column margin being held fixed that nothing fixed.
+
+    Read as size rather than as coverage, the same fact is starker. On that design at a claimed
+    five percent, Fisher's conditional test has an actual size of **0.6348%** — it spends
+    **12.7%** of the level it claims and gives the rest back. The unconditional test spends
+    **77.1%** and still holds. The asymptotic score test spends **135.2%** and does not hold at
+    all, which is a property of a procedure *and* a design rather than of either alone. Unspent
+    level is not safety: at a true `0.85` against `0.15` the difference is found **73.5818%** of
+    the time unconditionally against **44.3460%** conditionally, **29.2359 points** of power
+    handed back for an assumption nobody had stated.
+
+    The scenario also closes the item scenario 61 opened about itself. Every method of this kind
+    maximises over a nuisance parameter on a grid, and a grid maximum is a **lower** bound on a
+    supremum — so quoting it as a p-value errs towards rejecting, the one direction a p-value
+    must not err in. A grid uniform in the rate has an unbounded slope at both ends, which is
+    exactly where a small design puts its probability. Laid out uniformly in `asin(sqrt(p))` the
+    slope is bounded by `2*sqrt(n)` on the whole closed range, endpoints included, so the
+    remainder is `sqrt(n)*pi/(2m)`: linear in the reciprocal of the resolution, with no unknown
+    constant in front of it. Every p-value in the scenario is printed with the width of the
+    bracket it is known to, and the widths above are **0.000010** and **0.000006** because the
+    caller asked for them in advance.
+
+    Berger–Boos is included and honestly reported: on this panel it costs its `gamma` of
+    `0.001` and saves nothing, because the unrestricted maximiser sits at a shared rate of
+    `0.5000`, comfortably inside the interval the data give that rate. What it does buy is
+    precision — a narrower range means a smaller remainder at the same resolution — which is
+    why its bracket is the narrower of the two.
