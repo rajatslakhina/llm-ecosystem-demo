@@ -121,6 +121,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ConditioningCostKit`](https://github.com/rajatslakhina/conditioning-cost-kit) | What scenario 60's exactness was conditional on. That interval is exact because it conditions on **all four margins**, which removes the nuisance parameter — and that is free under exactly one of the three designs a two-by-two table can arise from. This corpus fixed neither margin: each turn is judged by two gates and nothing is chosen in advance. Coverage is a finite sum over the tables a design can produce, so the difference is measurable rather than arguable. The readable block `[36, 36; 12, 12]` covers **96.7385%** under both-margins-fixed and **97.1026%** under row-fixed — same block, same 95% claim, two answers, and the design is not an argument to any interval this demo computes. On a twelve-item panel the sharper finding lands: the exact interval covers **45.9637%** overall and **99.9994%** among the tables it agrees to read, because it declines **54.0360%** of them. The guarantee is real and it is conditional, and nothing here had said so. Enumerating the design this corpus actually has is **156849 tables**, which is why nobody had checked. Scenario 61 |
 | [`UnconditionalExactKit`](https://github.com/rajatslakhina/unconditional-exact-kit) | Scenario 61 priced an assumption; this one declines to make it. Barnard's test keeps the nuisance parameter and **maximises the null probability over it** instead of conditioning it away, which costs computation rather than guarantee. On a twelve-item panel — six turns per gate, `5/6` against `1/6` — the unconditional p-value is **0.038584** and Fisher's is **0.080087**: the same data, and only one of them rejects at five percent. Auditing the level itself shows why. Fisher's actual size on that design is **0.6348%**, **12.7%** of the five percent it claims; the unconditional test spends **77.1%**; the asymptotic score test spends **135.2%** and is over its level. The unspent level was purchasable power: at a true `0.85` against `0.15` the unconditional test finds the difference **73.5818%** of the time against **44.3460%**, a gain of **29.2359 points**. It also closes what scenario 61 left open. Every method of this kind maximises on a grid, and a grid maximum is a *lower* bound on a supremum — quoting it as a p-value errs towards rejecting. The grid here is uniform in `asin(sqrt(p))`, which bounds the slope by `2*sqrt(n)` across the closed range including both endpoints, so the remainder is `sqrt(n)*pi/(2m)` and every p-value is reported as the bracket it is known to. | Scenario 62 |
 | [`TotalFixedExactKit`](https://github.com/rajatslakhina/total-fixed-exact-kit) | Scenario 62 stopped conditioning and still stopped one parameter short. Barnard's test keeps the one nuisance parameter a **row-fixed** design leaves; a panel of turns cross-classified by two gates fixes neither margin, so its null leaves **two** and the honest supremum is over a square. On the same twelve-item panel the total-fixed p-value is **0.045872** against a row-fixed **0.038584** and Fisher's **0.080087**. The tempting shortcut is measured and found unavailable: `[9, 1; 3, 7]` moves **3.2650x larger** when the second parameter is admitted and `[10, 2; 3, 5]` moves **smaller** at a ratio of **0.8773**, across five percent — so the cheaper reading is not conservative in either direction. Making it affordable is the engineering. A uniform grid needs **2,960,992,225** evaluations for a remainder of `1e-4`, and a Lipschitz branch and bound over the same rectangle exhausts **49,999** evaluations at **0.03188319**, because a first-order bound has nothing to say in the flat region around a maximum. Writing the null in the tensor-product **Bernstein** basis makes the coefficients themselves the enclosure: the same certificate lands in **23 subdivisions** and `1e-9` in **184**, with no function evaluations at all. And by Vandermonde's identity a coefficient *is* the conditional probability given one pair of margins, so the free upper bound — **1/6** here — says the worst conditional behaviour over all margins bounds the worst unconditional behaviour over all rates. At five percent on this design Fisher spends **28.04%** of its level, the asymptotic score test **116.98%** and is over it, and this one **99.36%** and holds. | Scenario 63 |
+| [`RestrictionRuleKit`](https://github.com/rajatslakhina/restriction-rule-kit) | Every scenario above that restricts a nuisance region does it at a fixed conventional `gamma = 0.001`, chosen by nobody, for no particular design. On the same twelve-item reference table this scenario measures that convention costing **more** than not restricting at all — `0.071695` against an unrestricted `0.071605` — because the region a gamma that size buys is already almost the whole square. A search that actually minimises the quoted value finds `gamma ~= 0.000152` instead, landing at `0.071167`: lower than both the convention and the unrestricted baseline. It is **not** a licence to re-minimise gamma per observed table — that breaks the fixed-in-advance assumption the Berger–Boos guarantee needs, whether or not it happens to move the answer — so the safe use is a single design-fixed recommendation, and both the conventional and the recommended gamma are verified here to hold their level by the same full-enumeration audit `UnconditionalExactKit` uses on itself. | Scenario 64 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -1817,3 +1818,32 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     test spends **116.98%**, is over its level, and finds it **75.1595%**; the total-fixed
     unconditional test spends **99.36%**, holds, and finds it **73.7488%**. Only one of the
     three both holds the level it claims and spends it.
+
+64. **`RestrictionRuleKit`** adds the sixty-fourth scenario, and it answers the question every
+    restricted procedure above left to convention: what should `gamma` actually be.
+
+    Every Berger–Boos restriction in this corpus — scenario 62's row-fixed test, scenario 63's
+    total-fixed one — defaults `gamma` to `0.001`, chosen once, by nobody, for no particular
+    design. Measured on the twelve-item reference table this demo keeps reporting on, that
+    convention costs **more** than not restricting at all: `0.071695` against an unrestricted
+    `0.071605`. The region a gamma that size buys is already almost the whole square, so
+    restricting barely shrinks the maximum while still charging `gamma` back into the
+    p-value. A search that minimises the quoted value directly finds `gamma ~= 0.000152`
+    instead, landing at `0.071167` — lower than both the convention and doing nothing.
+
+    The search itself has no idea what a Berger–Boos region is. It takes a single protocol,
+    `GammaCostFunction`, evaluates a log-spaced grid, checks the scan is a single valley, and
+    refines with golden-section search in `log(gamma)` — a dependency-free numerical routine
+    any restricted procedure can plug into without this package depending on their types.
+
+    What it refuses to be is a licence to re-minimise `gamma` per observed table. The
+    classical guarantee needs `gamma` fixed *before* the table under test is looked at;
+    choosing whichever gamma flatters one specific result breaks that assumption regardless
+    of whether it happens to move the answer. The safe use is a single recommendation,
+    computed once from a design-level reference table and applied to every table the design
+    can produce — and this scenario verifies, by the same `SizeCertificate` full-enumeration
+    audit `UnconditionalExactKit` runs on itself, that both the conventional gamma and the
+    recommended one hold their level. Whether re-minimising per table would actually have
+    changed anything at this design's scale is measured, not assumed, in
+    `restriction-rule-kit`'s own repository — and at twelve items it does not, because the
+    gap between candidate gammas here is too small to flip a single reject/accept decision.
