@@ -1565,6 +1565,29 @@ says so.
     support costs when it cannot place a tail probability at exactly `0.025`.
 
 
+## Building from an iCloud-synced folder
+
+If this repo lives inside iCloud Drive, `swift build` fails with
+
+```
+error: input file '.../.build/checkouts/<pkg>/<File>.swift' was modified during the build
+```
+
+naming a **different package on each run**. Nothing in the repo is wrong: iCloud rewrites files
+underneath `.build/checkouts` while the compiler is reading them, and SwiftPM correctly reports that
+its inputs changed mid-build. The tell is that the named file moves between runs and no source was
+edited.
+
+Put the build directory outside iCloud:
+
+```bash
+swift build --scratch-path /tmp/llm-demo-scratch
+swift run  --scratch-path /tmp/llm-demo-scratch LLMEcosystemDemo
+```
+
+This is the SwiftPM counterpart of the rule `ai-chat-app` documents for DerivedData, and it has the
+same root cause.
+
 ## License
 
 MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
