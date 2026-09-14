@@ -76,7 +76,8 @@ extension EcosystemDemo {
             (.conditioningCostHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.unconditionalExactHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.totalFixedExactHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.restrictionRuleHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.restrictionRuleHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.repeatedSuccessHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

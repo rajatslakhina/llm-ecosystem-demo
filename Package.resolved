@@ -1,5 +1,5 @@
 {
-  "originHash" : "b69fc19080666451308dc86172e79a02dd11a83688bfed7f3754cc7ada1d8d6d",
+  "originHash" : "8f1bb62b3984cc83c7265d12e0dc970d3b4ec53f549c8467064f4f4cde10211c",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -376,6 +376,15 @@
       "location" : "https://github.com/rajatslakhina/realtime-session-kit.git",
       "state" : {
         "revision" : "d924a6f210d40222154d28f52388a0d8a66e0ab7",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "repeated-success-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/repeated-success-kit.git",
+      "state" : {
+        "revision" : "329b57f85f930237d159dc698c042e974f8e8ac2",
         "version" : "1.0.0"
       }
     },

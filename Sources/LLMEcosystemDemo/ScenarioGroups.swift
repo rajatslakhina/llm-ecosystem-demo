@@ -41,5 +41,6 @@ extension EcosystemDemo {
         await runUnconditionalExactScenario(meter: meter)
         await runTotalFixedExactScenario(meter: meter)
         await runRestrictionRuleScenario(meter: meter)
+        await runRepeatedSuccessScenario(meter: meter)
     }
 }

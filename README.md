@@ -122,6 +122,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`UnconditionalExactKit`](https://github.com/rajatslakhina/unconditional-exact-kit) | Scenario 61 priced an assumption; this one declines to make it. Barnard's test keeps the nuisance parameter and **maximises the null probability over it** instead of conditioning it away, which costs computation rather than guarantee. On a twelve-item panel — six turns per gate, `5/6` against `1/6` — the unconditional p-value is **0.038584** and Fisher's is **0.080087**: the same data, and only one of them rejects at five percent. Auditing the level itself shows why. Fisher's actual size on that design is **0.6348%**, **12.7%** of the five percent it claims; the unconditional test spends **77.1%**; the asymptotic score test spends **135.2%** and is over its level. The unspent level was purchasable power: at a true `0.85` against `0.15` the unconditional test finds the difference **73.5818%** of the time against **44.3460%**, a gain of **29.2359 points**. It also closes what scenario 61 left open. Every method of this kind maximises on a grid, and a grid maximum is a *lower* bound on a supremum — quoting it as a p-value errs towards rejecting. The grid here is uniform in `asin(sqrt(p))`, which bounds the slope by `2*sqrt(n)` across the closed range including both endpoints, so the remainder is `sqrt(n)*pi/(2m)` and every p-value is reported as the bracket it is known to. | Scenario 62 |
 | [`TotalFixedExactKit`](https://github.com/rajatslakhina/total-fixed-exact-kit) | Scenario 62 stopped conditioning and still stopped one parameter short. Barnard's test keeps the one nuisance parameter a **row-fixed** design leaves; a panel of turns cross-classified by two gates fixes neither margin, so its null leaves **two** and the honest supremum is over a square. On the same twelve-item panel the total-fixed p-value is **0.045872** against a row-fixed **0.038584** and Fisher's **0.080087**. The tempting shortcut is measured and found unavailable: `[9, 1; 3, 7]` moves **3.2650x larger** when the second parameter is admitted and `[10, 2; 3, 5]` moves **smaller** at a ratio of **0.8773**, across five percent — so the cheaper reading is not conservative in either direction. Making it affordable is the engineering. A uniform grid needs **2,960,992,225** evaluations for a remainder of `1e-4`, and a Lipschitz branch and bound over the same rectangle exhausts **49,999** evaluations at **0.03188319**, because a first-order bound has nothing to say in the flat region around a maximum. Writing the null in the tensor-product **Bernstein** basis makes the coefficients themselves the enclosure: the same certificate lands in **23 subdivisions** and `1e-9` in **184**, with no function evaluations at all. And by Vandermonde's identity a coefficient *is* the conditional probability given one pair of margins, so the free upper bound — **1/6** here — says the worst conditional behaviour over all margins bounds the worst unconditional behaviour over all rates. At five percent on this design Fisher spends **28.04%** of its level, the asymptotic score test **116.98%** and is over it, and this one **99.36%** and holds. | Scenario 63 |
 | [`RestrictionRuleKit`](https://github.com/rajatslakhina/restriction-rule-kit) | Every scenario above that restricts a nuisance region does it at a fixed conventional `gamma = 0.001`, chosen by nobody, for no particular design. On the same twelve-item reference table this scenario measures that convention costing **more** than not restricting at all — `0.071695` against an unrestricted `0.071605` — because the region a gamma that size buys is already almost the whole square. A search that actually minimises the quoted value finds `gamma ~= 0.000152` instead, landing at `0.071167`: lower than both the convention and the unrestricted baseline. It is **not** a licence to re-minimise gamma per observed table — that breaks the fixed-in-advance assumption the Berger–Boos guarantee needs, whether or not it happens to move the answer — so the safe use is a single design-fixed recommendation, and both the conventional and the recommended gamma are verified here to hold their level by the same full-enumeration audit `UnconditionalExactKit` uses on itself. | Scenario 64 |
+| [`RepeatedSuccessKit`](https://github.com/rajatslakhina/repeated-success-kit) | Every pass rate quoted anywhere above is one number, and one number stops being enough the moment the question is about more than one attempt. Two eval panels here have an **identical** headline rate — `79/120 = 0.658333` on both — and different answers at `k = 5`: the honest all-of-5 is `0.107804` on the tidy panel and `0.458333` on the mixed one, while raising the pass rate to the fifth gives `0.123660` for both. Because `x^k` is convex the pooled answer is wrong with a sign — too low for all-of-k, too high for any-of-k — and at `k = 2` the gap is exactly the dispersion the panel shows in excess of binomial noise, so the two gaps come out equal and opposite to `1e-16`. The scenario also aims an exact Clopper-Pearson bound at a mixed panel and shows it returning a 95% *lower* bound `0.051200` **above** the quantity it bounds. | Scenario 65 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -1847,3 +1848,34 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     changed anything at this design's scale is measured, not assumed, in
     `restriction-rule-kit`'s own repository — and at twelve items it does not, because the
     gap between candidate gammas here is too small to flip a single reject/accept decision.
+65. **`RepeatedSuccessKit`** adds the sixty-fifth scenario, and it is about a number every
+    scenario above has quoted and none of them has interrogated: a pass rate.
+
+    A rate is a sufficient statistic for exactly one question — how often something succeeds
+    **once**. Ask about a run and it stops being one, because `x^k` is convex: pooling and then
+    raising to a power understates an all-of-k answer and overstates an any-of-k one. The
+    scenario puts two twelve-task eval panels side by side with the **same** headline rate,
+    `79/120 = 0.658333`. Twelve tasks of one difficulty, and six the agent nearly always
+    finishes against six it nearly always fails. Naive all-of-5 gives `0.123660` for both. The
+    unbiased answers are `0.107804` and `0.458333` — 3.7x apart, on panels a pooled rate cannot
+    tell apart at all.
+
+    The fix is to stop estimating `p` and transforming it. Drawing `k` of a task's `n` observed
+    attempts without replacement, the chance all `k` succeed is `C(s,k)/C(n,k)`, whose
+    expectation is exactly `p^k`; averaging that across tasks handles heterogeneity by
+    construction. The any-of-k form is the estimator the pass@k literature already uses, and
+    this is its neglected twin.
+
+    The gap is not a correction term to be hand-waved. At `k = 2` on a balanced panel it equals
+    `(n*v - r(1-r))/(n-1)` exactly — dispersion in excess of what repeating one fixed-rate task
+    would produce — so the all-of-2 and any-of-2 gaps come out equal in size and opposite in
+    sign, and the scenario prints both residuals at `1e-16` rather than asserting the identity.
+
+    Then it does the thing worth seeing. It takes the exact Clopper-Pearson bound the earlier
+    statistical scenarios taught this corpus to reach for, which is sound for **one** task, and
+    feeds it the mixed panel's pooled counts. The result is a 95% *lower* bound of `0.926200`
+    on a quantity whose own unbiased estimate is `0.875000` — a bound sitting `0.051200` above
+    the thing it bounds, in the direction that makes the system look more reliable. A test in
+    the package asserts that inequality so the failure cannot quietly disappear.
+
+
