@@ -75,7 +75,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/unconditional-exact-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/total-fixed-exact-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/restriction-rule-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/repeated-success-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/repeated-success-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/sequential-bound-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -159,7 +160,8 @@ let package = Package(
                 .product(name: "UnconditionalExactKit", package: "unconditional-exact-kit"),
                 .product(name: "TotalFixedExactKit", package: "total-fixed-exact-kit"),
                 .product(name: "RestrictionRuleKit", package: "restriction-rule-kit"),
-                .product(name: "RepeatedSuccessKit", package: "repeated-success-kit")
+                .product(name: "RepeatedSuccessKit", package: "repeated-success-kit"),
+                .product(name: "SequentialBoundKit", package: "sequential-bound-kit")
             ]
         )
     ]

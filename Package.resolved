@@ -1,5 +1,5 @@
 {
-  "originHash" : "8f1bb62b3984cc83c7265d12e0dc970d3b4ec53f549c8467064f4f4cde10211c",
+  "originHash" : "b88e6e0387e830ff0f662b47c6d0762da57f694456942c5f5216bbb8fff8f5c8",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -457,6 +457,15 @@
       "location" : "https://github.com/rajatslakhina/semantic-router-kit.git",
       "state" : {
         "revision" : "fdb33b94eb889d1fd810a150225ba44043fc2e94",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "sequential-bound-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/sequential-bound-kit.git",
+      "state" : {
+        "revision" : "d888c991b434b141291ee7ee6983ba316d9243b9",
         "version" : "1.0.0"
       }
     },

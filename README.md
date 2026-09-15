@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixty-three packages in this
+A single runnable demo that wires together all sixty-six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -123,6 +123,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`TotalFixedExactKit`](https://github.com/rajatslakhina/total-fixed-exact-kit) | Scenario 62 stopped conditioning and still stopped one parameter short. Barnard's test keeps the one nuisance parameter a **row-fixed** design leaves; a panel of turns cross-classified by two gates fixes neither margin, so its null leaves **two** and the honest supremum is over a square. On the same twelve-item panel the total-fixed p-value is **0.045872** against a row-fixed **0.038584** and Fisher's **0.080087**. The tempting shortcut is measured and found unavailable: `[9, 1; 3, 7]` moves **3.2650x larger** when the second parameter is admitted and `[10, 2; 3, 5]` moves **smaller** at a ratio of **0.8773**, across five percent — so the cheaper reading is not conservative in either direction. Making it affordable is the engineering. A uniform grid needs **2,960,992,225** evaluations for a remainder of `1e-4`, and a Lipschitz branch and bound over the same rectangle exhausts **49,999** evaluations at **0.03188319**, because a first-order bound has nothing to say in the flat region around a maximum. Writing the null in the tensor-product **Bernstein** basis makes the coefficients themselves the enclosure: the same certificate lands in **23 subdivisions** and `1e-9` in **184**, with no function evaluations at all. And by Vandermonde's identity a coefficient *is* the conditional probability given one pair of margins, so the free upper bound — **1/6** here — says the worst conditional behaviour over all margins bounds the worst unconditional behaviour over all rates. At five percent on this design Fisher spends **28.04%** of its level, the asymptotic score test **116.98%** and is over it, and this one **99.36%** and holds. | Scenario 63 |
 | [`RestrictionRuleKit`](https://github.com/rajatslakhina/restriction-rule-kit) | Every scenario above that restricts a nuisance region does it at a fixed conventional `gamma = 0.001`, chosen by nobody, for no particular design. On the same twelve-item reference table this scenario measures that convention costing **more** than not restricting at all — `0.071695` against an unrestricted `0.071605` — because the region a gamma that size buys is already almost the whole square. A search that actually minimises the quoted value finds `gamma ~= 0.000152` instead, landing at `0.071167`: lower than both the convention and the unrestricted baseline. It is **not** a licence to re-minimise gamma per observed table — that breaks the fixed-in-advance assumption the Berger–Boos guarantee needs, whether or not it happens to move the answer — so the safe use is a single design-fixed recommendation, and both the conventional and the recommended gamma are verified here to hold their level by the same full-enumeration audit `UnconditionalExactKit` uses on itself. | Scenario 64 |
 | [`RepeatedSuccessKit`](https://github.com/rajatslakhina/repeated-success-kit) | Every pass rate quoted anywhere above is one number, and one number stops being enough the moment the question is about more than one attempt. Two eval panels here have an **identical** headline rate — `79/120 = 0.658333` on both — and different answers at `k = 5`: the honest all-of-5 is `0.107804` on the tidy panel and `0.458333` on the mixed one, while raising the pass rate to the fifth gives `0.123660` for both. Because `x^k` is convex the pooled answer is wrong with a sign — too low for all-of-k, too high for any-of-k — and at `k = 2` the gap is exactly the dispersion the panel shows in excess of binomial noise, so the two gaps come out equal and opposite to `1e-16`. The scenario also aims an exact Clopper-Pearson bound at a mixed panel and shows it returning a 95% *lower* bound `0.051200` **above** the quantity it bounds. | Scenario 65 |
+| [`SequentialBoundKit`](https://github.com/rajatslakhina/sequential-bound-kit) | Every exact test above answers one question, once; this is what happens the moment it gets asked again. `SPRTBoundary` walks the cumulative log-likelihood ratio of a 0/1 stream and stops the first time it leaves Wald's continuation region — valid at any stopping time, including one the data itself chooses, rather than only at one fixed sample size. Audited by full enumeration instead of trusted at face value: at `nullRate=0.6`, `alternativeRate=0.8`, `alpha=beta=0.05`, horizon 200, the exact Type-I error is **0.043705** and Type-II **0.038783**, both under nominal — and Wald's own closed-form ASN formula understates the true expected sample size by **+2.825478** trials under the null and **+2.173034** under the alternative, the overshoot his approximation ignores. Pointed at scenario 65's own tidy panel — 79 of 120 attempts, task by task, in recorded order — `SPRTMonitor` decides `acceptNull` after **88** of the panel's 120 attempts: **32** attempts a fixed-sample read would still have spent. | Scenario 66 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -1213,13 +1214,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all sixty-one
+- **Build:** `swift build` — clean, zero warnings, resolving all sixty-six
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all sixty-one packages together; the output above is a genuine capture,
+  of all sixty-six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1230,7 +1231,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the sixty-one real packages compose and run," which the sample output
+means "the sixty-six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1900,5 +1901,50 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     on a quantity whose own unbiased estimate is `0.875000` — a bound sitting `0.051200` above
     the thing it bounds, in the direction that makes the system look more reliable. A test in
     the package asserts that inequality so the failure cannot quietly disappear.
+
+66. **`SequentialBoundKit`** adds the sixty-sixth scenario, and it changes the question every
+    scenario above was answering. Fisher, Barnard's unconditional test, the total-fixed
+    design, restricted Berger-Boos, Clopper-Pearson — every exact interval in this corpus
+    answers one question, once. Check the same interval again tomorrow, the way a CI pipeline
+    checks today's eval pass rate against yesterday's, and the false-alarm rate it promised at
+    construction is no longer the one being paid, because a single-look interval was never
+    built to survive being consulted more than once.
+
+    `SPRTBoundary` is Wald's answer: walk the cumulative log-likelihood ratio of a 0/1 stream
+    and stop the first time it leaves the continuation region `(lowerLogBound, upperLogBound)`,
+    a boundary valid at *any* stopping time, including one the data itself picks. What it is
+    not valid about is its own `alpha` and `beta` — Wald derived both closed-form bounds by
+    ignoring overshoot, the margin the walk jumps past a boundary by on the step that crosses
+    it, and calls the result an approximation in his own 1945 treatment. `approximation` is not
+    `measurement`, which is the whole reason this package also ships
+    `OperatingCharacteristicSolver`: the state of the walk after `n` outcomes is fully
+    described by the success count `k` alone, so the cumulative ratio at `(n, k)` is
+    deterministic rather than a distribution, and what looks like an exponential tree of
+    outcome sequences collapses into an `O(horizon^2)` table with the boundary-crossing
+    probability at every step exact, not sampled.
+
+    Part A runs that audit at `nullRate = 0.6`, `alternativeRate = 0.8`,
+    `alpha = beta = 0.05`, horizon `200` — the same design `sequential-bound-kit`'s own README
+    reports — and this run reproduces it independently: exact Type-I error **0.043705** and
+    Type-II **0.038783**, both under the nominal 0.05, with continuation mass left undecided at
+    the horizon of **0.000072** and **0.000082**, too small to close the gap either way.
+    `OperatingCharacteristicSolver` does not expose Wald's own ASN formula — it is the
+    approximation being checked, not a reading worth reusing — so the scenario derives it
+    itself from the boundary's own log bounds and the log-likelihood drift under each rate.
+    The result: Wald's classical formula understates the true expected sample size by
+    **+2.825478** trials under the null (`25.322546` against an exact `28.148025`) and by
+    **+2.173034** under the alternative (`28.956561` against an exact `31.129595`) — a real,
+    measured shortfall in both directions, not a rounding difference.
+
+    Part B points a live `SPRTMonitor` at a real stream instead of a synthetic Bernoulli draw:
+    scenario 65's own tidy panel, twelve tasks of ten attempts each, flattened task by task in
+    recorded order into the same 79-of-120 sequence that panel was built from. Watching that
+    stream one outcome at a time, the monitor reaches `acceptNull` after **88** of the panel's
+    120 attempts — **32** attempts a fixed-sample read of the whole panel would still have
+    spent finding out what the running boundary already knew. The pooled rate along the way,
+    `59/88 = 0.670455`, sits closer to the panel's own `0.658333` headline than to either
+    hypothesis rate, which is the point: a boundary answers from the *path* the cumulative
+    log-likelihood ratio actually took, not from how close the running average looks to one
+    side, and the two can diverge on a real panel the way they cannot on a hand-built fixture.
 
 
