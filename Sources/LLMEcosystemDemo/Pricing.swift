@@ -78,7 +78,8 @@ extension EcosystemDemo {
             (.totalFixedExactHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.restrictionRuleHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.repeatedSuccessHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.sequentialBoundHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.sequentialBoundHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.confidenceSequenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

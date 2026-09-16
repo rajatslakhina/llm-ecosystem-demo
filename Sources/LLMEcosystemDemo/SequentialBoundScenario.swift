@@ -129,8 +129,9 @@ extension EcosystemDemo {
 
     /// The same twelve-task, 79-of-120 tidy panel scenario 65 builds — flattened task-by-task
     /// into a 0/1 stream in the recorded order, so this scenario watches a real eval panel
-    /// rather than a synthetic Bernoulli draw.
-    private static func tidyPanelStream() -> [Bool] {
+    /// rather than a synthetic Bernoulli draw. Scenario 67 reads the identical stream, which is
+    /// the only way its interval and this boundary's decision are comparable at all.
+    static func tidyPanelStream() -> [Bool] {
         let taskSuccesses = [7, 6, 8, 5, 7, 9, 6, 7, 4, 8, 6, 6]
         var stream: [Bool] = []
         for successes in taskSuccesses {

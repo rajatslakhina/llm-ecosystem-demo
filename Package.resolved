@@ -1,5 +1,5 @@
 {
-  "originHash" : "b88e6e0387e830ff0f662b47c6d0762da57f694456942c5f5216bbb8fff8f5c8",
+  "originHash" : "14c8dc8791aa696eaeda46e01e743b657c584cf20bbce680890f5cd977dd8749",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -133,6 +133,15 @@
       "location" : "https://github.com/rajatslakhina/conditioning-cost-kit.git",
       "state" : {
         "revision" : "9b8e52c3359c99ebc75feea3d0833a99014f86dd",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "confidence-sequence-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/confidence-sequence-kit.git",
+      "state" : {
+        "revision" : "9d250fae4951d3c31aee64638793a85fd179b750",
         "version" : "1.0.0"
       }
     },

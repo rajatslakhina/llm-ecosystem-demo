@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixty-six packages in this
+A single runnable demo that wires together all sixty-seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -124,6 +124,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`RestrictionRuleKit`](https://github.com/rajatslakhina/restriction-rule-kit) | Every scenario above that restricts a nuisance region does it at a fixed conventional `gamma = 0.001`, chosen by nobody, for no particular design. On the same twelve-item reference table this scenario measures that convention costing **more** than not restricting at all — `0.071695` against an unrestricted `0.071605` — because the region a gamma that size buys is already almost the whole square. A search that actually minimises the quoted value finds `gamma ~= 0.000152` instead, landing at `0.071167`: lower than both the convention and the unrestricted baseline. It is **not** a licence to re-minimise gamma per observed table — that breaks the fixed-in-advance assumption the Berger–Boos guarantee needs, whether or not it happens to move the answer — so the safe use is a single design-fixed recommendation, and both the conventional and the recommended gamma are verified here to hold their level by the same full-enumeration audit `UnconditionalExactKit` uses on itself. | Scenario 64 |
 | [`RepeatedSuccessKit`](https://github.com/rajatslakhina/repeated-success-kit) | Every pass rate quoted anywhere above is one number, and one number stops being enough the moment the question is about more than one attempt. Two eval panels here have an **identical** headline rate — `79/120 = 0.658333` on both — and different answers at `k = 5`: the honest all-of-5 is `0.107804` on the tidy panel and `0.458333` on the mixed one, while raising the pass rate to the fifth gives `0.123660` for both. Because `x^k` is convex the pooled answer is wrong with a sign — too low for all-of-k, too high for any-of-k — and at `k = 2` the gap is exactly the dispersion the panel shows in excess of binomial noise, so the two gaps come out equal and opposite to `1e-16`. The scenario also aims an exact Clopper-Pearson bound at a mixed panel and shows it returning a 95% *lower* bound `0.051200` **above** the quantity it bounds. | Scenario 65 |
 | [`SequentialBoundKit`](https://github.com/rajatslakhina/sequential-bound-kit) | Every exact test above answers one question, once; this is what happens the moment it gets asked again. `SPRTBoundary` walks the cumulative log-likelihood ratio of a 0/1 stream and stops the first time it leaves Wald's continuation region — valid at any stopping time, including one the data itself chooses, rather than only at one fixed sample size. Audited by full enumeration instead of trusted at face value: at `nullRate=0.6`, `alternativeRate=0.8`, `alpha=beta=0.05`, horizon 200, the exact Type-I error is **0.043705** and Type-II **0.038783**, both under nominal — and Wald's own closed-form ASN formula understates the true expected sample size by **+2.825478** trials under the null and **+2.173034** under the alternative, the overshoot his approximation ignores. Pointed at scenario 65's own tidy panel — 79 of 120 attempts, task by task, in recorded order — `SPRTMonitor` decides `acceptNull` after **88** of the panel's 120 attempts: **32** attempts a fixed-sample read would still have spent. | Scenario 66 |
+| [`ConfidenceSequenceKit`](https://github.com/rajatslakhina/confidence-sequence-kit) | What the boundary above structurally cannot answer. An SPRT needs both rates named before the first attempt is read and returns one of two words; asked *what is the rate*, it has nothing to say. Robbins' beta-mixture martingale names no hypothesis and reads the **same** 120-attempt stream as an interval valid at every look — `[0.266741, 0.963360]` after 10 attempts narrowing to `[0.512306, 0.786466]` after 120 — with the advertised `0.800000` leaving it at **trial 90** and no correction owed for the 90 looks it took to get there. `ExclusionSolver` then enumerates the whole `(trials, successes)` lattice rather than sampling it: exact miscoverage over all 120 looks is **0.027564** against a nominal `0.05` — **55.13%** of the budget genuinely spent — and the expected width buying that is **0.273016** against a fixed-sample Wald `0.169712`, a **1.6087x** premium for being allowed to look after every trial. Scenario 67 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -558,7 +559,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **sixty-one scenarios, $0.2099155 metered total**. `architecture.svg`
+The current run is **sixty-seven scenarios, $0.2275465 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1214,13 +1215,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all sixty-six
+- **Build:** `swift build` — clean, zero warnings, resolving all sixty-seven
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all sixty-six packages together; the output above is a genuine capture,
+  of all sixty-seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1231,7 +1232,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the sixty-six real packages compose and run," which the sample output
+means "the sixty-seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1948,3 +1949,48 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     side, and the two can diverge on a real panel the way they cannot on a hand-built fixture.
 
 
+
+67. **`ConfidenceSequenceKit`** adds the sixty-seventh scenario, and it answers the question
+    the scenario above it structurally cannot. `SPRTBoundary` reached `acceptNull` after 88 of
+    the tidy panel's 120 attempts, and that decision is worth exactly what it says: *not 0.80,
+    rather 0.60*. It is not a claim that the rate **is** 0.60, and the boundary has no way to
+    make one — both hypotheses had to be named before the first attempt was read, and a walk
+    between two named rates cannot report a third.
+
+    Robbins' beta-mixture construction names none of them. Mixing the likelihood ratio against
+    every alternative rate over a uniform `Beta(1, 1)` prior keeps the martingale property and
+    collapses the integral to a closed form,
+    `M_n(p) = B(a+k, b+n-k) / B(a,b) / (p^k (1-p)^(n-k))`, and Ville's inequality bounds the
+    probability that `M_n(p)` **ever** reaches `1/alpha` by `alpha` — for the whole sequence at
+    once, not per reading. The interval is whatever that evidence has not yet ruled out, so
+    re-reading it after every single attempt costs nothing.
+
+    Part A folds scenario 66's identical flattened stream through a
+    `ConfidenceSequenceMonitor`, one attempt at a time: `[0.266741, 0.963360]` after 10
+    attempts, `[0.409783, 0.846624]` after 40, `[0.502337, 0.813248]` at trial 88 where the
+    boundary stopped, and `[0.512306, 0.786466]` after all 120 — a width of `0.696619`
+    narrowing to `0.274161`. The advertised `0.800000` leaves the interval at **trial 90** and
+    does not come back. The `0.600000` the SPRT accepted is still admissible at the end — and
+    so is every rate up to `0.786466`. Both readings are true at the same time, and only one
+    of them is a measurement.
+
+    The honest cost is visible in those same two numbers: the boundary had its binary answer at
+    trial 88, two attempts **before** the sequence could rule out `0.80` at all. Naming both
+    hypotheses up front is what buys that. Part B prices the rest by enumeration rather than
+    simulation. `ExclusionSolver` walks the entire `(trials, successes)` lattice, and against a
+    truth of `0.658333` the realised miscoverage over all 120 looks is **0.027564** — real
+    budget genuinely spent, **55.13%** of the nominal `0.05`, not the zero a conservative bound
+    is usually assumed to leave lying around. The same solver read the other way is detection
+    power: the probability of catching that the advertised `0.800000` is wrong within 120
+    trials is **0.760807**, with an expected first exclusion at trial **52.0220**. One
+    enumeration, two readings, depending only on whether the reference rate and the true rate
+    are the same number.
+
+    And the width. Expected anytime width at 120 trials is **0.273016**, against the
+    fixed-sample Wald width `2 * z * sqrt(p(1-p)/n)` = **0.169712** at `z = 1.959964` — a
+    premium of **+0.103304**, a factor of **1.6087**. The package deliberately does not ship
+    that comparison, so the scenario derives the Wald width inline and bisects `z` out of
+    `erfc` rather than pasting in a constant. That 1.6087x is the entire price of being allowed
+    to look 120 times instead of once — and every scenario above this one that re-checked a
+    fixed-sample interval on a second day was paying something for the privilege too, without
+    ever printing what.
