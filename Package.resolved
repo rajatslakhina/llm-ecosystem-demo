@@ -1,5 +1,5 @@
 {
-  "originHash" : "14c8dc8791aa696eaeda46e01e743b657c584cf20bbce680890f5cd977dd8749",
+  "originHash" : "3d050cee783f7220483c1bccc1b47ddb0af8d22634aea52f5e605fbe04c08941",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -475,6 +475,15 @@
       "location" : "https://github.com/rajatslakhina/sequential-bound-kit.git",
       "state" : {
         "revision" : "d888c991b434b141291ee7ee6983ba316d9243b9",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "sequential-contrast-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/sequential-contrast-kit.git",
+      "state" : {
+        "revision" : "b0bfa3e8633bbbe7c7eab9d6e025d3f266414c41",
         "version" : "1.0.0"
       }
     },

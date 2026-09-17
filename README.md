@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixty-seven packages in this
+A single runnable demo that wires together all sixty-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -125,6 +125,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`RepeatedSuccessKit`](https://github.com/rajatslakhina/repeated-success-kit) | Every pass rate quoted anywhere above is one number, and one number stops being enough the moment the question is about more than one attempt. Two eval panels here have an **identical** headline rate — `79/120 = 0.658333` on both — and different answers at `k = 5`: the honest all-of-5 is `0.107804` on the tidy panel and `0.458333` on the mixed one, while raising the pass rate to the fifth gives `0.123660` for both. Because `x^k` is convex the pooled answer is wrong with a sign — too low for all-of-k, too high for any-of-k — and at `k = 2` the gap is exactly the dispersion the panel shows in excess of binomial noise, so the two gaps come out equal and opposite to `1e-16`. The scenario also aims an exact Clopper-Pearson bound at a mixed panel and shows it returning a 95% *lower* bound `0.051200` **above** the quantity it bounds. | Scenario 65 |
 | [`SequentialBoundKit`](https://github.com/rajatslakhina/sequential-bound-kit) | Every exact test above answers one question, once; this is what happens the moment it gets asked again. `SPRTBoundary` walks the cumulative log-likelihood ratio of a 0/1 stream and stops the first time it leaves Wald's continuation region — valid at any stopping time, including one the data itself chooses, rather than only at one fixed sample size. Audited by full enumeration instead of trusted at face value: at `nullRate=0.6`, `alternativeRate=0.8`, `alpha=beta=0.05`, horizon 200, the exact Type-I error is **0.043705** and Type-II **0.038783**, both under nominal — and Wald's own closed-form ASN formula understates the true expected sample size by **+2.825478** trials under the null and **+2.173034** under the alternative, the overshoot his approximation ignores. Pointed at scenario 65's own tidy panel — 79 of 120 attempts, task by task, in recorded order — `SPRTMonitor` decides `acceptNull` after **88** of the panel's 120 attempts: **32** attempts a fixed-sample read would still have spent. | Scenario 66 |
 | [`ConfidenceSequenceKit`](https://github.com/rajatslakhina/confidence-sequence-kit) | What the boundary above structurally cannot answer. An SPRT needs both rates named before the first attempt is read and returns one of two words; asked *what is the rate*, it has nothing to say. Robbins' beta-mixture martingale names no hypothesis and reads the **same** 120-attempt stream as an interval valid at every look — `[0.266741, 0.963360]` after 10 attempts narrowing to `[0.512306, 0.786466]` after 120 — with the advertised `0.800000` leaving it at **trial 90** and no correction owed for the 90 looks it took to get there. `ExclusionSolver` then enumerates the whole `(trials, successes)` lattice rather than sampling it: exact miscoverage over all 120 looks is **0.027564** against a nominal `0.05` — **55.13%** of the budget genuinely spent — and the expected width buying that is **0.273016** against a fixed-sample Wald `0.169712`, a **1.6087x** premium for being allowed to look after every trial. Scenario 67 |
+| [`SequentialContrastKit`](https://github.com/rajatslakhina/sequential-contrast-kit) | One rate was never the question. Every scenario above asks about a single pass rate; an eval asks whether the *other* variant is better, which is a **difference** of two rates. Scenario 68 scores a second variant on the identical twelve tasks and puts a time-uniform interval on `p_A - p_B` two ways. The paired construction decomposes it as `d * (2 * theta - 1)` — a discordance sequence over every attempt, a win sequence over the **14** attempts the variants actually disagreed on — and narrows to `[-0.027310, +0.243428]` against the unpaired `[-0.218521, +0.374496]`, a **2.1904x** gain at an agreement rate of **0.883333**. Neither excludes zero here and the scenario says so. The gap that matters is detection: enumerated over the whole lattice, the paired construction catches this difference within 120 attempts with probability **0.411251**, the unpaired one with **0.000000**. Same data, same alpha; the only difference is whether the pairing was kept. Scenario 68 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -559,7 +560,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **sixty-seven scenarios, $0.2275465 metered total**. `architecture.svg`
+The current run is **sixty-eight scenarios, $0.2303665 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1215,13 +1216,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all sixty-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all sixty-eight
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all sixty-seven packages together; the output above is a genuine capture,
+  of all sixty-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1232,7 +1233,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the sixty-seven real packages compose and run," which the sample output
+means "the sixty-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -1994,3 +1995,39 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     to look 120 times instead of once — and every scenario above this one that re-checked a
     fixed-sample interval on a second day was paying something for the privilege too, without
     ever printing what.
+
+68. **`SequentialContrastKit`** adds the sixty-eighth scenario, and it changes the subject the
+    three scenarios before it were all stuck on. Scenario 65 built a tidy panel, 66 pointed an
+    SPRT at it, 67 put an anytime-valid interval around it — and all three answered a question
+    about **one** rate. No eval has ever been run to find out what one number is. It is run to
+    find out whether the new prompt is better than the old one, and that is a difference.
+
+    Part A scores a second variant on the identical twelve tasks, cell by cell, so variant A's
+    half of the stream is the *same* 79-of-120 sequence scenarios 65, 66 and 67 all read — the
+    scenario prints `true` for that check rather than asserting it in a comment. The paired
+    reading narrows from `[-0.567332, +0.581879]` at 10 attempts to `[-0.027310, +0.243428]` at
+    120; the unpaired reading on identical data only reaches `[-0.218521, +0.374496]`. The gain
+    grows with the run, **1.3074x** at 10 attempts to **2.1904x** at 120, because the paired
+    construction is spending evidence the other one cannot see.
+
+    **Neither excludes zero, and the scenario says so plainly.** The variants disagreed on 14
+    of 120 attempts and A won 12 of those, which leaves the win rate at `[0.444399, 0.995606]`
+    — straddling one half, so the product straddles zero. A scenario that printed only the
+    2.19x would be implying a verdict the data does not support.
+
+    Part B is where the difference between the two constructions stops being cosmetic.
+    Enumerated over the whole `(attempts, A-only, B-only)` lattice rather than simulated: exact
+    miscoverage against the true `+0.083333` is **0.000047**, a mere **0.09%** of the nominal
+    `0.05`. Detection of the fact that zero is wrong, within the same 120 attempts, is
+    **0.411251** paired against **0.000000** unpaired. Expected width **0.271808** against
+    **0.590629**, a **2.1730x** gain at an agreement rate of **0.883333**.
+
+    That unpaired zero is the finding worth carrying out of this scenario. The unpaired
+    construction is not being cautious. Its bounds are a Minkowski difference of two arm
+    intervals, so it cannot exclude zero while those intervals overlap — not "usually will
+    not", *cannot*, as an identity — and on a panel where two variants agree on 88% of items
+    the arms will overlap essentially forever. Its miscoverage is beautiful and its power is
+    nil, which are the same fact read twice. Read the unpaired "expected first exclusion
+    attempt 26.2535" with that in mind: it is conditioned on a probability mass too small to
+    print at six places, so it describes a handful of freak paths and not behaviour anyone
+    will see.
