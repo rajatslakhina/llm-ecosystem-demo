@@ -80,7 +80,8 @@ extension EcosystemDemo {
             (.repeatedSuccessHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.sequentialBoundHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.confidenceSequenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.sequentialContrastHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.sequentialContrastHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.splitContrastHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

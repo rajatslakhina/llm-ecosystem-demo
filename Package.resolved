@@ -1,5 +1,5 @@
 {
-  "originHash" : "3d050cee783f7220483c1bccc1b47ddb0af8d22634aea52f5e605fbe04c08941",
+  "originHash" : "5eed1e8f59d2aeb0b2efe1908e15ce5bfcf6099f0f279686295644f6dd5d6132",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -511,6 +511,15 @@
       "location" : "https://github.com/rajatslakhina/source-independence-kit.git",
       "state" : {
         "revision" : "e199bc2a365d0c30fa52b65d9662569726edfe10",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "split-contrast-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/split-contrast-kit.git",
+      "state" : {
+        "revision" : "10de20a1b88e94b3e19cea95dc0305fd7e5985f0",
         "version" : "1.0.0"
       }
     },
