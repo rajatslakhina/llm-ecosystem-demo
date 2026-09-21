@@ -79,7 +79,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/sequential-bound-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/confidence-sequence-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/sequential-contrast-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/split-contrast-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/split-contrast-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/prompt-cache-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -167,7 +168,8 @@ let package = Package(
                 .product(name: "SequentialBoundKit", package: "sequential-bound-kit"),
                 .product(name: "ConfidenceSequenceKit", package: "confidence-sequence-kit"),
                 .product(name: "SequentialContrastKit", package: "sequential-contrast-kit"),
-                .product(name: "SplitContrastKit", package: "split-contrast-kit")
+                .product(name: "SplitContrastKit", package: "split-contrast-kit"),
+                .product(name: "PromptCacheKit", package: "prompt-cache-kit")
             ]
         )
     ]

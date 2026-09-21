@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all sixty-nine packages in this
+A single runnable demo that wires together all seventy packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -127,6 +127,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ConfidenceSequenceKit`](https://github.com/rajatslakhina/confidence-sequence-kit) | What the boundary above structurally cannot answer. An SPRT needs both rates named before the first attempt is read and returns one of two words; asked *what is the rate*, it has nothing to say. Robbins' beta-mixture martingale names no hypothesis and reads the **same** 120-attempt stream as an interval valid at every look — `[0.266741, 0.963360]` after 10 attempts narrowing to `[0.512306, 0.786466]` after 120 — with the advertised `0.800000` leaving it at **trial 90** and no correction owed for the 90 looks it took to get there. `ExclusionSolver` then enumerates the whole `(trials, successes)` lattice rather than sampling it: exact miscoverage over all 120 looks is **0.027564** against a nominal `0.05` — **55.13%** of the budget genuinely spent — and the expected width buying that is **0.273016** against a fixed-sample Wald `0.169712`, a **1.6087x** premium for being allowed to look after every trial. Scenario 67 |
 | [`SequentialContrastKit`](https://github.com/rajatslakhina/sequential-contrast-kit) | One rate was never the question. Every scenario above asks about a single pass rate; an eval asks whether the *other* variant is better, which is a **difference** of two rates. Scenario 68 scores a second variant on the identical twelve tasks and puts a time-uniform interval on `p_A - p_B` two ways. The paired construction decomposes it as `d * (2 * theta - 1)` — a discordance sequence over every attempt, a win sequence over the **14** attempts the variants actually disagreed on — and narrows to `[-0.027310, +0.243428]` against the unpaired `[-0.218521, +0.374496]`, a **2.1904x** gain at an agreement rate of **0.883333**. Neither excludes zero here and the scenario says so. The gap that matters is detection: enumerated over the whole lattice, the paired construction catches this difference within 120 attempts with probability **0.411251**, the unpaired one with **0.000000**. Same data, same alpha; the only difference is whether the pairing was kept. Scenario 68 |
 | [`SplitContrastKit`](https://github.com/rajatslakhina/split-contrast-kit) | Live traffic is never paired. Scenario 68's advantage came entirely from scoring both variants on every attempt; a canary routes each request to **one** variant, so each attempt only tells you about one side. Scenario 69 replays scenario 68's own 120 attempts through a seeded 50/50 coin and keeps only the routed variant's outcome. The centred inverse-propensity construction reaches `[-0.061706, +0.499910]`, the per-arm baseline `[-0.194091, +0.586812]` — **2.0744x** and **2.8844x** the paired width on identical underlying data, which is the price of losing the pairing, measured. Part B enumerates the choice to make before routing (at 24 arrivals the per-arm interval is narrower at both a 50/50 and a 20% split, ratios **1.0502** and **1.3034**) and what a mis-declared split does: declared 0.50, actually 0.40, no real difference, the plain estimator carries a phantom **-0.246667** and falsely detects with **0.009979** inside 30 arrivals; centring at 0.5 cuts that to **-0.046667** and **0.001418**. Scenario 69 |
+| [`PromptCacheKit`](https://github.com/rajatslakhina/prompt-cache-kit) | Every scenario above that talks to a model resends the same prompt on every turn and pays full price for the part a provider could have served from its cache. Whether it can is decided by **layout**, and scenario 70 measures two places where two earlier packages meet it. Part A feeds six tools from a real `ToolRegistry`, registered out of order, into a prompt for six turns: in registry order (sorted by name) all **5 of 5** transitions keep the whole cacheable prefix and **100.00%** survives; in an order that rotates per turn (a Swift dictionary's does across launches) **0 of 5** are healthy and **33.33%** survives. Part B is the interaction neither package could see: `ContextCompactionKit` keeps a 20-turn history under a 5,000-token budget, and every compaction rewrites the history, which is a broken prefix. Sliding the window every turn compacts **12** times, breaks the prefix **12 of 19** times, reaches a **52.58%** hit rate and spends **$0.224240**. Compacting in batches down to 3,200 tokens compacts **3** times, breaks it **3 of 19**, reaches **79.65%** and spends **$0.106336**, which is **2.11x** cheaper and within **0.2%** of never compacting at all (**$0.106540**, **88.72%**, and **151,320** prompt tokens over a budget it was meant to respect). Not all of that gap is caching: the batch policy also sends **10.5%** fewer prompt tokens (103,860 against 116,064), and the cache is simulated by `PrefixCacheSimulator` rather than a real provider. | Scenario 70 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -561,7 +562,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **sixty-nine scenarios, $0.2331865 metered total**. `architecture.svg`
+The current run is **seventy scenarios, $0.2360065 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1217,13 +1218,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all sixty-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all sixty-nine packages together; the output above is a genuine capture,
+  of all seventy packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1234,7 +1235,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the sixty-nine real packages compose and run," which the sample output
+means "the seventy real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2062,3 +2063,38 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     reads the split and sits at **1.982e-05** in both rows. The split alarm itself fires with
     probability **0.067644** in those 30 arrivals — weak that early, which is the honest reason
     the centre matters as much as the alarm.
+
+70. **`PromptCacheKit`** adds the seventieth scenario, and it leaves statistics for a question every
+    scenario that talks to a model has been quietly paying for: the same prompt goes out on every
+    turn, and a provider will serve a byte-identical prefix from its cache at a fraction of the
+    price. Whether it can is decided by layout, and the two places this demo can see that decision
+    being made are two earlier packages.
+
+    Part A takes six tools from a real `ToolRegistry`, registered in a deliberately scrambled
+    order, and builds six turns of prompt around them. `ToolRegistry.registeredDefinitions` returns
+    its definitions sorted by name, so every one of the 5 transitions keeps the whole cacheable
+    prefix and `PrefixStabilityAuditor` reports **100.00%** retained and the layout stable. The
+    same tools in an order that rotates per turn, which is what iterating a Swift dictionary gives
+    across launches, leave **0 of 5** transitions healthy and **33.33%** retained. The registry's
+    sort was written to make dispatch deterministic; it also happens to be the property a prefix
+    cache needs, and nothing in either package said so.
+
+    Part B is the interaction neither package could see. `ContextCompactionKit` keeps a 20-turn
+    history of 450-token tool results under a 5,000-token budget, and every compaction rewrites
+    the history, which for a prefix cache is a broken prefix. Sliding the window every turn
+    compacts **12** times and breaks the prefix on **12 of 19** transitions: a **52.58%** hit
+    rate and **$0.224240**. Compacting in batches, down to 3,200 tokens whenever the budget is
+    crossed, compacts **3** times and breaks it on **3 of 19**: **79.65%** and **$0.106336**, which
+    is **2.11x** cheaper. Never compacting at all is the reference: **88.72%** and **$0.106540**,
+    but **151,320** prompt tokens against a budget the history was supposed to respect, so the
+    batch policy buys the budget for **0.2%** less than doing nothing. It is not a clean
+    like-for-like: the batch policy also sends **10.5%** fewer prompt tokens (103,860 against
+    116,064), so part of the gap is smaller prompts and not caching. The hit rates are the cleaner
+    comparison.
+
+    Every cache figure comes from `PrefixCacheSimulator`, a model of a provider's cache under an
+    illustrative two-tier price list ($3.00 per million input tokens, a 1.25x five-minute write,
+    a 0.1x read), and the token counts are fixture values. Nothing here called a provider, which is
+    why the package ships `CacheReconciler` to compare a prediction with real usage. Pricing is
+    registered for `prompt-cache-host`, metering a real **$0.00282**; the running total is
+    **$0.2360065 across seventy scenarios**.

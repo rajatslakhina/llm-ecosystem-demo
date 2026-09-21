@@ -1,5 +1,5 @@
 {
-  "originHash" : "5eed1e8f59d2aeb0b2efe1908e15ce5bfcf6099f0f279686295644f6dd5d6132",
+  "originHash" : "f6df3eab74d0ab091a21f53029ac14031f448b84332edb03fd8557ae1bb21888",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -350,6 +350,15 @@
       "state" : {
         "revision" : "38870de9c7ceda9a3b512094fc07b156d2260df3",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "prompt-cache-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/prompt-cache-kit.git",
+      "state" : {
+        "revision" : "9849484742f8bca6ac49aec386b8931fa98fe4ab",
+        "version" : "1.0.0"
       }
     },
     {

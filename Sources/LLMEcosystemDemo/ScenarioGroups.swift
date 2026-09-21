@@ -46,5 +46,6 @@ extension EcosystemDemo {
         await runConfidenceSequenceScenario(meter: meter)
         await runSequentialContrastScenario(meter: meter)
         await runSplitContrastScenario(meter: meter)
+        await runPromptCacheScenario(meter: meter)
     }
 }
