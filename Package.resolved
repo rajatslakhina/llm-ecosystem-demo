@@ -1,5 +1,5 @@
 {
-  "originHash" : "f6df3eab74d0ab091a21f53029ac14031f448b84332edb03fd8557ae1bb21888",
+  "originHash" : "18884a176682e2b069f96435c4e5074a07460d44a56c4ac7015e5ce2a54e787d",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "3661a7a9b152d02f788f285eab38bad59bfa5e11",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "compaction-planner-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/compaction-planner-kit.git",
+      "state" : {
+        "revision" : "6d2a5d7f56ddff45df41d9f043b12133602d5c43",
+        "version" : "1.0.1"
       }
     },
     {

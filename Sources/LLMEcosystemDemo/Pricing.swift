@@ -82,7 +82,8 @@ extension EcosystemDemo {
             (.confidenceSequenceHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.sequentialContrastHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.splitContrastHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.promptCacheHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.promptCacheHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.compactionPlannerHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy packages in this
+A single runnable demo that wires together all seventy-one packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -128,6 +128,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SequentialContrastKit`](https://github.com/rajatslakhina/sequential-contrast-kit) | One rate was never the question. Every scenario above asks about a single pass rate; an eval asks whether the *other* variant is better, which is a **difference** of two rates. Scenario 68 scores a second variant on the identical twelve tasks and puts a time-uniform interval on `p_A - p_B` two ways. The paired construction decomposes it as `d * (2 * theta - 1)` — a discordance sequence over every attempt, a win sequence over the **14** attempts the variants actually disagreed on — and narrows to `[-0.027310, +0.243428]` against the unpaired `[-0.218521, +0.374496]`, a **2.1904x** gain at an agreement rate of **0.883333**. Neither excludes zero here and the scenario says so. The gap that matters is detection: enumerated over the whole lattice, the paired construction catches this difference within 120 attempts with probability **0.411251**, the unpaired one with **0.000000**. Same data, same alpha; the only difference is whether the pairing was kept. Scenario 68 |
 | [`SplitContrastKit`](https://github.com/rajatslakhina/split-contrast-kit) | Live traffic is never paired. Scenario 68's advantage came entirely from scoring both variants on every attempt; a canary routes each request to **one** variant, so each attempt only tells you about one side. Scenario 69 replays scenario 68's own 120 attempts through a seeded 50/50 coin and keeps only the routed variant's outcome. The centred inverse-propensity construction reaches `[-0.061706, +0.499910]`, the per-arm baseline `[-0.194091, +0.586812]` — **2.0744x** and **2.8844x** the paired width on identical underlying data, which is the price of losing the pairing, measured. Part B enumerates the choice to make before routing (at 24 arrivals the per-arm interval is narrower at both a 50/50 and a 20% split, ratios **1.0502** and **1.3034**) and what a mis-declared split does: declared 0.50, actually 0.40, no real difference, the plain estimator carries a phantom **-0.246667** and falsely detects with **0.009979** inside 30 arrivals; centring at 0.5 cuts that to **-0.046667** and **0.001418**. Scenario 69 |
 | [`PromptCacheKit`](https://github.com/rajatslakhina/prompt-cache-kit) | Every scenario above that talks to a model resends the same prompt on every turn and pays full price for the part a provider could have served from its cache. Whether it can is decided by **layout**, and scenario 70 measures two places where two earlier packages meet it. Part A feeds six tools from a real `ToolRegistry`, registered out of order, into a prompt for six turns: in registry order (sorted by name) all **5 of 5** transitions keep the whole cacheable prefix and **100.00%** survives; in an order that rotates per turn (a Swift dictionary's does across launches) **0 of 5** are healthy and **33.33%** survives. Part B is the interaction neither package could see: `ContextCompactionKit` keeps a 20-turn history under a 5,000-token budget, and every compaction rewrites the history, which is a broken prefix. Sliding the window every turn compacts **12** times, breaks the prefix **12 of 19** times, reaches a **52.58%** hit rate and spends **$0.224240**. Compacting in batches down to 3,200 tokens compacts **3** times, breaks it **3 of 19**, reaches **79.65%** and spends **$0.106336**, which is **2.11x** cheaper and within **0.2%** of never compacting at all (**$0.106540**, **88.72%**, and **151,320** prompt tokens over a budget it was meant to respect). Not all of that gap is caching: the batch policy also sends **10.5%** fewer prompt tokens (103,860 against 116,064), and the cache is simulated by `PrefixCacheSimulator` rather than a real provider. | Scenario 70 |
+| [`CompactionPlannerKit`](https://github.com/rajatslakhina/compaction-planner-kit) | Scenario 70 found batch compaction **2.11x** cheaper than sliding the window, and said itself the comparison was not like for like. Scenario 71 holds the kept history fixed and asks again. Restated as history budgets (the compactor pins scenario 70's 1,200-token system message, so the history gets 3,800 and the batch target leaves 2,000), **nothing** among 930 schedules keeps as much as either for less: both sit on the cost/retention frontier, so the 2.11x is a trade, and the batch schedule keeps **20.45%** less history. Halfway between (at least 2,678 kept) the planner picks over 3700 -> 2800 for **$0.104730**. Run through the real `ContextCompactor` with `CompactionScheduler` making the calls, the three schedules reproduce scenario 70's figures exactly (**$0.224240** and **$0.106336**) under `PromptCacheKit`'s simulator, and the two independent cache models **rank the three the same way**. With a 400-second pause the five-minute cache does not survive, compacting on the lapsed cache keeps the same history for **7.58%** less. Writing this scenario found a bug in the package, fixed in 1.0.1 (below). | Scenario 71 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -562,7 +563,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy scenarios, $0.2360065 metered total**. `architecture.svg`
+The current run is **seventy-one scenarios, $0.2390665 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1218,13 +1219,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-one
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy packages together; the output above is a genuine capture,
+  of all seventy-one packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1235,7 +1236,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy real packages compose and run," which the sample output
+means "the seventy-one real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2098,3 +2099,46 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     why the package ships `CacheReconciler` to compare a prediction with real usage. Pricing is
     registered for `prompt-cache-host`, metering a real **$0.00282**; the running total is
     **$0.2360065 across seventy scenarios**.
+
+71. **`CompactionPlannerKit`** adds the seventy-first scenario, and it answers the question scenario
+    70 left open. Scenario 70 found compacting in batches **2.11x** cheaper than sliding the window
+    every turn, then said itself that part of that gap was smaller prompts, because the batch
+    schedule also kept less history. The planner holds the history kept fixed and asks again.
+
+    Part A restates scenario 70's two schedules as history budgets. `ContextCompactionKit` pins the
+    1,200-token system message, so scenario 70's 5,000-token budget leaves the history 3,800 and
+    its batch target of 3,200 leaves 2,000. Replayed against a model of the cache
+    (`CacheTerms.explicitFiveMinute`: 1.25x writes, 0.1x reads, five minutes), the sliding window
+    compacts **12** times, keeps **2,983** tokens on average and costs **$0.206159**; the batch
+    schedule compacts **3** times, keeps **2,373** and costs **$0.085543**. Against each, the planner
+    looked for a schedule among 930 that keeps at least as much for less, and found **none**. Both
+    sit on the frontier. Scenario 70's 2.11x is a trade: the batch schedule keeps **20.45%** less
+    history.
+
+    Part B prices the history between them. The frontier has three schedules strictly inside:
+    2,576 kept for $0.091441, 2,712 for $0.104730 and 2,848 for $0.130494. Asked for at least the
+    halfway point (2,678), the planner picks over 3700 -> 2800 at **$0.104730**. On 452-token turns
+    a trigger of 3,700 fires on the same requests as 3,800; the name comes from the planner's
+    tie-break.
+
+    Part C runs all three through the real `ContextCompactor`, with `CompactionScheduler` deciding
+    when, and prices them with `PromptCacheKit`'s `CachingSession`, which plans its own breakpoints
+    and tiers and so is a second, independent model of the same cache. It reproduces scenario 70's
+    figures exactly for the two baselines (**$0.224240** at 52.58% and **$0.106336** at 79.65%), puts
+    the halfway pick at **$0.125524** (76.40%, 4 compactions, 2,712 kept), and ranks the three in
+    the same order as the planner's replay ($0.206159, $0.104730, $0.085543). The two models
+    disagree on the absolute figures by 9 to 24%. They agree on the order, and the order is what a
+    schedule choice depends on.
+
+    Part D adds a 400-second pause before turn 11, longer than the five-minute cache. The batch
+    schedule costs **$0.102862**. The cheapest schedule keeping as much compacts on the lapsed cache
+    once, where a rewrite costs nothing extra, and costs **$0.095065**: **7.58%** less for the same
+    2,373 tokens. It prints as over 3700 -> 1900 +cold, again a tie-break twin of over 3800 -> 2000
+    +cold on these turns.
+
+    Writing this scenario found a bug in the package. `likeForLike` returned over 3700 -> 3700 as
+    the "cheaper" match for over 3800 -> 3800. On these turns the two behave identically, so it
+    won only on the name tie-break and was reported as a 0.00% saving. `compaction-planner-kit`
+    1.0.1 requires a match to be strictly cheaper or to keep strictly more history, and the test
+    that pins it is in that repository. Pricing is registered for `compaction-planner-host`,
+    metering a real **$0.00306**; the running total is **$0.2390665 across seventy-one scenarios**.
