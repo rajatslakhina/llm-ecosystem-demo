@@ -1,5 +1,5 @@
 {
-  "originHash" : "18884a176682e2b069f96435c4e5074a07460d44a56c4ac7015e5ce2a54e787d",
+  "originHash" : "e2ebd788c154fb0f0cece4028e1adb0182187813fa3274d5ec826fc35b62e07d",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -269,6 +269,15 @@
       "state" : {
         "revision" : "3c7220a5a3a6ea6fb0c3a70f0c8dd2e59df05d89",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "fleet-rollout-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/fleet-rollout-kit.git",
+      "state" : {
+        "revision" : "ed6aeeda3cdcc03fc42a53d9103b7c082c50a714",
+        "version" : "1.0.1"
       }
     },
     {

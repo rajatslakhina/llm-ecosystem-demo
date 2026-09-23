@@ -48,5 +48,6 @@ extension EcosystemDemo {
         await runSplitContrastScenario(meter: meter)
         await runPromptCacheScenario(meter: meter)
         await runCompactionPlannerScenario(meter: meter)
+        await runFleetRolloutScenario(meter: meter)
     }
 }

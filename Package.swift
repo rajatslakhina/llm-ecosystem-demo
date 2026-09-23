@@ -81,7 +81,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/sequential-contrast-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/split-contrast-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/prompt-cache-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/compaction-planner-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/compaction-planner-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/fleet-rollout-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -171,7 +172,8 @@ let package = Package(
                 .product(name: "SequentialContrastKit", package: "sequential-contrast-kit"),
                 .product(name: "SplitContrastKit", package: "split-contrast-kit"),
                 .product(name: "PromptCacheKit", package: "prompt-cache-kit"),
-                .product(name: "CompactionPlannerKit", package: "compaction-planner-kit")
+                .product(name: "CompactionPlannerKit", package: "compaction-planner-kit"),
+                .product(name: "FleetRollout", package: "fleet-rollout-kit")
             ]
         )
     ]
