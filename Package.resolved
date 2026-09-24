@@ -1,5 +1,5 @@
 {
-  "originHash" : "e2ebd788c154fb0f0cece4028e1adb0182187813fa3274d5ec826fc35b62e07d",
+  "originHash" : "6efc57f3dd768f796dc7db6cde5bc4cc29af415cb89b0928d59400885cd4b3cc",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -601,6 +601,15 @@
       "location" : "https://github.com/rajatslakhina/tool-authority-kit.git",
       "state" : {
         "revision" : "3d35e69a3b227138c3558243adf0e4cba363b96a",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "tool-integrity-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/tool-integrity-kit.git",
+      "state" : {
+        "revision" : "b8a4321b83a922e0cd6769514c3637a658393d32",
         "version" : "1.0.0"
       }
     },

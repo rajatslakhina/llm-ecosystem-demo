@@ -69,7 +69,10 @@ extension EcosystemDemo {
         let bundled = ConfigDocument(
             documentVersion: 0, issuedAt: .now.addingTimeInterval(-3_600), flags: [flag.settingKilled(true)])
 
-        let store = ConfigStore(bundledFallback: bundled, transport: EcosystemFleetTransport(documents: [live, killed, live]))
+        let store = ConfigStore(
+            bundledFallback: bundled,
+            transport: EcosystemFleetTransport(documents: [live, killed, live])
+        )
         _ = await store.refresh()
         _ = await store.refresh()
         let replay = await store.refresh()
