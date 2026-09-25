@@ -1,5 +1,5 @@
 {
-  "originHash" : "6efc57f3dd768f796dc7db6cde5bc4cc29af415cb89b0928d59400885cd4b3cc",
+  "originHash" : "5c5df89b2ae7b6300a2443ee05d6e2cdb3effcf80fca8373e2cfafe49917cba4",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -476,6 +476,15 @@
       "state" : {
         "revision" : "8c161694357e0c19cf886b17fd956be9a0dc012d",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "scope-drift-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/scope-drift-kit.git",
+      "state" : {
+        "revision" : "5de2ff4f666133cb14d16ceafe4212177704eaf8",
+        "version" : "1.0.1"
       }
     },
     {

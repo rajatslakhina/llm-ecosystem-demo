@@ -85,7 +85,8 @@ extension EcosystemDemo {
             (.promptCacheHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.compactionPlannerHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.fleetRolloutHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.toolIntegrityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.toolIntegrityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.scopeDriftHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

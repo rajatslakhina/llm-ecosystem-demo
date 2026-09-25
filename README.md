@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-three packages in this
+A single runnable demo that wires together all seventy-four packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -131,6 +131,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`CompactionPlannerKit`](https://github.com/rajatslakhina/compaction-planner-kit) | Scenario 70 found batch compaction **2.11x** cheaper than sliding the window, and said itself the comparison was not like for like. Scenario 71 holds the kept history fixed and asks again. Restated as history budgets (the compactor pins scenario 70's 1,200-token system message, so the history gets 3,800 and the batch target leaves 2,000), **nothing** among 930 schedules keeps as much as either for less: both sit on the cost/retention frontier, so the 2.11x is a trade, and the batch schedule keeps **20.45%** less history. Halfway between (at least 2,678 kept) the planner picks over 3700 -> 2800 for **$0.104730**. Run through the real `ContextCompactor` with `CompactionScheduler` making the calls, the three schedules reproduce scenario 70's figures exactly (**$0.224240** and **$0.106336**) under `PromptCacheKit`'s simulator, and the two independent cache models **rank the three the same way**. With a 400-second pause the five-minute cache does not survive, compacting on the lapsed cache keeps the same history for **7.58%** less. Writing this scenario found a bug in the package, fixed in 1.0.1 (below). | Scenario 71 |
 | [`FleetRolloutKit`](https://github.com/rajatslakhina/fleet-rollout-kit) | Every scenario above assumes every session gets the same providers and the same capabilities. A real fleet does not ship that way — a new capability goes to a canary slice first, and the kill has to actually hold. Scenario 72 runs the real `FleetSimulator` over 2,000 sessions: `onTrain(["ios-27.1-duo"])` treats **31**; the version-ordering rule nobody would write on purpose but that `osVersion >= "27.1"` is equivalent to treats **1,476** — a **47.6x** over-exposure at this scale (the package's own README runs it at 10,000 and finds 34.5x; the ratio moves with fleet composition, not with the bug). Part B runs the real `ConfigStore` through a live document, a kill, and a replay of the pre-kill document — the replay is rejected as stale against the accepted floor (`v5` against a floor of `v6`), and this session's assignment still reads `killed`: kill held. | Scenario 72 |
 | [`ToolIntegrityKit`](https://github.com/rajatslakhina/tool-integrity-kit) | `ToolAuthorityKit` (scenario 21) asks whether a proposed call is permitted; this asks the question that has to be settled earlier — is the tool definition even the one anybody reviewed. Scenario 73 approves a `get_weather` definition (`NEWLY APPROVED`), then verifies a provider-rewritten redefinition of the same name — the MCP "rug pull" shape (OWASP MCP03:2025, CVE-2025-54136) — and the gate reports `DRIFT DETECTED (changed: description)` while the ledger keeps pinning the original, reviewed baseline. Only the still-trusted definition is registered with `ToolRegistryKit`; a real routed turn then asks about the weather and dispatches against it successfully. | Scenario 73 |
+| [`ScopeDriftKit`](https://github.com/rajatslakhina/scope-drift-kit) | `ToolAuthorityKit` (scenario 21) decides one call and `ToolIntegrityKit` (scenario 73) decides one definition; neither sees a session. Scenario 74 puts a `ScopeLedger` between a routed turn and `ToolRegistryKit`'s dispatch: the model proposes `push_branch(release/2.4)`, the agent's manifest (read the repo, write `feature/*`) says `DENIED (outsideScope)`, a justified 600-second elevation is `GRANTED`, and only then does the push dispatch. Two more small grants (`hotfix/2.3.1`, `main`) later, the drift report names the `fanOut` on `branch` that no single grant showed (OWASP MCP02:2025), and a second session trying to reuse the release grant is told it belongs to someone else. | Scenario 74 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -565,7 +566,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-three scenarios, $0.2411395 metered total**. `architecture.svg`
+The current run is **seventy-four scenarios, $0.2413495 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1221,13 +1222,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-three
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-four
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-three packages together; the output above is a genuine capture,
+  of all seventy-four packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1238,7 +1239,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-three real packages compose and run," which the sample output
+means "the seventy-four real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2166,3 +2167,21 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     check — the rewritten one was never a candidate. Pricing is registered for
     `tool-integrity-host`, metering a real **$0.000213**; the running total after scenario 73 is
     **$0.2411395 across seventy-three scenarios**.
+
+
+74. **`ScopeDriftKit`** adds the seventy-fourth scenario, and it asks the question the two tool
+    scenarios before it cannot: not "may this call run" (21) or "is this the definition we
+    approved" (73), but "across everything this session has been granted, how far has it moved
+    from what the agent was deployed to do". A `release-bot` manifest allows reading the repo and
+    writing `feature/*` branches, with `write` as the elevation ceiling on `repo`.
+
+    Part A routes a real turn. The scripted model proposes `push_branch` on `release/2.4`; the
+    ledger answers `DENIED (outsideScope)` before `ToolRegistryKit` sees it. The host requests a
+    600-second elevation with a justification, gets `GRANTED #1`, re-checks (`ALLOWED (elevation
+    #1)`), and the push dispatches. Part B grants two more small, individually reasonable
+    elevations (`hotfix/2.3.1`, `main`); the drift report then flags
+    `fanOut(repo, write, branch, [hotfix/2.3.1, main, release/2.4])`, three grants that together
+    approximate a `branch=*` nobody approved. Part C has a second session try the release grant and
+    get `DENIED (elevation #1 belongs to release-bot/demo-74)`. Pricing is registered for
+    `scope-drift-host`, metering **$0.00021** (10 prompt + 15 completion tokens); the running
+    total after scenario 74 is **$0.2413495 across seventy-four scenarios**.
