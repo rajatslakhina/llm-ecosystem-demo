@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-four packages in this
+A single runnable demo that wires together all seventy-five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -132,6 +132,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`FleetRolloutKit`](https://github.com/rajatslakhina/fleet-rollout-kit) | Every scenario above assumes every session gets the same providers and the same capabilities. A real fleet does not ship that way — a new capability goes to a canary slice first, and the kill has to actually hold. Scenario 72 runs the real `FleetSimulator` over 2,000 sessions: `onTrain(["ios-27.1-duo"])` treats **31**; the version-ordering rule nobody would write on purpose but that `osVersion >= "27.1"` is equivalent to treats **1,476** — a **47.6x** over-exposure at this scale (the package's own README runs it at 10,000 and finds 34.5x; the ratio moves with fleet composition, not with the bug). Part B runs the real `ConfigStore` through a live document, a kill, and a replay of the pre-kill document — the replay is rejected as stale against the accepted floor (`v5` against a floor of `v6`), and this session's assignment still reads `killed`: kill held. | Scenario 72 |
 | [`ToolIntegrityKit`](https://github.com/rajatslakhina/tool-integrity-kit) | `ToolAuthorityKit` (scenario 21) asks whether a proposed call is permitted; this asks the question that has to be settled earlier — is the tool definition even the one anybody reviewed. Scenario 73 approves a `get_weather` definition (`NEWLY APPROVED`), then verifies a provider-rewritten redefinition of the same name — the MCP "rug pull" shape (OWASP MCP03:2025, CVE-2025-54136) — and the gate reports `DRIFT DETECTED (changed: description)` while the ledger keeps pinning the original, reviewed baseline. Only the still-trusted definition is registered with `ToolRegistryKit`; a real routed turn then asks about the weather and dispatches against it successfully. | Scenario 73 |
 | [`ScopeDriftKit`](https://github.com/rajatslakhina/scope-drift-kit) | `ToolAuthorityKit` (scenario 21) decides one call and `ToolIntegrityKit` (scenario 73) decides one definition; neither sees a session. Scenario 74 puts a `ScopeLedger` between a routed turn and `ToolRegistryKit`'s dispatch: the model proposes `push_branch(release/2.4)`, the agent's manifest (read the repo, write `feature/*`) says `DENIED (outsideScope)`, a justified 600-second elevation is `GRANTED`, and only then does the push dispatch. Two more small grants (`hotfix/2.3.1`, `main`) later, the drift report names the `fanOut` on `branch` that no single grant showed (OWASP MCP02:2025), and a second session trying to reuse the release grant is told it belongs to someone else. | Scenario 74 |
+| [`ToolCallSchedulerKit`](https://github.com/rajatslakhina/tool-call-scheduler-kit) | `ToolRegistryKit` (scenario 5) dispatches one call and `StreamAggregatorKit` (scenario 16) reassembles a batch, but nothing decided which calls of one turn may run at the same time. Scenario 75 routes a turn that emits five tool calls at once (`read_file(notes.md)`, two `write_file(notes.md)`, two `get_weather`), plans them against declared effects (`c1+c3+c4 | c2 | c5`: five sequential rounds become a critical path of three), runs them through a real `ToolRegistry` three at a time, and hands the results back in emission order. Peak concurrency 3/3; the two writes to `notes.md` are ordered after the read and after each other. | Scenario 75 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -566,7 +567,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-four scenarios, $0.2413495 metered total**. `architecture.svg`
+The current run is **seventy-five scenarios, $0.2424715 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1222,13 +1223,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-four
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-five
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-four packages together; the output above is a genuine capture,
+  of all seventy-five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1239,7 +1240,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-four real packages compose and run," which the sample output
+means "the seventy-five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2185,3 +2186,18 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     get `DENIED (elevation #1 belongs to release-bot/demo-74)`. Pricing is registered for
     `scope-drift-host`, metering **$0.00021** (10 prompt + 15 completion tokens); the running
     total after scenario 74 is **$0.2413495 across seventy-four scenarios**.
+
+
+75. **`ToolCallSchedulerKit`** adds the seventy-fifth scenario, and it fills a gap between two
+    older ones. Scenario 5 dispatches one tool call; scenario 16 reassembles several streamed ones.
+    Neither says whether the calls of one turn may run at the same time, and the two easy answers
+    are both wrong: one at a time is slow, all at once races writes the model meant in order.
+
+    A routed turn emits five calls: `read_file(notes.md)`, `write_file(notes.md)`,
+    `get_weather(Delhi)`, `get_weather(Pune)`, `write_file(notes.md)`. An effect catalog declares
+    that `read_file`/`write_file` read/write `file:<path>` and `get_weather` touches nothing. The
+    plan is `c1+c3+c4 | c2 | c5`: five sequential rounds, critical path three. The scheduler runs
+    the calls through a real `ToolRegistry` with `maxConcurrency: 3` (start order c1, c3, c4, c2,
+    c5; peak concurrency 3/3) and returns all five results in emission order. Pricing is
+    registered for `tool-call-scheduler-host`, metering **$0.001122** (14 prompt + 90 completion
+    tokens); the running total after scenario 75 is **$0.2424715 across seventy-five scenarios**.

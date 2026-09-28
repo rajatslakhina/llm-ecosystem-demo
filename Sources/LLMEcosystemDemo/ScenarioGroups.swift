@@ -51,5 +51,6 @@ extension EcosystemDemo {
         await runFleetRolloutScenario(meter: meter)
         await runToolIntegrityScenario(meter: meter)
         await runScopeDriftScenario(meter: meter)
+        await runToolCallSchedulerScenario(meter: meter)
     }
 }

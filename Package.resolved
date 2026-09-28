@@ -1,5 +1,5 @@
 {
-  "originHash" : "5c5df89b2ae7b6300a2443ee05d6e2cdb3effcf80fca8373e2cfafe49917cba4",
+  "originHash" : "543b84d52645f4c6d1b0657914383215a09dd13b3d2341c913750be376cff2a7",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -610,6 +610,15 @@
       "location" : "https://github.com/rajatslakhina/tool-authority-kit.git",
       "state" : {
         "revision" : "3d35e69a3b227138c3558243adf0e4cba363b96a",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "tool-call-scheduler-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/tool-call-scheduler-kit.git",
+      "state" : {
+        "revision" : "9cfb4b5adda0b19fb0c15ae0cc434053eb9c4624",
         "version" : "1.0.0"
       }
     },

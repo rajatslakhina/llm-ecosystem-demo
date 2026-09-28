@@ -84,7 +84,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/compaction-planner-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/fleet-rollout-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/tool-integrity-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/scope-drift-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/scope-drift-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/tool-call-scheduler-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -177,7 +178,8 @@ let package = Package(
                 .product(name: "CompactionPlannerKit", package: "compaction-planner-kit"),
                 .product(name: "FleetRollout", package: "fleet-rollout-kit"),
                 .product(name: "ToolIntegrityKit", package: "tool-integrity-kit"),
-                .product(name: "ScopeDriftKit", package: "scope-drift-kit")
+                .product(name: "ScopeDriftKit", package: "scope-drift-kit"),
+                .product(name: "ToolCallSchedulerKit", package: "tool-call-scheduler-kit")
             ]
         )
     ]
