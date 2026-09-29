@@ -52,5 +52,6 @@ extension EcosystemDemo {
         await runToolIntegrityScenario(meter: meter)
         await runScopeDriftScenario(meter: meter)
         await runToolCallSchedulerScenario(meter: meter)
+        await runLoopGuardScenario(meter: meter)
     }
 }

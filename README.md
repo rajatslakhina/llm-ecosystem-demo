@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-five packages in this
+A single runnable demo that wires together all seventy-six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -133,6 +133,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ToolIntegrityKit`](https://github.com/rajatslakhina/tool-integrity-kit) | `ToolAuthorityKit` (scenario 21) asks whether a proposed call is permitted; this asks the question that has to be settled earlier — is the tool definition even the one anybody reviewed. Scenario 73 approves a `get_weather` definition (`NEWLY APPROVED`), then verifies a provider-rewritten redefinition of the same name — the MCP "rug pull" shape (OWASP MCP03:2025, CVE-2025-54136) — and the gate reports `DRIFT DETECTED (changed: description)` while the ledger keeps pinning the original, reviewed baseline. Only the still-trusted definition is registered with `ToolRegistryKit`; a real routed turn then asks about the weather and dispatches against it successfully. | Scenario 73 |
 | [`ScopeDriftKit`](https://github.com/rajatslakhina/scope-drift-kit) | `ToolAuthorityKit` (scenario 21) decides one call and `ToolIntegrityKit` (scenario 73) decides one definition; neither sees a session. Scenario 74 puts a `ScopeLedger` between a routed turn and `ToolRegistryKit`'s dispatch: the model proposes `push_branch(release/2.4)`, the agent's manifest (read the repo, write `feature/*`) says `DENIED (outsideScope)`, a justified 600-second elevation is `GRANTED`, and only then does the push dispatch. Two more small grants (`hotfix/2.3.1`, `main`) later, the drift report names the `fanOut` on `branch` that no single grant showed (OWASP MCP02:2025), and a second session trying to reuse the release grant is told it belongs to someone else. | Scenario 74 |
 | [`ToolCallSchedulerKit`](https://github.com/rajatslakhina/tool-call-scheduler-kit) | `ToolRegistryKit` (scenario 5) dispatches one call and `StreamAggregatorKit` (scenario 16) reassembles a batch, but nothing decided which calls of one turn may run at the same time. Scenario 75 routes a turn that emits five tool calls at once (`read_file(notes.md)`, two `write_file(notes.md)`, two `get_weather`), plans them against declared effects (`c1+c3+c4 | c2 | c5`: five sequential rounds become a critical path of three), runs them through a real `ToolRegistry` three at a time, and hands the results back in emission order. Peak concurrency 3/3; the two writes to `notes.md` are ordered after the read and after each other. | Scenario 75 |
+| [`LoopGuardKit`](https://github.com/rajatslakhina/loop-guard-kit) | `AgentLoopKit` (scenario 6) stops a stuck agent only at `maxSteps`, after every remaining turn is billed. Scenario 76 routes an agent that keeps calling `ToolRegistryKit`'s `search` with the same query and getting the same empty result; `LoopGuard` nudges it on turn 3 and halts it on turn 4 of an 8-turn cap, and `TokenMeterKit` meters only the four turns actually sent. | Scenario 76 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -567,7 +568,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-five scenarios, $0.2424715 metered total**. `architecture.svg`
+The current run is **seventy-six scenarios, $0.2433235 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1223,13 +1224,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-five
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-six
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-five packages together; the output above is a genuine capture,
+  of all seventy-six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1240,7 +1241,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-five real packages compose and run," which the sample output
+means "the seventy-six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2201,3 +2202,19 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     c5; peak concurrency 3/3) and returns all five results in emission order. Pricing is
     registered for `tool-call-scheduler-host`, metering **$0.001122** (14 prompt + 90 completion
     tokens); the running total after scenario 75 is **$0.2424715 across seventy-five scenarios**.
+
+76. **`LoopGuardKit`** adds the seventy-sixth scenario, and it gives scenario 6's agent loop a
+    better way to stop. `AgentLoopKit` ends a run that never converges at `maxSteps`, which is
+    correct and expensive: a stuck agent spends every remaining turn first, and the halt reason
+    says "ran out", not what it was repeating.
+
+    A routed agent (scripted provider, 8-turn cap) asks for the Swift 7 release date and calls
+    `ToolRegistryKit`'s `search` tool with the same query every turn; the tool answers
+    `No results found.` every time. Each round trip is recorded in a `LoopGuard` as a
+    `ToolStep` (tool, canonical JSON arguments, observation). Turns 1-2 proceed. Turn 3 trips
+    `ExactRepeatDetector` and returns a nudge naming the call and the way out. The scripted model
+    ignores it, so turn 4 halts: `search({"q":"swift 7 release date"}) repeated 4x with an
+    identical result`. The loop stops after 4 of 8 billed turns. Pricing is registered for
+    `loop-guard-host`, metering **$0.000852** (44 prompt + 60 completion tokens across the four
+    turns sent); the running total after scenario 76 is **$0.2433235 across seventy-six
+    scenarios**.
