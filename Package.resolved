@@ -1,5 +1,5 @@
 {
-  "originHash" : "13bc014777321d821fa03e0392c77975e20e0dc46695be75a34fc325b4b20e51",
+  "originHash" : "38378c2c5f33f2270f7ae36fd305e56118fc0bc26a6c286023d7baa47beafaff",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -304,6 +304,15 @@
       "location" : "https://github.com/rajatslakhina/guardrail-kit.git",
       "state" : {
         "revision" : "a27c8e98f482cb1032e5c73db5ee13098b098e3e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "hedged-request-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/hedged-request-kit.git",
+      "state" : {
+        "revision" : "9f61e35490c94e28afcc1a1c64231765d3b7bb44",
         "version" : "1.0.0"
       }
     },

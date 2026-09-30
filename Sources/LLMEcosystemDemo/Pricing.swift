@@ -88,7 +88,9 @@ extension EcosystemDemo {
             (.toolIntegrityHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.scopeDriftHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.toolCallSchedulerHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.loopGuardHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.loopGuardHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.hedgePrimaryHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.hedgeBackupHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

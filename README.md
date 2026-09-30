@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-six packages in this
+A single runnable demo that wires together all seventy-seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -134,6 +134,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ScopeDriftKit`](https://github.com/rajatslakhina/scope-drift-kit) | `ToolAuthorityKit` (scenario 21) decides one call and `ToolIntegrityKit` (scenario 73) decides one definition; neither sees a session. Scenario 74 puts a `ScopeLedger` between a routed turn and `ToolRegistryKit`'s dispatch: the model proposes `push_branch(release/2.4)`, the agent's manifest (read the repo, write `feature/*`) says `DENIED (outsideScope)`, a justified 600-second elevation is `GRANTED`, and only then does the push dispatch. Two more small grants (`hotfix/2.3.1`, `main`) later, the drift report names the `fanOut` on `branch` that no single grant showed (OWASP MCP02:2025), and a second session trying to reuse the release grant is told it belongs to someone else. | Scenario 74 |
 | [`ToolCallSchedulerKit`](https://github.com/rajatslakhina/tool-call-scheduler-kit) | `ToolRegistryKit` (scenario 5) dispatches one call and `StreamAggregatorKit` (scenario 16) reassembles a batch, but nothing decided which calls of one turn may run at the same time. Scenario 75 routes a turn that emits five tool calls at once (`read_file(notes.md)`, two `write_file(notes.md)`, two `get_weather`), plans them against declared effects (`c1+c3+c4 | c2 | c5`: five sequential rounds become a critical path of three), runs them through a real `ToolRegistry` three at a time, and hands the results back in emission order. Peak concurrency 3/3; the two writes to `notes.md` are ordered after the read and after each other. | Scenario 75 |
 | [`LoopGuardKit`](https://github.com/rajatslakhina/loop-guard-kit) | `AgentLoopKit` (scenario 6) stops a stuck agent only at `maxSteps`, after every remaining turn is billed. Scenario 76 routes an agent that keeps calling `ToolRegistryKit`'s `search` with the same query and getting the same empty result; `LoopGuard` nudges it on turn 3 and halts it on turn 4 of an 8-turn cap, and `TokenMeterKit` meters only the four turns actually sent. | Scenario 76 |
+| [`HedgedRequestKit`](https://github.com/rajatslakhina/hedged-request-kit) | The router fails over only after a provider *fails*, and `RetryPolicyKit` (scenario 11) retries only after an error, so neither touches a call that is merely slow. Scenario 77 sends five routed requests to a primary whose third call takes 300ms; `HedgedExecutor` launches the same request on a backup route after 80ms, keeps the backup's answer and cancels the primary. 1 hedge in 5 requests under a 20%/burst-1 budget; `TokenMeterKit` bills each winning route. | Scenario 77 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -568,7 +569,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-six scenarios, $0.2433235 metered total**. `architecture.svg`
+The current run is **seventy-seven scenarios, $0.2436535 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1224,13 +1225,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-six
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-seven
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-six packages together; the output above is a genuine capture,
+  of all seventy-seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1241,7 +1242,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-six real packages compose and run," which the sample output
+means "the seventy-seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2217,4 +2218,22 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     identical result`. The loop stops after 4 of 8 billed turns. Pricing is registered for
     `loop-guard-host`, metering **$0.000852** (44 prompt + 60 completion tokens across the four
     turns sent); the running total after scenario 76 is **$0.2433235 across seventy-six
+    scenarios**.
+
+77. **`HedgedRequestKit`** adds the seventy-seventh scenario, and it covers the one latency case
+    the rest of the series can't: a call that is slow but hasn't failed. `ProviderRouter` fails
+    over after an error and `RetryPolicyKit` (scenario 11) retries after one, so a provider that
+    is still thinking at 300ms gets waited on.
+
+    Two single-provider routes (`hedge-primary-host`, `hedge-backup-host`) each sit behind an
+    `LLMSession`. The primary is wrapped in a scripted-latency provider: 20ms normally, 300ms on
+    its third call. The backup answers in 20ms. A `HedgedExecutor` with a fixed 80ms hedge delay
+    and a `HedgeBudget(ratio: 0.2, burst: 1)` runs five requests. Four are answered by the
+    primary with no hedge sent. On q3 the primary is still running at 80ms, so the executor
+    spends a budget token, launches the backup as a hedge, takes `"Paris (backup)"` in under
+    200ms and cancels the primary's stream. Result: 1 hedge in 5 requests, 1 hedge win,
+    0 budget denials. Pricing is registered for both hosts: **$0.000264** for the primary's four
+    answers and **$0.000066** for the backup's one, **$0.00033** in all. The cancelled primary
+    call is not metered; a real provider may still bill the tokens it generated before the
+    cancel arrived. The running total after scenario 77 is **$0.2436535 across seventy-seven
     scenarios**.

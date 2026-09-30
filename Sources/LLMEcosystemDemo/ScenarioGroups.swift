@@ -53,5 +53,6 @@ extension EcosystemDemo {
         await runScopeDriftScenario(meter: meter)
         await runToolCallSchedulerScenario(meter: meter)
         await runLoopGuardScenario(meter: meter)
+        await runHedgedRequestScenario(meter: meter)
     }
 }
