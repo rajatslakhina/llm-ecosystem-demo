@@ -87,7 +87,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/scope-drift-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/tool-call-scheduler-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/loop-guard-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/hedged-request-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/hedged-request-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/model-cascade-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -183,7 +184,8 @@ let package = Package(
                 .product(name: "ScopeDriftKit", package: "scope-drift-kit"),
                 .product(name: "ToolCallSchedulerKit", package: "tool-call-scheduler-kit"),
                 .product(name: "LoopGuardKit", package: "loop-guard-kit"),
-                .product(name: "HedgedRequestKit", package: "hedged-request-kit")
+                .product(name: "HedgedRequestKit", package: "hedged-request-kit"),
+                .product(name: "ModelCascadeKit", package: "model-cascade-kit")
             ]
         )
     ]

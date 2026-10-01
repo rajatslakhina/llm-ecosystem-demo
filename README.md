@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-seven packages in this
+A single runnable demo that wires together all seventy-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -135,6 +135,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ToolCallSchedulerKit`](https://github.com/rajatslakhina/tool-call-scheduler-kit) | `ToolRegistryKit` (scenario 5) dispatches one call and `StreamAggregatorKit` (scenario 16) reassembles a batch, but nothing decided which calls of one turn may run at the same time. Scenario 75 routes a turn that emits five tool calls at once (`read_file(notes.md)`, two `write_file(notes.md)`, two `get_weather`), plans them against declared effects (`c1+c3+c4 | c2 | c5`: five sequential rounds become a critical path of three), runs them through a real `ToolRegistry` three at a time, and hands the results back in emission order. Peak concurrency 3/3; the two writes to `notes.md` are ordered after the read and after each other. | Scenario 75 |
 | [`LoopGuardKit`](https://github.com/rajatslakhina/loop-guard-kit) | `AgentLoopKit` (scenario 6) stops a stuck agent only at `maxSteps`, after every remaining turn is billed. Scenario 76 routes an agent that keeps calling `ToolRegistryKit`'s `search` with the same query and getting the same empty result; `LoopGuard` nudges it on turn 3 and halts it on turn 4 of an 8-turn cap, and `TokenMeterKit` meters only the four turns actually sent. | Scenario 76 |
 | [`HedgedRequestKit`](https://github.com/rajatslakhina/hedged-request-kit) | The router fails over only after a provider *fails*, and `RetryPolicyKit` (scenario 11) retries only after an error, so neither touches a call that is merely slow. Scenario 77 sends five routed requests to a primary whose third call takes 300ms; `HedgedExecutor` launches the same request on a backup route after 80ms, keeps the backup's answer and cancels the primary. 1 hedge in 5 requests under a 20%/burst-1 budget; `TokenMeterKit` bills each winning route. | Scenario 77 |
+| [`ModelCascadeKit`](https://github.com/rajatslakhina/model-cascade-kit) | `SemanticRouterKit` (scenario 14) picks a model from the *question*; this picks one from the *answer*. Scenario 78 sends four questions to a cheap routed tier first and climbs to a mid or frontier tier only when the reply's self-rated confidence is under 0.80. Two are answered by the small tier, one by mid, one by frontier; `CascadeLedger` puts the spend 61% below sending all four to frontier. Every tier call is billed through `TokenMeterKit`. | Scenario 78 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -569,7 +570,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-seven scenarios, $0.2436535 metered total**. `architecture.svg`
+The current run is **seventy-eight scenarios, $0.2442555 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1225,13 +1226,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-eight
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-seven packages together; the output above is a genuine capture,
+  of all seventy-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1242,7 +1243,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-seven real packages compose and run," which the sample output
+means "the seventy-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2237,3 +2238,23 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     call is not metered; a real provider may still bill the tokens it generated before the
     cancel arrived. The running total after scenario 77 is **$0.2436535 across seventy-seven
     scenarios**.
+
+78. **`ModelCascadeKit`** adds the seventy-eighth scenario, and it chooses a model by looking at
+    the answer instead of the question. `SemanticRouterKit` (scenario 14) routes on what a query
+    *is*. A cascade routes on how well a cheap model *did*: ask the small model first, and pay
+    for a bigger one only when the small one's answer looks weak.
+
+    Three single-provider routes (`cascade-small-host`, `cascade-mid-host`,
+    `cascade-frontier-host`) each sit behind an `LLMSession`, priced at $1/$4, $3/$12 and $15/$60
+    per million input/output tokens. Each scripted reply carries a self-rated confidence
+    (`"Paris || 0.95"`), which the scenario splits into a `TierAnswer`. A `CascadeExecutor` with a
+    `ConfidenceFloor(0.80)` runs four questions. The small tier answers "Paris" (0.95) and "1945"
+    (0.92) and both are accepted. It is unsure of the prime count (0.40), so that question goes to
+    mid, which answers "7" (0.88). It is unsure of who axiomatised probability (0.30), mid is too
+    (0.55), and frontier answers "Kolmogorov" (0.93). Frontier is called once in four requests.
+    `CascadeLedger` estimates the spend at **61% below** sending all four to frontier, and the small
+    tier's escalation yield is 100%: every question it passed up was answered by a tier that
+    cleared the floor. Every call made is metered, including the two deferred answers that were
+    thrown away: **$0.000089** small + **$0.000123** mid + **$0.00039** frontier = **$0.000602**,
+    exactly the change in the total. The running total after scenario 78 is **$0.2442555 across
+    seventy-eight scenarios**.

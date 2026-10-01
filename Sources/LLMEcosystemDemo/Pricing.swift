@@ -20,7 +20,7 @@ extension EcosystemDemo {
         return TokenMeter(registry: registry)
     }
 
-    private static var rates: [(ProviderIdentifier, ModelPricing)] {
+    static var rates: [(ProviderIdentifier, ModelPricing)] {
         [
             (.onDevice, ModelPricing(inputPerMillion: 0, outputPerMillion: 0)),
             (.cloud, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
@@ -90,7 +90,10 @@ extension EcosystemDemo {
             (.toolCallSchedulerHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.loopGuardHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.hedgePrimaryHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.hedgeBackupHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.hedgeBackupHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.cascadeSmallHost, ModelPricing(inputPerMillion: 1, outputPerMillion: 4)),
+            (.cascadeMidHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.cascadeFrontierHost, ModelPricing(inputPerMillion: 15, outputPerMillion: 60))
         ]
     }
 }

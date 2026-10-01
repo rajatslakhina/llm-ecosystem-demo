@@ -1,5 +1,5 @@
 {
-  "originHash" : "38378c2c5f33f2270f7ae36fd305e56118fc0bc26a6c286023d7baa47beafaff",
+  "originHash" : "0ed55ffb58d269e4c6b399df76418447d7c21f17ef8a58410a1a891dcc5cbfd3",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -349,6 +349,15 @@
       "location" : "https://github.com/rajatslakhina/loop-guard-kit.git",
       "state" : {
         "revision" : "7503c46505d27afb25e73bb50e447041eddb5749",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "model-cascade-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/model-cascade-kit.git",
+      "state" : {
+        "revision" : "a7c262addff27f57d25584ea43b7bfe60da137de",
         "version" : "1.0.0"
       }
     },
