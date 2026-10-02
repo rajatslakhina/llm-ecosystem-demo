@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-eight packages in this
+A single runnable demo that wires together all seventy-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -136,6 +136,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`LoopGuardKit`](https://github.com/rajatslakhina/loop-guard-kit) | `AgentLoopKit` (scenario 6) stops a stuck agent only at `maxSteps`, after every remaining turn is billed. Scenario 76 routes an agent that keeps calling `ToolRegistryKit`'s `search` with the same query and getting the same empty result; `LoopGuard` nudges it on turn 3 and halts it on turn 4 of an 8-turn cap, and `TokenMeterKit` meters only the four turns actually sent. | Scenario 76 |
 | [`HedgedRequestKit`](https://github.com/rajatslakhina/hedged-request-kit) | The router fails over only after a provider *fails*, and `RetryPolicyKit` (scenario 11) retries only after an error, so neither touches a call that is merely slow. Scenario 77 sends five routed requests to a primary whose third call takes 300ms; `HedgedExecutor` launches the same request on a backup route after 80ms, keeps the backup's answer and cancels the primary. 1 hedge in 5 requests under a 20%/burst-1 budget; `TokenMeterKit` bills each winning route. | Scenario 77 |
 | [`ModelCascadeKit`](https://github.com/rajatslakhina/model-cascade-kit) | `SemanticRouterKit` (scenario 14) picks a model from the *question*; this picks one from the *answer*. Scenario 78 sends four questions to a cheap routed tier first and climbs to a mid or frontier tier only when the reply's self-rated confidence is under 0.80. Two are answered by the small tier, one by mid, one by frontier; `CascadeLedger` puts the spend 61% below sending all four to frontier. Every tier call is billed through `TokenMeterKit`. | Scenario 78 |
+| [`StreamReleaseKit`](https://github.com/rajatslakhina/stream-release-kit) | `GuardrailKit` (scenario 7) screens a whole reply and `StreamAggregatorKit` (scenario 16) reassembles a streamed one, but a chat UI shows deltas as they arrive. Scenario 79 cuts a routed, metered reply into 12-scalar deltas: screening each delta with `GuardrailKit` shows the key and the email in full, and screening the assembled reply catches the email only after all six deltas were on screen. `ReleaseGate` shows `Use [AWS-KEY] for staging; mail [EMAIL] if it fails.`, equal to its whole-text reference. The cost is latency: the email pattern's 96-scalar holdback holds this whole 67-scalar reply until it ends. | Scenario 79 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -570,7 +571,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-eight scenarios, $0.2442555 metered total**. `architecture.svg`
+The current run is **seventy-nine scenarios, $0.2444985 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1226,13 +1227,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all seventy-nine
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-eight packages together; the output above is a genuine capture,
+  of all seventy-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1243,7 +1244,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-eight real packages compose and run," which the sample output
+means "the seventy-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2258,3 +2259,27 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     thrown away: **$0.000089** small + **$0.000123** mid + **$0.00039** frontier = **$0.000602**,
     exactly the change in the total. The running total after scenario 78 is **$0.2442555 across
     seventy-eight scenarios**.
+
+79. **`StreamReleaseKit`** adds the seventy-ninth scenario, and it is about the moment between
+    the model and the screen. `GuardrailKit` (scenario 7) judges a whole reply. A chat UI does not
+    wait for one: it shows each delta as it arrives. Screen each delta on its own and a value split
+    across two deltas passes, because neither half matches. Screen the assembled reply and the
+    verdict arrives after the user has read it.
+
+    One single-provider route (`stream-release-host`, $3/$12 per million tokens) answers through an
+    `LLMSession`: `"Use AKIAIOSFODNN7EXAMPLE for staging; mail ops@acme.io if it fails."` The
+    gateway's scripted provider replies in one piece, so the scenario cuts the reply into six
+    12-scalar deltas, as scenario 16 scripts its SSE. Three readers then see the same deltas:
+    - `GuardrailKit` per delta shows the reply **unchanged**: the email is split across deltas 4
+      and 5, and GuardrailKit has no AWS-key detector at all.
+    - `StreamAggregatorKit` reassembles the deltas and `GuardrailKit` redacts the email from the
+      whole reply, one finding, after all six deltas were already shown.
+    - `ReleaseGate` with `PatternScanner.awsAccessKeyID()` and `.emailAddress()` shows
+      `Use [AWS-KEY] for staging; mail [EMAIL] if it fails.` across 7 releases, and the result
+      equals `ReleaseGate.reference(for:)` of the whole text.
+
+    The scenario also prints the price. The email pattern can match up to 96 scalars, so the gate
+    holds back the whole 67-scalar reply until the stream ends. The key scanner alone peaks at 32
+    withheld scalars (its 20-scalar holdback plus the newest 12-scalar delta). The call is metered
+    at 17 prompt and 16 completion tokens: **$0.000243**, exactly the change in the total. The
+    running total after scenario 79 is **$0.2444985 across seventy-nine scenarios**.

@@ -1,5 +1,5 @@
 {
-  "originHash" : "0ed55ffb58d269e4c6b399df76418447d7c21f17ef8a58410a1a891dcc5cbfd3",
+  "originHash" : "85e8566472461cbc47cef99bdb43eb9cea06acd23f4241c9bfc6495979879c57",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -601,6 +601,15 @@
       "location" : "https://github.com/rajatslakhina/stream-aggregator-kit.git",
       "state" : {
         "revision" : "c3c60b2bca69d295a9c9b36287b2f1d27a7f7e20",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "stream-release-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/stream-release-kit.git",
+      "state" : {
+        "revision" : "a6129dcd75bdcd7d224377ff8a769245683ca673",
         "version" : "1.0.0"
       }
     },

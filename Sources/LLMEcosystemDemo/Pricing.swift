@@ -93,7 +93,8 @@ extension EcosystemDemo {
             (.hedgeBackupHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.cascadeSmallHost, ModelPricing(inputPerMillion: 1, outputPerMillion: 4)),
             (.cascadeMidHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.cascadeFrontierHost, ModelPricing(inputPerMillion: 15, outputPerMillion: 60))
+            (.cascadeFrontierHost, ModelPricing(inputPerMillion: 15, outputPerMillion: 60)),
+            (.streamReleaseHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

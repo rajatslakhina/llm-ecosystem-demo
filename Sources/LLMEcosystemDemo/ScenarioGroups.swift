@@ -55,5 +55,6 @@ extension EcosystemDemo {
         await runLoopGuardScenario(meter: meter)
         await runHedgedRequestScenario(meter: meter)
         await runModelCascadeScenario(meter: meter)
+        await runStreamReleaseScenario(meter: meter)
     }
 }
