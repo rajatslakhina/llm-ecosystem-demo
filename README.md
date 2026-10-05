@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all seventy-nine packages in this
+A single runnable demo that wires together all eighty packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -137,6 +137,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`HedgedRequestKit`](https://github.com/rajatslakhina/hedged-request-kit) | The router fails over only after a provider *fails*, and `RetryPolicyKit` (scenario 11) retries only after an error, so neither touches a call that is merely slow. Scenario 77 sends five routed requests to a primary whose third call takes 300ms; `HedgedExecutor` launches the same request on a backup route after 80ms, keeps the backup's answer and cancels the primary. 1 hedge in 5 requests under a 20%/burst-1 budget; `TokenMeterKit` bills each winning route. | Scenario 77 |
 | [`ModelCascadeKit`](https://github.com/rajatslakhina/model-cascade-kit) | `SemanticRouterKit` (scenario 14) picks a model from the *question*; this picks one from the *answer*. Scenario 78 sends four questions to a cheap routed tier first and climbs to a mid or frontier tier only when the reply's self-rated confidence is under 0.80. Two are answered by the small tier, one by mid, one by frontier; `CascadeLedger` puts the spend 61% below sending all four to frontier. Every tier call is billed through `TokenMeterKit`. | Scenario 78 |
 | [`StreamReleaseKit`](https://github.com/rajatslakhina/stream-release-kit) | `GuardrailKit` (scenario 7) screens a whole reply and `StreamAggregatorKit` (scenario 16) reassembles a streamed one, but a chat UI shows deltas as they arrive. Scenario 79 cuts a routed, metered reply into 12-scalar deltas: screening each delta with `GuardrailKit` shows the key and the email in full, and screening the assembled reply catches the email only after all six deltas were on screen. `ReleaseGate` shows `Use [AWS-KEY] for staging; mail [EMAIL] if it fails.`, equal to its whole-text reference. The cost is latency: the email pattern's 96-scalar holdback holds this whole 67-scalar reply until it ends. | Scenario 79 |
+| [`OutcomeMonitorKit`](https://github.com/rajatslakhina/outcome-monitor-kit) | `ToolRegistryKit` (scenario 5) validates a tool call's *arguments* and `GroundingKit` checks the model's *answer*; nothing checked the tool's *result*. Scenario 80 routes an agent whose `get_quote` call is valid and whose result is well-formed JSON from a stale cache with a negative price. `OutcomeMonitor` checks it against a declared contract (`price: number ≥ 0`) and hands the model the unchanged result plus a receipt naming `refresh_quote`. The recovery tool's result passes a contract `ContractMiner` built from three known-good quotes. All three agent turns are billed through `TokenMeterKit`. | Scenario 80 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -571,7 +572,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **seventy-nine scenarios, $0.2444985 metered total**. `architecture.svg`
+The current run is **eighty scenarios, $0.2457195 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1227,13 +1228,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all seventy-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all eighty
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all seventy-nine packages together; the output above is a genuine capture,
+  of all eighty packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1244,7 +1245,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the seventy-nine real packages compose and run," which the sample output
+means "the eighty real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2283,3 +2284,25 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     withheld scalars (its 20-scalar holdback plus the newest 12-scalar delta). The call is metered
     at 17 prompt and 16 completion tokens: **$0.000243**, exactly the change in the total. The
     running total after scenario 79 is **$0.2444985 across seventy-nine scenarios**.
+
+80. **`OutcomeMonitorKit`** adds the eightieth scenario, and it checks the one thing every tool
+    scenario above passes along on trust: the tool's *result*. `ToolRegistryKit` (scenario 5)
+    rejects bad arguments before a handler runs. `GroundingKit` (scenario 22) judges the model's
+    answer after it is written. In between, a result that parses is treated as a result that is true.
+
+    One route (`outcome-monitor-host`, $3/$12 per million tokens) drives a scripted three-turn
+    agent. `ToolRegistryKit` dispatches its `get_quote(sku: LMP-200)` call, and the handler answers
+    from a cache that a bad price-feed import wrote: `{"currency":"USD","price":-41.5,"sku":"LMP-200",
+    "source":"cache"}`. The arguments are valid and the JSON is well-formed, so nothing upstream objects.
+    - `OutcomeMonitor` checks the result against a declared contract and finds
+      `price: number ≥ 0 (observed -41.5)`. The model is handed the result unchanged, followed by a
+      receipt that names `refresh_quote` as the recovery tool.
+    - Turn 2 calls `refresh_quote`. Its result passes a contract that `ContractMiner` built from
+      three known-good quotes: 11 properties, including `source: one of origin`.
+    - Turn 3 answers `LMP-200 costs 41.50 USD (fresh quote from origin).`
+
+    The replies are scripted, so turn 2 follows the receipt because the script says so. What the
+    scenario shows for real is what the model is handed at each step. Without the monitor, turn 2
+    would see the negative price with nothing marking it wrong. The three turns are metered at 251
+    prompt and 39 completion tokens: **$0.001221**, exactly the change in the total. The running
+    total after scenario 80 is **$0.2457195 across eighty scenarios**.

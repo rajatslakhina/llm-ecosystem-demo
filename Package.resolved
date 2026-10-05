@@ -1,5 +1,5 @@
 {
-  "originHash" : "85e8566472461cbc47cef99bdb43eb9cea06acd23f4241c9bfc6495979879c57",
+  "originHash" : "d3baad5f74f87cb1224993c05ad7f3b7c3d90f8e5f3884b002045676b8b2af3f",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -376,6 +376,15 @@
       "location" : "https://github.com/rajatslakhina/observed-null-kit.git",
       "state" : {
         "revision" : "60f7063816571a2e54fc84daa1ca19c1d4b8aa57",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "outcome-monitor-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/outcome-monitor-kit.git",
+      "state" : {
+        "revision" : "74c84827c78b79999b9280733d660dac449dafc6",
         "version" : "1.0.0"
       }
     },
