@@ -57,5 +57,6 @@ extension EcosystemDemo {
         await runModelCascadeScenario(meter: meter)
         await runStreamReleaseScenario(meter: meter)
         await runOutcomeMonitorScenario(meter: meter)
+        await runVerifiedCallScenario(meter: meter)
     }
 }

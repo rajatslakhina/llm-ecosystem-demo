@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighty packages in this
+A single runnable demo that wires together all eighty-one packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -138,6 +138,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ModelCascadeKit`](https://github.com/rajatslakhina/model-cascade-kit) | `SemanticRouterKit` (scenario 14) picks a model from the *question*; this picks one from the *answer*. Scenario 78 sends four questions to a cheap routed tier first and climbs to a mid or frontier tier only when the reply's self-rated confidence is under 0.80. Two are answered by the small tier, one by mid, one by frontier; `CascadeLedger` puts the spend 61% below sending all four to frontier. Every tier call is billed through `TokenMeterKit`. | Scenario 78 |
 | [`StreamReleaseKit`](https://github.com/rajatslakhina/stream-release-kit) | `GuardrailKit` (scenario 7) screens a whole reply and `StreamAggregatorKit` (scenario 16) reassembles a streamed one, but a chat UI shows deltas as they arrive. Scenario 79 cuts a routed, metered reply into 12-scalar deltas: screening each delta with `GuardrailKit` shows the key and the email in full, and screening the assembled reply catches the email only after all six deltas were on screen. `ReleaseGate` shows `Use [AWS-KEY] for staging; mail [EMAIL] if it fails.`, equal to its whole-text reference. The cost is latency: the email pattern's 96-scalar holdback holds this whole 67-scalar reply until it ends. | Scenario 79 |
 | [`OutcomeMonitorKit`](https://github.com/rajatslakhina/outcome-monitor-kit) | `ToolRegistryKit` (scenario 5) validates a tool call's *arguments* and `GroundingKit` checks the model's *answer*; nothing checked the tool's *result*. Scenario 80 routes an agent whose `get_quote` call is valid and whose result is well-formed JSON from a stale cache with a negative price. `OutcomeMonitor` checks it against a declared contract (`price: number ≥ 0`) and hands the model the unchanged result plus a receipt naming `refresh_quote`. The recovery tool's result passes a contract `ContractMiner` built from three known-good quotes. All three agent turns are billed through `TokenMeterKit`. | Scenario 80 |
+| [`VerifiedCallKit`](https://github.com/rajatslakhina/verified-call-kit) | `IdempotencyKit` (scenario 19) freezes a key when an effect fails in doubt, and scenario 19's reconciler was a hand-written `resolve(.notApplied)`. Scenario 81 routes an agent whose `pay_invoice` call goes through `ToolRegistryKit` into an `IdempotencyGuard` whose executor runs the payment under a `VerifiedCaller`. The backend commits and then times out, and its replica lags one second, so the 2-second settle window reads "absent" at 0.0s and 0.5s and finds the payment at 1.0s. The receipt is recovered without a second charge, and the agent's re-sent call is replayed by the guard. Controls on the same fault: a plain retry charges twice; the guard alone charges once but freezes the key. All three agent turns are billed through `TokenMeterKit`. | Scenario 81 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -572,7 +573,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **eighty scenarios, $0.2457195 metered total**. `architecture.svg`
+The current run is **eighty-one scenarios, $0.2465955 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1228,13 +1229,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighty
+- **Build:** `swift build` — clean, zero warnings, resolving all eighty-one
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighty packages together; the output above is a genuine capture,
+  of all eighty-one packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1245,7 +1246,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighty real packages compose and run," which the sample output
+means "the eighty-one real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2306,3 +2307,28 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     would see the negative price with nothing marking it wrong. The three turns are metered at 251
     prompt and 39 completion tokens: **$0.001221**, exactly the change in the total. The running
     total after scenario 80 is **$0.2457195 across eighty scenarios**.
+
+81. **`VerifiedCallKit`** adds the eighty-first scenario, and it supplies the reconciler that
+    scenario 19 had to write by hand. `IdempotencyKit` freezes a key when an effect fails in doubt,
+    which is correct and leaves a question: did it happen? Scenario 19 answered with
+    `resolve(.notApplied)`, typed in. Here the answer comes from looking.
+
+    One route (`verified-call-host`, $3/$12 per million tokens) drives a scripted three-turn agent.
+    `ToolRegistryKit` dispatches its `pay_invoice(invoice: INV-311, cents: 18000)` call into an
+    `IdempotencyGuard`, whose executor runs the payment under a `VerifiedCaller`. The backend's first
+    POST commits and then times out, and its read replica shows payments one second late.
+    - The timeout is classified in doubt, so the caller probes before anything is sent again. With a
+      2-second settle window probed every 500ms, the lookups read `absent` at 0.0s and 0.5s and find
+      `rcpt-INV-311` at 1.0s. The verdict is `in doubt -> applied at probe 3 (read absent first)`, and
+      the receipt comes back as `.recovered` with one charge.
+    - The guard records the recovered receipt as the executed result, so turn 2's identical call is
+      `replayed`: same receipt, backend not called.
+    - Turn 3 answers `Paid INV-311 ($180.00), receipt rcpt-INV-311.`
+
+    The same fault is run against two controls. A plain retry loop charges twice. The guard with no
+    verifier charges once, but it can only see a thrown POST, so it freezes the key and refuses the
+    re-sent call with "key pay:INV-311 has an indeterminate outcome and must be resolved before
+    retrying". Someone would have to find out by hand. All times come from a virtual clock, so the
+    lookup timeline is the same on every run. The three turns are metered at 96 prompt and 49
+    completion tokens: **$0.000876**, exactly the change in the total. The running total after
+    scenario 81 is **$0.2465955 across eighty-one scenarios**.

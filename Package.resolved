@@ -1,5 +1,5 @@
 {
-  "originHash" : "d3baad5f74f87cb1224993c05ad7f3b7c3d90f8e5f3884b002045676b8b2af3f",
+  "originHash" : "698868e0c2bd95ec0e8c42e49b56487d818705b02d60ac4b863f341149c6b0b9",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -709,6 +709,15 @@
       "location" : "https://github.com/rajatslakhina/unconditional-exact-kit.git",
       "state" : {
         "revision" : "585b5e38b92bc18489cf9b98e4810d9d578c36a4",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "verified-call-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/verified-call-kit.git",
+      "state" : {
+        "revision" : "d9bf01ef069064790d7032860984d5e4d00e4b6c",
         "version" : "1.0.0"
       }
     },
