@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighty-one packages in this
+A single runnable demo that wires together all eighty-two packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -139,6 +139,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`StreamReleaseKit`](https://github.com/rajatslakhina/stream-release-kit) | `GuardrailKit` (scenario 7) screens a whole reply and `StreamAggregatorKit` (scenario 16) reassembles a streamed one, but a chat UI shows deltas as they arrive. Scenario 79 cuts a routed, metered reply into 12-scalar deltas: screening each delta with `GuardrailKit` shows the key and the email in full, and screening the assembled reply catches the email only after all six deltas were on screen. `ReleaseGate` shows `Use [AWS-KEY] for staging; mail [EMAIL] if it fails.`, equal to its whole-text reference. The cost is latency: the email pattern's 96-scalar holdback holds this whole 67-scalar reply until it ends. | Scenario 79 |
 | [`OutcomeMonitorKit`](https://github.com/rajatslakhina/outcome-monitor-kit) | `ToolRegistryKit` (scenario 5) validates a tool call's *arguments* and `GroundingKit` checks the model's *answer*; nothing checked the tool's *result*. Scenario 80 routes an agent whose `get_quote` call is valid and whose result is well-formed JSON from a stale cache with a negative price. `OutcomeMonitor` checks it against a declared contract (`price: number ≥ 0`) and hands the model the unchanged result plus a receipt naming `refresh_quote`. The recovery tool's result passes a contract `ContractMiner` built from three known-good quotes. All three agent turns are billed through `TokenMeterKit`. | Scenario 80 |
 | [`VerifiedCallKit`](https://github.com/rajatslakhina/verified-call-kit) | `IdempotencyKit` (scenario 19) freezes a key when an effect fails in doubt, and scenario 19's reconciler was a hand-written `resolve(.notApplied)`. Scenario 81 routes an agent whose `pay_invoice` call goes through `ToolRegistryKit` into an `IdempotencyGuard` whose executor runs the payment under a `VerifiedCaller`. The backend commits and then times out, and its replica lags one second, so the 2-second settle window reads "absent" at 0.0s and 0.5s and finds the payment at 1.0s. The receipt is recovered without a second charge, and the agent's re-sent call is replayed by the guard. Controls on the same fault: a plain retry charges twice; the guard alone charges once but freezes the key. All three agent turns are billed through `TokenMeterKit`. | Scenario 81 |
+| [`ProgressGateKit`](https://github.com/rajatslakhina/progress-gate-kit) | Every agent loop in this demo stopped when the model stopped calling tools, which is the model reporting "done". Scenario 82 moves that decision onto evidence. A scripted refund agent ends each reply with `PROGRESS: <stage>`; its `ToolRegistryKit` results are mapped into `Evidence`, and a `StageLadder` (order located, refund issued, refund confirmed, customer notified) decides where the task really is. The create call times out with the refund `pending`; the agent claims "refund issued", emails the customer, and answers "done". `ProgressGate` refuses both stop claims, feeds back the missing `refund.status = "issued"`, and stops only after `check_ledger` confirms the refund, even though the agent then under-reports. `LoopGuardKit` runs alongside as the control and flags nothing: the agent was not stuck, it was wrong about where it was. Six turns billed through `TokenMeterKit`. | Scenario 82 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -573,7 +574,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **eighty-one scenarios, $0.2465955 metered total**. `architecture.svg`
+The current run is **eighty-two scenarios, $0.2505435 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1229,13 +1230,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighty-one
+- **Build:** `swift build` — clean, zero warnings, resolving all eighty-two
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighty-one packages together; the output above is a genuine capture,
+  of all eighty-two packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1246,7 +1247,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighty-one real packages compose and run," which the sample output
+means "the eighty-two real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2332,3 +2333,32 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     lookup timeline is the same on every run. The three turns are metered at 96 prompt and 49
     completion tokens: **$0.000876**, exactly the change in the total. The running total after
     scenario 81 is **$0.2465955 across eighty-one scenarios**.
+
+82. **`ProgressGateKit`** adds the eighty-second scenario, and it questions something every agent
+    loop above takes for granted: that the loop is over when the model says so. Scenario 6's
+    `AgentLoop` and the scripted agents of scenarios 80 and 81 all stop when the model answers
+    instead of calling a tool. That answer is the model's own progress
+    report, and *The Unreliable Progress Bar* (arXiv 2609.08589) found such reports reliable at some
+    stages of a task and not at others.
+
+    One route (`progress-gate-host`, $3/$12 per million tokens) drives a scripted refund agent that
+    ends every reply with a `PROGRESS:` line. Each `ToolRegistryKit` result is mapped into
+    `Evidence` by a small host-side table (`create_refund.status` becomes `refund.status`, and so
+    on), and a cumulative `StageLadder` says what each stage needs.
+    - Turn 2: `create_refund` times out and answers `status: pending`. The agent claims "refund
+      issued"; the gate audits that as an overclaim and feeds back `refund.status = "issued"`.
+    - Turn 3: the agent emails the customer and claims "customer notified". The ladder is cumulative,
+      so an email sent before the refund it confirms leaves the evidence at "order located".
+    - Turn 4: the agent answers "Refund issued for A-1042 and the customer has been emailed." with
+      `PROGRESS: done`. A loop that stopped on the model's word would have ended here with
+      `refund.status = "pending"` and the ledger unchecked. The gate refuses the stop.
+    - Turns 5 and 6: `get_refund` reads `issued` and `check_ledger` confirms it. The agent claims only
+      "refund confirmed", and the gate stops anyway, because the evidence shows the final stage.
+
+    The report counts 6 checks, 2 refused stops and 33% report reliability. `LoopGuardKit` watches the
+    same five tool steps and returns `proceed` on each: nothing repeats, so it has nothing to say. The
+    two packages answer different questions; one asks whether the agent is stuck, the other whether
+    it is where it says it is. The six turns are metered at 840 prompt and 119 completion tokens:
+    **$0.003948**, exactly the change in the total. The prompt count is the largest of any single
+    route because the gate's guidance is appended to the transcript on every turn. The running total
+    after scenario 82 is **$0.2505435 across eighty-two scenarios**.

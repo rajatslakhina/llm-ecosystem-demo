@@ -96,7 +96,8 @@ extension EcosystemDemo {
             (.cascadeFrontierHost, ModelPricing(inputPerMillion: 15, outputPerMillion: 60)),
             (.streamReleaseHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.outcomeMonitorHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.verifiedCallHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.verifiedCallHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.progressGateHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

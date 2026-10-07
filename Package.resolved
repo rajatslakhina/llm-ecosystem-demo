@@ -1,5 +1,5 @@
 {
-  "originHash" : "698868e0c2bd95ec0e8c42e49b56487d818705b02d60ac4b863f341149c6b0b9",
+  "originHash" : "636a55cc284f0ddf44d5c3491a2a1a71ce72f095858fe4ca2c5acff064308a90",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -404,6 +404,15 @@
       "state" : {
         "revision" : "38870de9c7ceda9a3b512094fc07b156d2260df3",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "progress-gate-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/progress-gate-kit.git",
+      "state" : {
+        "revision" : "367fecf3b536a32129d73c1d83e3e24ea6347b99",
+        "version" : "1.0.0"
       }
     },
     {
