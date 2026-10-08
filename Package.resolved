@@ -1,5 +1,5 @@
 {
-  "originHash" : "636a55cc284f0ddf44d5c3491a2a1a71ce72f095858fe4ca2c5acff064308a90",
+  "originHash" : "58fae567a816968de55e5600ba9d1500687e56903b6a60c9b952857f55e5d546",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -160,6 +160,15 @@
       "location" : "https://github.com/rajatslakhina/conformal-gate-kit.git",
       "state" : {
         "revision" : "50da4b6a2201fc1d7d68ee2896365b7dca1a2fa3",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "content-boundary-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/content-boundary-kit.git",
+      "state" : {
+        "revision" : "0add97c6a4c0e09112f4bec902f4a42653d4864c",
         "version" : "1.0.0"
       }
     },

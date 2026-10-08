@@ -92,7 +92,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/stream-release-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/outcome-monitor-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/verified-call-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/progress-gate-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/progress-gate-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/content-boundary-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -193,7 +194,8 @@ let package = Package(
                 .product(name: "StreamReleaseKit", package: "stream-release-kit"),
                 .product(name: "OutcomeMonitorKit", package: "outcome-monitor-kit"),
                 .product(name: "VerifiedCallKit", package: "verified-call-kit"),
-                .product(name: "ProgressGateKit", package: "progress-gate-kit")
+                .product(name: "ProgressGateKit", package: "progress-gate-kit"),
+                .product(name: "ContentBoundaryKit", package: "content-boundary-kit")
             ]
         )
     ]
