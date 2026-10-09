@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighty-three packages in this
+A single runnable demo that wires together all eighty-four packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -141,6 +141,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`VerifiedCallKit`](https://github.com/rajatslakhina/verified-call-kit) | `IdempotencyKit` (scenario 19) freezes a key when an effect fails in doubt, and scenario 19's reconciler was a hand-written `resolve(.notApplied)`. Scenario 81 routes an agent whose `pay_invoice` call goes through `ToolRegistryKit` into an `IdempotencyGuard` whose executor runs the payment under a `VerifiedCaller`. The backend commits and then times out, and its replica lags one second, so the 2-second settle window reads "absent" at 0.0s and 0.5s and finds the payment at 1.0s. The receipt is recovered without a second charge, and the agent's re-sent call is replayed by the guard. Controls on the same fault: a plain retry charges twice; the guard alone charges once but freezes the key. All three agent turns are billed through `TokenMeterKit`. | Scenario 81 |
 | [`ProgressGateKit`](https://github.com/rajatslakhina/progress-gate-kit) | Every agent loop in this demo stopped when the model stopped calling tools, which is the model reporting "done". Scenario 82 moves that decision onto evidence. A scripted refund agent ends each reply with `PROGRESS: <stage>`; its `ToolRegistryKit` results are mapped into `Evidence`, and a `StageLadder` (order located, refund issued, refund confirmed, customer notified) decides where the task really is. The create call times out with the refund `pending`; the agent claims "refund issued", emails the customer, and answers "done". `ProgressGate` refuses both stop claims, feeds back the missing `refund.status = "issued"`, and stops only after `check_ledger` confirms the refund, even though the agent then under-reports. `LoopGuardKit` runs alongside as the control and flags nothing: the agent was not stuck, it was wrong about where it was. Six turns billed through `TokenMeterKit`. | Scenario 82 |
 | [`ContentBoundaryKit`](https://github.com/rajatslakhina/content-boundary-kit) | Every scenario above pastes tool results and retrieved passages straight into the next prompt, and nothing decided how that text should reach the model. Scenario 83 routes a vendor-support agent whose `fetch_page` result (dispatched through `ToolRegistryKit`) contains `</tool_result>` and a `System:` line telling it to change the payee. Wrapped in fixed `<tool_result>` tags, that line lands outside the data block. Wrapped in a `BoundarySession` envelope (datamarked, with an id drawn after the page was known and absent from it), the whole page stays inside, the closer and the role header are reported, and `EnvelopeParser.verify` confirms the prompt reads back as built before it is sent. The scripted turn 2 follows the page on purpose and `ToolAuthorityKit` still denies the `update_payee` call, because its arguments came from `tool:fetch_page`. Three turns billed through `TokenMeterKit`. | Scenario 83 |
+| [`TrajectoryConsistencyKit`](https://github.com/rajatslakhina/trajectory-consistency-kit) | Scenario 21 shows a signature covering one refund and no other by presenting the same proposal twice. In a real loop the call after an approval is a fresh model output, and models re-serialize JSON. Scenario 84 signs an `issue_refund` call; the model resends it as `{ "amount_cents": 4999.0, ... }`. A desk keyed on argument bytes asks the user again for a call they already signed. A desk keyed on `CanonicalJSON` honours the signature and runs exactly the approved bytes through `ToolRegistryKit`. A second conversation's resend doubles the amount: both desks ask again, and `ReplayCheck` names `amount_cents: 4999 → 9998`. Read as runs of one input, the three proposals fail `ConsistencyPolicy` on argument agreement (0.778). |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -575,7 +576,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **eighty-three scenarios, $0.2535405 metered total**. `architecture.svg`
+The current run is **eighty-four scenarios, $0.2560185 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1231,13 +1232,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighty-three
+- **Build:** `swift build` — clean, zero warnings, resolving all eighty-four
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighty-three packages together; the output above is a genuine capture,
+  of all eighty-four packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1248,7 +1249,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighty-three real packages compose and run," which the sample output
+means "the eighty-four real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2392,3 +2393,32 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The envelope costs 33% more scalars than the page (the two marker lines and the datamark field).
     The three turns are metered at 755 prompt and 61 completion tokens: **$0.002997**, exactly the change
     in the total. The running total after scenario 83 is **$0.2535405 across eighty-three scenarios**.
+
+84. **`TrajectoryConsistencyKit`** adds the eighty-fourth scenario. Scenario 21 showed that a human
+    signature covers one refund and no other, and it showed it by presenting the same `ToolProposal`
+    value twice. In a real loop the call after an approval is a fresh model output. *How Consistent
+    Are LLM Agents?* (arXiv 2605.28840) asks whether repeated invocations select the same tools, in
+    the same order, with the same arguments, and the arguments are where an approval breaks:
+    `ProposalDigest` hashes the argument text it is given.
+
+    One route (`trajectory-consistency-host`, $3/$12 per million tokens) drives two scripted
+    conversations with a billing agent whose `issue_refund` capability has `requiresApproval`. Two
+    signature desks sit beside the broker, shaped like ai-chat-app's `ToolAuthorityGate` (signatures
+    keyed by the digest they authorize). One hashes the argument bytes; the other hashes the
+    canonical arguments from `TrajectoryConsistencyKit`.
+    - Conversation A, turn 1: `issue_refund {"order_id":"A-1042","charge_id":"ch_88","amount_cents":4999}`.
+      Both desks return `.approvalRequired`, and the user signs.
+    - Turn 2, the resend: `{ "amount_cents": 4999.0, "charge_id": "ch_88", "order_id": "A-1042" }`.
+      `ReplayCheck` reads it as `.equivalent`. The byte-keyed desk has no signature for the new
+      digest and asks the user again for a call they already signed. The canonical desk is allowed
+      (`signed by ops@billing`), and `ToolRegistryKit` runs
+      `{"amount_cents":4999,"charge_id":"ch_88","order_id":"A-1042"}`, the bytes that were approved.
+    - Conversation B: the same turn 1 and signature, then a resend with `amount_cents` 9998. Both
+      desks ask again, which is right, and `ReplayCheck` says why: `amount_cents: 4999 → 9998`.
+    - The three proposals read as runs of one input: 1 tool path, 3 calls as bytes, 2 canonically,
+      `issue_refund.amount_cents` volatile, and `ConsistencyPolicy` rules them inconsistent
+      (argument agreement 0.778, below 0.9).
+
+    The replies are scripted, so the respelling and the drift are chosen, not observed. The six turns
+    are metered at 262 prompt and 141 completion tokens: **$0.002478**, exactly the change in the
+    total. The running total after scenario 84 is **$0.2560185 across eighty-four scenarios**.

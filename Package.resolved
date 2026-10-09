@@ -1,5 +1,5 @@
 {
-  "originHash" : "58fae567a816968de55e5600ba9d1500687e56903b6a60c9b952857f55e5d546",
+  "originHash" : "6b555a679c642290d8b6642b1c12d03e3f4a568ffc0f4b1439549f9a918ad232",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -718,6 +718,15 @@
       "location" : "https://github.com/rajatslakhina/trace-kit.git",
       "state" : {
         "revision" : "5f7a31768adf9e35acc5b440827e2b5d950d6dcb",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "trajectory-consistency-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/trajectory-consistency-kit.git",
+      "state" : {
+        "revision" : "12c9a268ea0aa9b19e149d1d3ffcc9584fd83e1c",
         "version" : "1.0.0"
       }
     },

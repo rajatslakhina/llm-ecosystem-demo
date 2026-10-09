@@ -60,5 +60,6 @@ extension EcosystemDemo {
         await runVerifiedCallScenario(meter: meter)
         await runProgressGateScenario(meter: meter)
         await runContentBoundaryScenario(meter: meter)
+        await runTrajectoryConsistencyScenario(meter: meter)
     }
 }
