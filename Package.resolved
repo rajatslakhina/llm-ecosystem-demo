@@ -1,5 +1,5 @@
 {
-  "originHash" : "6b555a679c642290d8b6642b1c12d03e3f4a568ffc0f4b1439549f9a918ad232",
+  "originHash" : "374b3e3bfe6a82445da3a2149e1e7886194b653d717be865b25f8eba81585124",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -322,6 +322,15 @@
       "location" : "https://github.com/rajatslakhina/hedged-request-kit.git",
       "state" : {
         "revision" : "9f61e35490c94e28afcc1a1c64231765d3b7bb44",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "hidden-text-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/hidden-text-kit.git",
+      "state" : {
+        "revision" : "b8c3ffed5bce8f57bd720f95fc7036fa565adced",
         "version" : "1.0.0"
       }
     },
