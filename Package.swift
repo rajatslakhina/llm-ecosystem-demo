@@ -95,7 +95,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/progress-gate-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/content-boundary-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/trajectory-consistency-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/hidden-text-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/hidden-text-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/session-mask-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -199,7 +200,8 @@ let package = Package(
                 .product(name: "ProgressGateKit", package: "progress-gate-kit"),
                 .product(name: "ContentBoundaryKit", package: "content-boundary-kit"),
                 .product(name: "TrajectoryConsistencyKit", package: "trajectory-consistency-kit"),
-                .product(name: "HiddenTextKit", package: "hidden-text-kit")
+                .product(name: "HiddenTextKit", package: "hidden-text-kit"),
+                .product(name: "SessionMaskKit", package: "session-mask-kit")
             ]
         )
     ]

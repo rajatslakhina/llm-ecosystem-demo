@@ -1,5 +1,5 @@
 {
-  "originHash" : "374b3e3bfe6a82445da3a2149e1e7886194b653d717be865b25f8eba81585124",
+  "originHash" : "e95ffe5f21087146d2fdb5c5014f2c04e90cf6468f8354fad3142f943c8c00a8",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -583,6 +583,15 @@
       "location" : "https://github.com/rajatslakhina/sequential-contrast-kit.git",
       "state" : {
         "revision" : "b0bfa3e8633bbbe7c7eab9d6e025d3f266414c41",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "session-mask-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/session-mask-kit.git",
+      "state" : {
+        "revision" : "af1aee5fc6a3ec031f7774d67ed0d4d37601230c",
         "version" : "1.0.0"
       }
     },
