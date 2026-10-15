@@ -63,5 +63,6 @@ extension EcosystemDemo {
         await runTrajectoryConsistencyScenario(meter: meter)
         await runHiddenTextScenario(meter: meter)
         await runSessionMaskScenario(meter: meter)
+        await runLinkEgressScenario(meter: meter)
     }
 }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "e95ffe5f21087146d2fdb5c5014f2c04e90cf6468f8354fad3142f943c8c00a8",
+  "originHash" : "ddbd1472af12a278b0ad5a4da024615465c113fcb9e82e49d8b6b98c39b19ca0",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -358,6 +358,15 @@
       "location" : "https://github.com/rajatslakhina/label-return-kit.git",
       "state" : {
         "revision" : "54d5436b5cbbe38dfcf439877c7cc865aa33d87b",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "link-egress-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/link-egress-kit.git",
+      "state" : {
+        "revision" : "31195032ac9c9944b7c009ee0915dcee7efba332",
         "version" : "1.0.0"
       }
     },

@@ -101,7 +101,8 @@ extension EcosystemDemo {
             (.contentBoundaryHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.trajectoryConsistencyHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.hiddenTextHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.sessionMaskHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
+            (.sessionMaskHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
+            (.linkEgressHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }
