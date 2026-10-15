@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighty-seven packages in this
+A single runnable demo that wires together all eighty-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -145,6 +145,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`HiddenTextKit`](https://github.com/rajatslakhina/hidden-text-kit) | Text reaches a model from places nobody reads closely, and Unicode tag characters, zero-width binary and variation-selector bytes spell instructions a screen never draws. Scenario 85 meets all three directions in one turn: a pasted card number joined by zero-width spaces that `GuardrailKit` does not match until `HiddenTextSanitizer` runs first (then `[REDACTED:CREDIT_CARD]`); a `ToolRegistryKit` web fetch whose terms page carries 87 tag scalars telling the assistant to approve payment, decoded in the audit view and kept from the model; and a streamed answer whose 70-scalar note to the next agent `HiddenTextStreamFilter` holds back and drops before the answer is shown or written to history. A `HiddenTextLedger` attributes each finding to its source. |
 | [`SessionMaskKit`](https://github.com/rajatslakhina/session-mask-kit) | `GuardrailKit` redacts the message it screens, per turn and for good, and a chat client re-sends the history from what the user typed. Scenario 86 runs two turns: `GuardrailKit` alone sends `[REDACTED:EMAIL_ADDRESS]` twice on turn 1 (two people, one placeholder) and re-sends the 2 raw addresses in the history on turn 2; `SessionMaskKit` sends `[EMAIL_1]` and `[EMAIL_2]` on both turns, keeps turn 1's prompt a byte-for-byte prefix of turn 2's (137 of 137 bytes, against 108 of 167), restores real addresses into the `ToolRegistryKit` `send_email` call only because the policy grants that tool `EMAIL`, escapes a fetched page's own `[EMAIL_1]` to `[LITERAL_1]`, and reports the model's respelled `email_2` instead of guessing. |
 | [`LinkEgressKit`](https://github.com/rajatslakhina/link-egress-kit) | Every link a model writes is one tap from the network, and an image needs no tap. Scenario 87 plants an injection in a `ToolRegistryKit` web fetch asking for the guest's details in a link and an image. The model only ever saw `[EMAIL_1]` (`SessionMaskKit`), so it writes the token into the URL, and restoring the answer for display writes the address back in: **3** live URLs carry the guest's details. `GuardrailKit` over the restored answer redacts the address and leaves the booking reference in **2** (a Base64 pixel and a reference-definition line). `LinkEgressKit`, run before the restore with the session's tokens as sensitive values and the turn's messages as sources, unlinks all three, keeps the hotel link copied from the page, and leaves **0**; streamed in 16-scalar chunks, it releases exactly the whole-answer result. |
+| [`DegenerationGuardKit`](https://github.com/rajatslakhina/degeneration-guard-kit) | A model that starts repeating itself rarely stops before its output cap, and the provider bills every token with HTTP 200. Scenario 88 routes a physics question to a cheap route (`degeneration-host`) whose reply loops "Wait, let me reconsider the units." until its 4,096-token cap (16,384 scalars). Cut into 16-scalar chunks as a live bubble receives it, a `DegenerationGate` stops reading after **192** scalars (a 35-scalar block written 4 times in a row), the user keeps the opening sentence plus one copy, and the turn meters **$0.0002387** instead of **$0.0180499**. The question goes to `degeneration-fallback`, whose answer is clean, and a `DegenerationLedger` records that the first route looped in 1 of 1 answers and the second in 0 of 1. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -579,7 +580,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **eighty-seven scenarios, $0.2603085 metered total**. `architecture.svg`
+The current run is **eighty-eight scenarios, $0.2608622 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1235,13 +1236,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighty-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all eighty-eight
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighty-seven packages together; the output above is a genuine capture,
+  of all eighty-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1252,7 +1253,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighty-seven real packages compose and run," which the sample output
+means "the eighty-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2515,3 +2516,30 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the injection is planted, not observed. The two turns are metered
     at **$0.001599**, exactly the change in the total. The running total after scenario 87 is
     **$0.2603085 across eighty-seven scenarios**.
+
+88. **`DegenerationGuardKit`** adds the eighty-eighth scenario. *LZ Penalty* (arXiv 2504.20131)
+    measured degenerate repetition in up to 4% of generations even with the usual frequency and
+    repetition penalties, and *FailureAtlas* (arXiv 2607.17525) found that the most severe gateway
+    failures are silent: they return HTTP 200 and pass every health check. A looping answer is one
+    of them, and the client is the only place that can stop paying for it.
+
+    Two routes: `degeneration-host` ($1.10/$4.40 per million tokens) and `degeneration-fallback`
+    ($3/$15).
+    - A physics tutor is asked to convert 3.2 km/h to metres per second. The (scripted) reply from
+      `degeneration-host` opens correctly, then writes "Wait, let me reconsider the units." until
+      it reaches 16,384 scalars, the route's 4,096-token cap at the demo's 4 characters per token.
+    - `ScriptedProvider` returns whole replies, so the reply is cut into 16-scalar chunks the way a
+      live bubble receives it, and each chunk goes through a `DegenerationGate`. The gate reports
+      `verbatim: a 35-scalar block written 4 times in a row` and the client stops after **192**
+      scalars, in chunk 12. The user keeps "To convert km/h to m/s, divide by 3.6. Wait, let me
+      reconsider the units."
+    - The same turn metered on a scratch `TokenMeter`: read to the cap, **$0.0180499**; stopped by
+      the gate, **$0.0002387**. Only what was read is metered, on the assumption that a provider
+      stops generating when its stream is cancelled; the few tokens in flight are ignored.
+    - The question is retried on `degeneration-fallback`, whose 65-scalar answer ("3.2 km/h is
+      3.2 / 3.6 = 0.889 m/s, about 0.89 m/s") passes clean. A shared `DegenerationLedger` records
+      `degeneration-host` looping in 1 of 1 answers and `degeneration-fallback` in 0 of 1.
+
+    The replies are scripted, so the loop is planted, not observed. The two turns are metered at
+    **$0.0005537**, exactly the change in the total. The running total after scenario 88 is
+    **$0.2608622 across eighty-eight scenarios**.

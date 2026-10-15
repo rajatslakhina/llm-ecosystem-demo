@@ -64,5 +64,6 @@ extension EcosystemDemo {
         await runHiddenTextScenario(meter: meter)
         await runSessionMaskScenario(meter: meter)
         await runLinkEgressScenario(meter: meter)
+        await runDegenerationGuardScenario(meter: meter)
     }
 }

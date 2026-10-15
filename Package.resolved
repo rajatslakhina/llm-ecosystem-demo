@@ -1,5 +1,5 @@
 {
-  "originHash" : "ddbd1472af12a278b0ad5a4da024615465c113fcb9e82e49d8b6b98c39b19ca0",
+  "originHash" : "942c4ce6595bf7016bff8b419acf8bfe8d9154cf0f7df0ce372b597f7e724fb9",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -197,6 +197,15 @@
       "state" : {
         "revision" : "9b2dadd3a51901a6cad9f2748c3c293bbf192922",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "degeneration-guard-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/degeneration-guard-kit.git",
+      "state" : {
+        "revision" : "a619609e9abba5f3d8444a0cef459af347fc095a",
+        "version" : "1.0.0"
       }
     },
     {

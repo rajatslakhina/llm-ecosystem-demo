@@ -97,7 +97,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/trajectory-consistency-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/hidden-text-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/session-mask-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/link-egress-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/link-egress-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/degeneration-guard-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -203,7 +204,8 @@ let package = Package(
                 .product(name: "TrajectoryConsistencyKit", package: "trajectory-consistency-kit"),
                 .product(name: "HiddenTextKit", package: "hidden-text-kit"),
                 .product(name: "SessionMaskKit", package: "session-mask-kit"),
-                .product(name: "LinkEgressKit", package: "link-egress-kit")
+                .product(name: "LinkEgressKit", package: "link-egress-kit"),
+                .product(name: "DegenerationGuardKit", package: "degeneration-guard-kit")
             ]
         )
     ]
