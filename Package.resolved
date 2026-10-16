@@ -1,5 +1,5 @@
 {
-  "originHash" : "942c4ce6595bf7016bff8b419acf8bfe8d9154cf0f7df0ce372b597f7e724fb9",
+  "originHash" : "8fcc46f0d1c0aa2e82bf357907b3e81e200bee2a2cc88ab0b6bfe2d8d48634e2",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -25,6 +25,15 @@
       "location" : "https://github.com/rajatslakhina/agent-memory-kit.git",
       "state" : {
         "revision" : "b3a6bd3edb06e193d0dd42582ac1910432a7477c",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "answer-continuation-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/answer-continuation-kit.git",
+      "state" : {
+        "revision" : "7247b7de10324cc79e66e281f432f01ad92a93fd",
         "version" : "1.0.0"
       }
     },

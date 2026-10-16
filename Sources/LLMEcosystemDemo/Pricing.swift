@@ -104,7 +104,8 @@ extension EcosystemDemo {
             (.sessionMaskHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.linkEgressHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
             (.degenerationHost, ModelPricing(inputPerMillion: 1.1, outputPerMillion: 4.4)),
-            (.degenerationFallback, ModelPricing(inputPerMillion: 3, outputPerMillion: 15))
+            (.degenerationFallback, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
+            (.continuationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15))
         ]
     }
 }

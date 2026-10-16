@@ -55,6 +55,14 @@ extension EcosystemDemo {
         await runLoopGuardScenario(meter: meter)
         await runHedgedRequestScenario(meter: meter)
         await runModelCascadeScenario(meter: meter)
+        await runAnswerPathScenarios(meter: meter)
+    }
+
+    /// The scenarios about the answer on its way to the user, from scenario 77 on: what the stream
+    /// shows, what the turn proves, and what the text carries. Split out of
+    /// `runFeedbackScenarios` when the eighty-ninth scenario took it past the 50-line body limit;
+    /// the order, and so the output, is unchanged.
+    static func runAnswerPathScenarios(meter: TokenMeter) async {
         await runStreamReleaseScenario(meter: meter)
         await runOutcomeMonitorScenario(meter: meter)
         await runVerifiedCallScenario(meter: meter)
@@ -65,5 +73,6 @@ extension EcosystemDemo {
         await runSessionMaskScenario(meter: meter)
         await runLinkEgressScenario(meter: meter)
         await runDegenerationGuardScenario(meter: meter)
+        await runAnswerContinuationScenario(meter: meter)
     }
 }

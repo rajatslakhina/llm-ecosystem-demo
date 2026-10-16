@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighty-eight packages in this
+A single runnable demo that wires together all eighty-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -146,6 +146,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SessionMaskKit`](https://github.com/rajatslakhina/session-mask-kit) | `GuardrailKit` redacts the message it screens, per turn and for good, and a chat client re-sends the history from what the user typed. Scenario 86 runs two turns: `GuardrailKit` alone sends `[REDACTED:EMAIL_ADDRESS]` twice on turn 1 (two people, one placeholder) and re-sends the 2 raw addresses in the history on turn 2; `SessionMaskKit` sends `[EMAIL_1]` and `[EMAIL_2]` on both turns, keeps turn 1's prompt a byte-for-byte prefix of turn 2's (137 of 137 bytes, against 108 of 167), restores real addresses into the `ToolRegistryKit` `send_email` call only because the policy grants that tool `EMAIL`, escapes a fetched page's own `[EMAIL_1]` to `[LITERAL_1]`, and reports the model's respelled `email_2` instead of guessing. |
 | [`LinkEgressKit`](https://github.com/rajatslakhina/link-egress-kit) | Every link a model writes is one tap from the network, and an image needs no tap. Scenario 87 plants an injection in a `ToolRegistryKit` web fetch asking for the guest's details in a link and an image. The model only ever saw `[EMAIL_1]` (`SessionMaskKit`), so it writes the token into the URL, and restoring the answer for display writes the address back in: **3** live URLs carry the guest's details. `GuardrailKit` over the restored answer redacts the address and leaves the booking reference in **2** (a Base64 pixel and a reference-definition line). `LinkEgressKit`, run before the restore with the session's tokens as sensitive values and the turn's messages as sources, unlinks all three, keeps the hotel link copied from the page, and leaves **0**; streamed in 16-scalar chunks, it releases exactly the whole-answer result. |
 | [`DegenerationGuardKit`](https://github.com/rajatslakhina/degeneration-guard-kit) | A model that starts repeating itself rarely stops before its output cap, and the provider bills every token with HTTP 200. Scenario 88 routes a physics question to a cheap route (`degeneration-host`) whose reply loops "Wait, let me reconsider the units." until its 4,096-token cap (16,384 scalars). Cut into 16-scalar chunks as a live bubble receives it, a `DegenerationGate` stops reading after **192** scalars (a 35-scalar block written 4 times in a row), the user keeps the opening sentence plus one copy, and the turn meters **$0.0002387** instead of **$0.0180499**. The question goes to `degeneration-fallback`, whose answer is clean, and a `DegenerationLedger` records that the first route looped in 1 of 1 answers and the second in 0 of 1. |
+| [`AnswerContinuationKit`](https://github.com/rajatslakhina/answer-continuation-kit) | An answer stopped by `finish_reason: length` looks finished to most clients, and the cut lands wherever the tokens ran out. Scenario 89 asks `continuation-host` for URLSession retry code and a docs link, with a 64-token limit. The route stops twice: inside the code block, then inside the link, which `LinkEgressKit` shows would have pointed at `https://developer.apple.com/documen`. `ContinuationRunner` rewinds each cut past the half-written word or link, asks for the rest through `ProviderRouter.send`, and stitches each reply on, removing a reopened ```` ```swift ```` fence, a repeated line and a "Continuing from where I left off:" preamble. The finished text equals the answer the model meant to write; naive concatenation would have shown two opening fences and the preamble. Three calls meter **$0.004278**; one call with a limit that fits would have cost **$0.002433**. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -580,7 +581,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **eighty-eight scenarios, $0.2608622 metered total**. `architecture.svg`
+The current run is **eighty-nine scenarios, $0.2651402 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1236,13 +1237,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighty-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all eighty-nine
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighty-eight packages together; the output above is a genuine capture,
+  of all eighty-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1253,7 +1254,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighty-eight real packages compose and run," which the sample output
+means "the eighty-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2543,3 +2544,29 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the loop is planted, not observed. The two turns are metered at
     **$0.0005537**, exactly the change in the total. The running total after scenario 88 is
     **$0.2608622 across eighty-eight scenarios**.
+
+89. **`AnswerContinuationKit`** adds the eighty-ninth scenario. Every chat API reports when it cut an
+    answer short (`length`, `max_tokens`, `MAX_TOKENS`), and reasoning models make it common: OpenRouter
+    gives them roughly 20 to 95 percent of `max_tokens` to think in. A client that ignores the stop
+    reason shows the cut as the answer, and the cut lands mid-number, mid-address or mid-code.
+
+    One route, `continuation-host` ($3/$15 per million tokens), asked for URLSession retry code and a
+    docs link with `maxOutputTokens: 64`. A small provider in the scenario reports the finish reason
+    each scripted reply really had, which `ScriptedProvider` (always `.stop`) cannot.
+    - The first reply stops at 382 scalars with `.maxTokens`, inside a swift code block, on
+      `Double(attempt)` cut to `Dou`. `ResumePoint` sets `Dou` aside (`partialWord`).
+    - Round 1 (an instruction request through `ProviderRouter.send`) reopens the block with
+      ```` ```swift ```` and repeats `try await Task.sleep(for: .seconds(pow(2,` before continuing; both
+      are removed and 180 scalars are added. It stops again with `.maxTokens`, inside the docs link.
+      Shown as it is, `LinkEgressKit`'s scanner finds one live link in that text:
+      `https://developer.apple.com/documen`.
+    - Round 2 starts "Continuing from where I left off:"; the preamble is removed and the answer
+      finishes. It equals the answer the model meant to write, and its one link is the full
+      `.../foundation/urlerror/code` address. Gluing the three replies together instead gives two
+      opening fences and the preamble.
+    - A `TruncationLedger` records 1 answer, 1 cut, finished in 2 rounds.
+
+    The replies are scripted, so the cuts are planted, not observed. The three calls (each sending the
+    prompt again, plus what was kept) meter **$0.004278**, exactly the change in the total; one call
+    with a limit that fits would have cost **$0.002433** on a scratch meter. The running total after
+    scenario 89 is **$0.2651402 across eighty-nine scenarios**.
