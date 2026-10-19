@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all eighty-nine packages in this
+A single runnable demo that wires together all ninety packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -147,6 +147,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`LinkEgressKit`](https://github.com/rajatslakhina/link-egress-kit) | Every link a model writes is one tap from the network, and an image needs no tap. Scenario 87 plants an injection in a `ToolRegistryKit` web fetch asking for the guest's details in a link and an image. The model only ever saw `[EMAIL_1]` (`SessionMaskKit`), so it writes the token into the URL, and restoring the answer for display writes the address back in: **3** live URLs carry the guest's details. `GuardrailKit` over the restored answer redacts the address and leaves the booking reference in **2** (a Base64 pixel and a reference-definition line). `LinkEgressKit`, run before the restore with the session's tokens as sensitive values and the turn's messages as sources, unlinks all three, keeps the hotel link copied from the page, and leaves **0**; streamed in 16-scalar chunks, it releases exactly the whole-answer result. |
 | [`DegenerationGuardKit`](https://github.com/rajatslakhina/degeneration-guard-kit) | A model that starts repeating itself rarely stops before its output cap, and the provider bills every token with HTTP 200. Scenario 88 routes a physics question to a cheap route (`degeneration-host`) whose reply loops "Wait, let me reconsider the units." until its 4,096-token cap (16,384 scalars). Cut into 16-scalar chunks as a live bubble receives it, a `DegenerationGate` stops reading after **192** scalars (a 35-scalar block written 4 times in a row), the user keeps the opening sentence plus one copy, and the turn meters **$0.0002387** instead of **$0.0180499**. The question goes to `degeneration-fallback`, whose answer is clean, and a `DegenerationLedger` records that the first route looped in 1 of 1 answers and the second in 0 of 1. |
 | [`AnswerContinuationKit`](https://github.com/rajatslakhina/answer-continuation-kit) | An answer stopped by `finish_reason: length` looks finished to most clients, and the cut lands wherever the tokens ran out. Scenario 89 asks `continuation-host` for URLSession retry code and a docs link, with a 64-token limit. The route stops twice: inside the code block, then inside the link, which `LinkEgressKit` shows would have pointed at `https://developer.apple.com/documen`. `ContinuationRunner` rewinds each cut past the half-written word or link, asks for the rest through `ProviderRouter.send`, and stitches each reply on, removing a reopened ```` ```swift ```` fence, a repeated line and a "Continuing from where I left off:" preamble. The finished text equals the answer the model meant to write; naive concatenation would have shown two opening fences and the preamble. Three calls meter **$0.004278**; one call with a limit that fits would have cost **$0.002433**. |
+| [`UsageRecoveryKit`](https://github.com/rajatslakhina/usage-recovery-kit) | A stream that ends early never sends its usage chunk, and the call was still billed. Scenario 90 reads 40 chunks of `recovery-host`'s answer and the user taps Stop, so the usage frame never comes. Settled at zero, a `QuotaGovernor` account gets the whole hold back and `TokenMeter` records nothing. `UsageRecovery` bounds the call from what was read (output 107 to 512 tokens, **169200 to 778800 microcents**, because the router chose the upstream and its cancellation billing is unknown) and the governor settles at the upper bound. The billing lookup answers not-found once, then has the record: **341 output tokens, 181 of them generated after the Stop**, inside the bounds. That record, not the 160 tokens that were read, is what `TokenMeter` meters: **$0.005214**. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -581,7 +582,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **eighty-nine scenarios, $0.2651402 metered total**. `architecture.svg`
+The current run is **ninety scenarios, $0.2703542 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1237,13 +1238,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all eighty-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all eighty-nine packages together; the output above is a genuine capture,
+  of all ninety packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1254,7 +1255,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the eighty-nine real packages compose and run," which the sample output
+means "the ninety real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2570,3 +2571,26 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     prompt again, plus what was kept) meter **$0.004278**, exactly the change in the total; one call
     with a limit that fits would have cost **$0.002433** on a scratch meter. The running total after
     scenario 89 is **$0.2651402 across eighty-nine scenarios**.
+
+90. **`UsageRecoveryKit`** adds the ninetieth scenario. OpenRouter sends a stream's usage in its last
+    chunk, so any stream that ends early never delivers it: a user's Stop, a repetition cut, a dropped
+    connection. The call was still billed. OpenRouter's docs say a disconnect stops billing only on
+    some upstreams; on the others "you will be billed for the complete response".
+
+    One route, `recovery-host` ($3/$15 per million tokens), writes a 1,366-scalar answer about
+    background uploads through `ProviderRouter`. The client reads 40 chunks of 16 scalars (640
+    scalars) and the user taps Stop. `GenerationIDExtractor` takes the id from the
+    `X-Generation-Id` header before the first chunk.
+    - **Settled at zero**, a fresh `QuotaGovernor` account with a $0.05 ceiling gets its whole hold
+      back (5000000 of 5000000 microcents left) and `TokenMeter` records nothing for the turn.
+    - **Bounded**, the call costs 169200 to 778800 microcents: output 107 to 512 tokens (the byte
+      estimate of what was read, up to the 512-token limit), because the router chose the upstream and
+      `BillingCatalog` cannot say whether it stops at a disconnect. The governor settles at the upper
+      bound and has 4221200 left. The text that was read alone prices the call at 249900.
+    - **Resolved**, the scripted billing lookup answers not-found once, then has the record: 33 in /
+      341 out on an upstream that bills the full generation, 521400 microcents, inside the bounds.
+      181 of the 341 output tokens were generated after the Stop. `TokenMeter` records the bill.
+
+    The billing record is scripted, so the gap is planted, not observed. The turn meters **$0.005214**,
+    exactly the change in the total. The running total after scenario 90 is **$0.2703542 across
+    ninety scenarios**.

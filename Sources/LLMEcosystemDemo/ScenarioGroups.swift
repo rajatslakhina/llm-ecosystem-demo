@@ -74,5 +74,6 @@ extension EcosystemDemo {
         await runLinkEgressScenario(meter: meter)
         await runDegenerationGuardScenario(meter: meter)
         await runAnswerContinuationScenario(meter: meter)
+        await runUsageRecoveryScenario(meter: meter)
     }
 }
