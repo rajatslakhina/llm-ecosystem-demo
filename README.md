@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety packages in this
+A single runnable demo that wires together all ninety-one packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -148,6 +148,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`DegenerationGuardKit`](https://github.com/rajatslakhina/degeneration-guard-kit) | A model that starts repeating itself rarely stops before its output cap, and the provider bills every token with HTTP 200. Scenario 88 routes a physics question to a cheap route (`degeneration-host`) whose reply loops "Wait, let me reconsider the units." until its 4,096-token cap (16,384 scalars). Cut into 16-scalar chunks as a live bubble receives it, a `DegenerationGate` stops reading after **192** scalars (a 35-scalar block written 4 times in a row), the user keeps the opening sentence plus one copy, and the turn meters **$0.0002387** instead of **$0.0180499**. The question goes to `degeneration-fallback`, whose answer is clean, and a `DegenerationLedger` records that the first route looped in 1 of 1 answers and the second in 0 of 1. |
 | [`AnswerContinuationKit`](https://github.com/rajatslakhina/answer-continuation-kit) | An answer stopped by `finish_reason: length` looks finished to most clients, and the cut lands wherever the tokens ran out. Scenario 89 asks `continuation-host` for URLSession retry code and a docs link, with a 64-token limit. The route stops twice: inside the code block, then inside the link, which `LinkEgressKit` shows would have pointed at `https://developer.apple.com/documen`. `ContinuationRunner` rewinds each cut past the half-written word or link, asks for the rest through `ProviderRouter.send`, and stitches each reply on, removing a reopened ```` ```swift ```` fence, a repeated line and a "Continuing from where I left off:" preamble. The finished text equals the answer the model meant to write; naive concatenation would have shown two opening fences and the preamble. Three calls meter **$0.004278**; one call with a limit that fits would have cost **$0.002433**. |
 | [`UsageRecoveryKit`](https://github.com/rajatslakhina/usage-recovery-kit) | A stream that ends early never sends its usage chunk, and the call was still billed. Scenario 90 reads 40 chunks of `recovery-host`'s answer and the user taps Stop, so the usage frame never comes. Settled at zero, a `QuotaGovernor` account gets the whole hold back and `TokenMeter` records nothing. `UsageRecovery` bounds the call from what was read (output 107 to 512 tokens, **169200 to 778800 microcents**, because the router chose the upstream and its cancellation billing is unknown) and the governor settles at the upper bound. The billing lookup answers not-found once, then has the record: **341 output tokens, 181 of them generated after the Stop**, inside the bounds. That record, not the 160 tokens that were read, is what `TokenMeter` meters: **$0.005214**. |
+| [`TokenCalibrationKit`](https://github.com/rajatslakhina/token-calibration-kit) | Every token count before a call in this series was characters divided by four, and Japanese, code and digits make that badly low. Scenario 91 teaches a `TokenCalibrator` `calibration-host`'s rates from 30 earlier bills (English and short Japanese questions; the host tokenizer is simulated), then a customer pastes a 120-line Japanese upload log into a 4,096-token window with 512 kept for the answer. `chars/4` says **1673 tokens, fits**; the host would bill **6667**. The calibrator says it overflows by 625 to 3165, so the oldest lines are trimmed until the upper bound fits: 63 lines, **2230-3563**. 626 tokens of that are digits, a class no earlier bill contained, so they are bounded by the prior band rather than the calibrated interval. `QuotaGovernor` holds the upper bound, the turn goes through `ProviderRouter`, the host bills **3511** (inside the window and the interval; the point, 2625, was still 33.8% low on the digits), `TokenMeter` meters **$0.011793**, and the bill is fed back. With 1.0.0 the same scenario called 70 lines "fits, 41 to spare" and was billed 3896, over the window; that is what 1.1.0 fixed. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -582,7 +583,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety scenarios, $0.2703542 metered total**. `architecture.svg`
+The current run is **ninety-one scenarios, $0.2821472 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1238,13 +1239,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-one
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety packages together; the output above is a genuine capture,
+  of all ninety-one packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1255,7 +1256,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety real packages compose and run," which the sample output
+means "the ninety-one real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2594,3 +2595,29 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The billing record is scripted, so the gap is planted, not observed. The turn meters **$0.005214**,
     exactly the change in the total. The running total after scenario 90 is **$0.2703542 across
     ninety scenarios**.
+
+91. **`TokenCalibrationKit`** adds the ninety-first scenario. Every scenario before it, and the chat app,
+    counted tokens before a call as characters divided by four. That is close for English prose and far too
+    low for Japanese, code and digits, and it decides whether a request fits the window and how much budget
+    to hold.
+
+    One route, `calibration-host` ($3/$15 per million tokens), with a simulated tokenizer the calibrator
+    never sees: it only sees request text and billed counts.
+    - **Learned**: 30 earlier bills (English questions and short Japanese ones). 11 of the 11 bills that
+      arrived once the interval was calibrated fell inside it.
+    - **Checked**: a 120-line Japanese upload log in a 4,096-token window, 512 kept for the answer.
+      `chars/4` says 1673 tokens and that it fits. The calibrator says 4209-6749, overflowing by 625 to
+      3165. The host would bill 6667.
+    - **Trimmed**: the oldest lines go until the upper bound fits: 63 lines, 2230-3563, 21 tokens to
+      spare. 626 tokens of the estimate are digits, which no earlier bill contained, so that part is
+      bounded by the prior band, not by the calibrated errors.
+    - **Sent and learned**: `QuotaGovernor` holds the upper bound (4075 tokens with the answer), the turn
+      goes through `ProviderRouter`, and the host bills 3511 in / 84 out: inside the window and inside the
+      interval, though the point estimate (2625) was 33.8% low because the prior undercounts this host's
+      digits. `TokenMeter` meters it and the bill goes back to the calibrator.
+
+    This scenario found a flaw in the package. With 1.0.0 the digits were inside the calibrated interval
+    like everything else, the trimmed request (70 lines) was called 2697-3543, "fits, 41 tokens to spare",
+    and the host billed 3896, over the window. 1.1.0 bounds never-billed classes by the prior band, and
+    this scenario pins it. The turn meters **$0.011793**. The running total after scenario 91 is
+    **$0.2821472 across ninety-one scenarios**.

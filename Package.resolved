@@ -1,5 +1,5 @@
 {
-  "originHash" : "0aee4a388d93b506bbb735acb2a168241c1eb0fce3e7da31e7021ce93d94a65c",
+  "originHash" : "9cdd0e606358a5fe3fc8a031caebded256f9cba9c776f9ec8a5153b358f42c87",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -701,6 +701,15 @@
       "state" : {
         "revision" : "73220d593b43480489e14ad09c3ac7af219b01b0",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "token-calibration-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/token-calibration-kit.git",
+      "state" : {
+        "revision" : "5edeaaf0976a3ead2450dcf04c74d4fc0ba0cbbe",
+        "version" : "1.1.0"
       }
     },
     {
