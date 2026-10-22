@@ -107,7 +107,8 @@ extension EcosystemDemo {
             (.degenerationFallback, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
             (.continuationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
             (.recoveryHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
-            (.calibrationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15))
+            (.calibrationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
+            (.stanceGuardHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12))
         ]
     }
 }

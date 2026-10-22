@@ -101,7 +101,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/degeneration-guard-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/answer-continuation-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/usage-recovery-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/token-calibration-kit.git", from: "1.1.0")
+        .package(url: "https://github.com/rajatslakhina/token-calibration-kit.git", from: "1.1.0"),
+        .package(url: "https://github.com/rajatslakhina/stance-guard-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -211,7 +212,8 @@ let package = Package(
                 .product(name: "DegenerationGuardKit", package: "degeneration-guard-kit"),
                 .product(name: "AnswerContinuationKit", package: "answer-continuation-kit"),
                 .product(name: "UsageRecoveryKit", package: "usage-recovery-kit"),
-                .product(name: "TokenCalibrationKit", package: "token-calibration-kit")
+                .product(name: "TokenCalibrationKit", package: "token-calibration-kit"),
+                .product(name: "StanceGuardKit", package: "stance-guard-kit")
             ]
         )
     ]

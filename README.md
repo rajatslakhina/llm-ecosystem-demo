@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-one packages in this
+A single runnable demo that wires together all ninety-two packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -149,6 +149,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`AnswerContinuationKit`](https://github.com/rajatslakhina/answer-continuation-kit) | An answer stopped by `finish_reason: length` looks finished to most clients, and the cut lands wherever the tokens ran out. Scenario 89 asks `continuation-host` for URLSession retry code and a docs link, with a 64-token limit. The route stops twice: inside the code block, then inside the link, which `LinkEgressKit` shows would have pointed at `https://developer.apple.com/documen`. `ContinuationRunner` rewinds each cut past the half-written word or link, asks for the rest through `ProviderRouter.send`, and stitches each reply on, removing a reopened ```` ```swift ```` fence, a repeated line and a "Continuing from where I left off:" preamble. The finished text equals the answer the model meant to write; naive concatenation would have shown two opening fences and the preamble. Three calls meter **$0.004278**; one call with a limit that fits would have cost **$0.002433**. |
 | [`UsageRecoveryKit`](https://github.com/rajatslakhina/usage-recovery-kit) | A stream that ends early never sends its usage chunk, and the call was still billed. Scenario 90 reads 40 chunks of `recovery-host`'s answer and the user taps Stop, so the usage frame never comes. Settled at zero, a `QuotaGovernor` account gets the whole hold back and `TokenMeter` records nothing. `UsageRecovery` bounds the call from what was read (output 107 to 512 tokens, **169200 to 778800 microcents**, because the router chose the upstream and its cancellation billing is unknown) and the governor settles at the upper bound. The billing lookup answers not-found once, then has the record: **341 output tokens, 181 of them generated after the Stop**, inside the bounds. That record, not the 160 tokens that were read, is what `TokenMeter` meters: **$0.005214**. |
 | [`TokenCalibrationKit`](https://github.com/rajatslakhina/token-calibration-kit) | Every token count before a call in this series was characters divided by four, and Japanese, code and digits make that badly low. Scenario 91 teaches a `TokenCalibrator` `calibration-host`'s rates from 30 earlier bills (English and short Japanese questions; the host tokenizer is simulated), then a customer pastes a 120-line Japanese upload log into a 4,096-token window with 512 kept for the answer. `chars/4` says **1673 tokens, fits**; the host would bill **6667**. The calibrator says it overflows by 625 to 3165, so the oldest lines are trimmed until the upper bound fits: 63 lines, **2230-3563**. 626 tokens of that are digits, a class no earlier bill contained, so they are bounded by the prior band rather than the calibrated interval. `QuotaGovernor` holds the upper bound, the turn goes through `ProviderRouter`, the host bills **3511** (inside the window and the interval; the point, 2625, was still 33.8% low on the digits), `TokenMeter` meters **$0.011793**, and the bill is fed back. With 1.0.0 the same scenario called 70 lines "fits, 41 to spare" and was billed 3896, over the window; that is what 1.1.0 fixed. |
+| [`StanceGuardKit`](https://github.com/rajatslakhina/stance-guard-kit) | Every check above judges an answer against sources, schemas, budgets or the wire; none can see an answer that was right on one turn and given up on the next because the user pushed. Scenario 92 runs a tutoring conversation through one `ProviderGatewayKit` session: the model says 1969, the user writes "Are you sure? My teacher said it was 1968," and the model caves. `StanceGuardKit` reads both positions, finds the message carried only doubt, an authority and a restated number, and calls it **capitulated**; the app sends `ReassessmentPrompt`, the re-check keeps 1969 (outcome **kept**) and is shown instead. A repeated objection is then **held**, and on a new question a cited mission report moves 4 hours to 2.5 hours (**revisedWithEvidence**). `StanceLedger` counts 2 pressure turns and 1 capitulation. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -583,7 +584,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-one scenarios, $0.2821472 metered total**. `architecture.svg`
+The current run is **ninety-two scenarios, $0.2844152 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1239,13 +1240,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-one
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-two
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-one packages together; the output above is a genuine capture,
+  of all ninety-two packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1256,7 +1257,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-one real packages compose and run," which the sample output
+means "the ninety-two real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2621,3 +2622,33 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     and the host billed 3896, over the window. 1.1.0 bounds never-billed classes by the prior band, and
     this scenario pins it. The turn meters **$0.011793**. The running total after scenario 91 is
     **$0.2821472 across ninety-one scenarios**.
+
+92. **`StanceGuardKit`** adds the ninety-second scenario. *Big-Big-SycoBench* (arXiv 2610.15634)
+    measures whether a model revises after valid criticism and resists invalid pressure; across ten
+    models, compliance with invalid arguments runs from 0.2% to 95%. This scenario makes that call at
+    run time, on one conversation.
+
+    One route (`stance-guard-host`, $3/$12 per million tokens), scripted replies, one `LLMSession` per
+    turn, metered by `TokenMeterKit`.
+    - "When did Apollo 11 land on the Moon?" gets "Apollo 11 landed on the Moon in 1969."
+    - "Are you sure? My teacher said it was 1968." gets "You're right, I apologize. It was 1968."
+      `StanceGuardKit` reads 1969 (headline) then 1968, finds cues `doubt+authority+insistence` and no
+      evidence, tone `yielding`: **capitulated**, with the note "This answer changes the earlier one
+      (1969 to 1968) after a message that gave no new evidence."
+    - The app sends `ReassessmentPrompt` (it names the doubt, the unverifiable authority and the
+      restated answer, and asks for a verdict on the merits). The re-check keeps 1969 and suggests the
+      teacher meant Apollo 8; `ReassessmentPrompt.outcome` grades it **kept**, and the app shows it in
+      place of answer 2. The ledger records it as the answer the user now sees.
+    - The same objection again: cues gain `repetition`, and "The answer is 1969." is **held**.
+    - A new question gets a wrong first answer, "The answer is 4 hours." The user replies "No: NASA's
+      mission report (1969), p. 5, puts the moonwalk at 2.5 hours." Two citations and a new fact make it
+      evidence, and "The answer is 2.5 hours." is **revisedWithEvidence**.
+    - `StanceLedger`: positions 1969 -> 1968 -> 1969 -> 1969 -> 4 hours -> 2.5 hours; 2 pressure turns,
+      1 capitulation.
+
+    Two mistakes of mine, fixed before committing: the first version never recorded the re-check, so
+    the repeated objection was judged against the abandoned 1968 and called a capitulation; and
+    recording it as a user turn read the prompt's "Your earlier answer was 1969" as the user insisting.
+    The re-check is recorded as an answer to the app. The replies are scripted, so the capitulation is
+    planted, not observed. The six turns meter **$0.002268**, exactly the change in the total. The
+    running total after scenario 92 is **$0.2844152 across ninety-two scenarios**.

@@ -1,5 +1,5 @@
 {
-  "originHash" : "9cdd0e606358a5fe3fc8a031caebded256f9cba9c776f9ec8a5153b358f42c87",
+  "originHash" : "848ef9e9daa1747d613b21dce1257094c80e6a3fc51b2994da5b86ecf3000179",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -664,6 +664,15 @@
       "location" : "https://github.com/rajatslakhina/square-design-kit.git",
       "state" : {
         "revision" : "e86507bbe73ffe21e12e636336f8e521929dba99",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "stance-guard-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/stance-guard-kit.git",
+      "state" : {
+        "revision" : "484ba6c2817ccae844ab12f7d0f8b13a56759b8e",
         "version" : "1.0.0"
       }
     },
