@@ -798,8 +798,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/usage-recovery-kit.git",
       "state" : {
-        "revision" : "9f924e223a903ba512bb6b8953546bcc34545dad",
-        "version" : "1.0.0"
+        "revision" : "c65144bfa974085602ed78f2f01bb5a13894efc6",
+        "version" : "1.0.1"
       }
     },
     {
