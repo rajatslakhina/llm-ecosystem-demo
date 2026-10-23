@@ -77,5 +77,6 @@ extension EcosystemDemo {
         await runUsageRecoveryScenario(meter: meter)
         await runTokenCalibrationScenario(meter: meter)
         await runStanceGuardScenario(meter: meter)
+        await runNumberBindingScenario(meter: meter)
     }
 }

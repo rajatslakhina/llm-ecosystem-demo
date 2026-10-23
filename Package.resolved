@@ -1,5 +1,5 @@
 {
-  "originHash" : "848ef9e9daa1747d613b21dce1257094c80e6a3fc51b2994da5b86ecf3000179",
+  "originHash" : "6ce695afed509d62e3e781fe535ac8ac6e6f3c4f2fb342fce4f519baed833552",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -412,6 +412,15 @@
       "location" : "https://github.com/rajatslakhina/morphology-match-kit.git",
       "state" : {
         "revision" : "3a41e047ea5ec59fd7311989077cd808022590b8",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "number-binding-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/number-binding-kit.git",
+      "state" : {
+        "revision" : "c1ad1e5a890619c8c19b847eb17ab4421ae24eb1",
         "version" : "1.0.0"
       }
     },
