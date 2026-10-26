@@ -103,7 +103,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/usage-recovery-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/token-calibration-kit.git", from: "1.1.0"),
         .package(url: "https://github.com/rajatslakhina/stance-guard-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/number-binding-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/number-binding-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/instruction-compliance-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -215,7 +216,8 @@ let package = Package(
                 .product(name: "UsageRecoveryKit", package: "usage-recovery-kit"),
                 .product(name: "TokenCalibrationKit", package: "token-calibration-kit"),
                 .product(name: "StanceGuardKit", package: "stance-guard-kit"),
-                .product(name: "NumberBindingKit", package: "number-binding-kit")
+                .product(name: "NumberBindingKit", package: "number-binding-kit"),
+                .product(name: "InstructionComplianceKit", package: "instruction-compliance-kit")
             ]
         )
     ]

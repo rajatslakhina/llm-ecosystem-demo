@@ -109,7 +109,8 @@ extension EcosystemDemo {
             (.recoveryHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
             (.calibrationHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 15)),
             (.stanceGuardHost, ModelPricing(inputPerMillion: 3, outputPerMillion: 12)),
-            (.numberBindingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8))
+            (.numberBindingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
+            (.instructionComplianceHost, ModelPricing(inputPerMillion: 2.5, outputPerMillion: 10))
         ]
     }
 }

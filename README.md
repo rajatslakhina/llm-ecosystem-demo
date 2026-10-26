@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-three packages in this
+A single runnable demo that wires together all ninety-four packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -151,6 +151,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`TokenCalibrationKit`](https://github.com/rajatslakhina/token-calibration-kit) | Every token count before a call in this series was characters divided by four, and Japanese, code and digits make that badly low. Scenario 91 teaches a `TokenCalibrator` `calibration-host`'s rates from 30 earlier bills (English and short Japanese questions; the host tokenizer is simulated), then a customer pastes a 120-line Japanese upload log into a 4,096-token window with 512 kept for the answer. `chars/4` says **1673 tokens, fits**; the host would bill **6667**. The calibrator says it overflows by 625 to 3165, so the oldest lines are trimmed until the upper bound fits: 63 lines, **2230-3563**. 626 tokens of that are digits, a class no earlier bill contained, so they are bounded by the prior band rather than the calibrated interval. `QuotaGovernor` holds the upper bound, the turn goes through `ProviderRouter`, the host bills **3511** (inside the window and the interval; the point, 2625, was still 33.8% low on the digits), `TokenMeter` meters **$0.011793**, and the bill is fed back. With 1.0.0 the same scenario called 70 lines "fits, 41 to spare" and was billed 3896, over the window; that is what 1.1.0 fixed. |
 | [`StanceGuardKit`](https://github.com/rajatslakhina/stance-guard-kit) | Every check above judges an answer against sources, schemas, budgets or the wire; none can see an answer that was right on one turn and given up on the next because the user pushed. Scenario 92 runs a tutoring conversation through one `ProviderGatewayKit` session: the model says 1969, the user writes "Are you sure? My teacher said it was 1968," and the model caves. `StanceGuardKit` reads both positions, finds the message carried only doubt, an authority and a restated number, and calls it **capitulated**; the app sends `ReassessmentPrompt`, the re-check keeps 1969 (outcome **kept**) and is shown instead. A repeated objection is then **held**, and on a new question a cited mission report moves 4 hours to 2.5 hours (**revisedWithEvidence**). `StanceLedger` counts 2 pressure turns and 1 capitulation. |
 | [`NumberBindingKit`](https://github.com/rajatslakhina/number-binding-kit) | Grounding scores a sentence by overlap, and a sentence with one wrong figure overlaps its source almost perfectly. Scenario 93 runs `ToolRegistryKit`'s `analytics` tool (`{"conversion_rate":0.057,"orders":2645,...}`) and one `ProviderGatewayKit` session whose answer puts the rate at **6.7%**. `NumberBindingKit` binds every figure in the answer to the tool output and the user's message: 46,404 and 2,645 **exact**, 15% growth **derived** (percent change from the user's 2,300 and the tool's 2,645), 6.7% **contradicted**. The app sends the note back; the corrected 5.7% binds as **rescaled** (0.057). On a follow-up with no tool call, `BindingSession` reports 15% and 5.7% as **echoed** (only the model's own earlier answers carry them) and the projection 3,040 as **unbound**. |
+| [`InstructionComplianceKit`](https://github.com/rajatslakhina/instruction-compliance-kit) | Every check above judges what an answer says; none reads what the user asked it to look like. Scenario 94 sends "From now on, keep every answer under 60 words and end with a question. Summarize the outage as 3 to 5 bullet points, and don't use the word \"synergy\"." through one `ProviderGatewayKit` session. `InstructionComplianceKit` reads five instructions, two of them **standing**, and the first answer breaks three: 6 list items, ends with ".", uses "synergy" once. The report's feedback goes back to the model and the rewrite is **compliant** (strict 100%). The next request asks for at most 2 sentences across at least 3 paragraphs, and `ConflictDetector` turns it back **before any provider call**. A third turn carries the word limit and the closing question without the user repeating them, and the answer keeps both. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -585,7 +586,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-three scenarios, $0.2852372 metered total**. `architecture.svg`
+The current run is **ninety-four scenarios, $0.2873297 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1241,13 +1242,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-three
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-four
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-three packages together; the output above is a genuine capture,
+  of all ninety-four packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1258,7 +1259,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-three real packages compose and run," which the sample output
+means "the ninety-four real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2680,3 +2681,28 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the wrong rate is planted, not observed. The three turns meter
     **$0.000822**, exactly the change in the total. The running total after scenario 93 is
     **$0.2852372 across ninety-three scenarios**.
+
+94. **`InstructionComplianceKit`** adds the ninety-fourth scenario. IFEval (arXiv 2311.07911) made
+    instruction following measurable by limiting it to instructions a program can verify, and IFBench
+    (arXiv 2507.02833) showed that models tuned on those constraints still break unseen ones. This
+    scenario reads such instructions out of a user's own words and checks the answer against them.
+
+    One route (`instruction-compliance-host`, $2.50/$10 per million tokens), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `ComplianceSession` for the conversation.
+    - "From now on, keep every answer under 60 words and end with a question. Summarize the outage as
+      3 to 5 bullet points, and don't use the word "synergy"." reads as at most 59 words (standing), end
+      with a question (standing), between 3 and 5 list items, a bulleted list, don't use "synergy".
+    - The first answer is six bullets, one about the on-call team's synergy, ending on a full stop:
+      **violated** on three (6 list items; ends with "."; uses "synergy" once).
+    - The report's `feedback` goes back with the answer. The rewrite is three bullets and a question:
+      **compliant**, strict 100%. The app shows the rewrite.
+    - "Explain the root cause in at most 2 sentences, across at least 3 paragraphs." is **not sent**:
+      at least 3 paragraphs need at least 3 sentences, more than at most 2 sentences allows. No provider
+      call is made, so nothing is metered for it.
+    - "What should we change first?" carries the two standing instructions. The answer (a one-sentence
+      recommendation and an offer to draft the change) keeps both: **compliant**.
+    - Session: 3 turns, 12 checks, 9 met, 3 violated, 1 turned back.
+
+    The replies are scripted, so the violations are planted, not observed. The three paid turns meter
+    **$0.0020925**, exactly the change in the total. The running total after scenario 94 is
+    **$0.2873297 across ninety-four scenarios**.
