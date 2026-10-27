@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-four packages in this
+A single runnable demo that wires together all ninety-five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -152,6 +152,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`StanceGuardKit`](https://github.com/rajatslakhina/stance-guard-kit) | Every check above judges an answer against sources, schemas, budgets or the wire; none can see an answer that was right on one turn and given up on the next because the user pushed. Scenario 92 runs a tutoring conversation through one `ProviderGatewayKit` session: the model says 1969, the user writes "Are you sure? My teacher said it was 1968," and the model caves. `StanceGuardKit` reads both positions, finds the message carried only doubt, an authority and a restated number, and calls it **capitulated**; the app sends `ReassessmentPrompt`, the re-check keeps 1969 (outcome **kept**) and is shown instead. A repeated objection is then **held**, and on a new question a cited mission report moves 4 hours to 2.5 hours (**revisedWithEvidence**). `StanceLedger` counts 2 pressure turns and 1 capitulation. |
 | [`NumberBindingKit`](https://github.com/rajatslakhina/number-binding-kit) | Grounding scores a sentence by overlap, and a sentence with one wrong figure overlaps its source almost perfectly. Scenario 93 runs `ToolRegistryKit`'s `analytics` tool (`{"conversion_rate":0.057,"orders":2645,...}`) and one `ProviderGatewayKit` session whose answer puts the rate at **6.7%**. `NumberBindingKit` binds every figure in the answer to the tool output and the user's message: 46,404 and 2,645 **exact**, 15% growth **derived** (percent change from the user's 2,300 and the tool's 2,645), 6.7% **contradicted**. The app sends the note back; the corrected 5.7% binds as **rescaled** (0.057). On a follow-up with no tool call, `BindingSession` reports 15% and 5.7% as **echoed** (only the model's own earlier answers carry them) and the projection 3,040 as **unbound**. |
 | [`InstructionComplianceKit`](https://github.com/rajatslakhina/instruction-compliance-kit) | Every check above judges what an answer says; none reads what the user asked it to look like. Scenario 94 sends "From now on, keep every answer under 60 words and end with a question. Summarize the outage as 3 to 5 bullet points, and don't use the word \"synergy\"." through one `ProviderGatewayKit` session. `InstructionComplianceKit` reads five instructions, two of them **standing**, and the first answer breaks three: 6 list items, ends with ".", uses "synergy" once. The report's feedback goes back to the model and the rewrite is **compliant** (strict 100%). The next request asks for at most 2 sentences across at least 3 paragraphs, and `ConflictDetector` turns it back **before any provider call**. A third turn carries the word limit and the closing question without the user repeating them, and the answer keeps both. |
+| [`CalendarClaimKit`](https://github.com/rajatslakhina/calendar-claim-kit) | `NumberBindingKit` binds a figure to what a tool returned; a date the model worked out has nothing to bind to, and date arithmetic is where models are confidently wrong. Scenario 95 asks one `ProviderGatewayKit` session when a 90-day trial that started on March 3, 2026 ends. The answer says "90 days later, on June 2, 2026, a Tuesday": the weekday is right for June 2 and the date is wrong. `CalendarClaimKit` counts "90 days later" from the question's date, reports **contradicted** with June 1, and its feedback gets a rewrite that holds. A follow-up names no year; `CalendarSession` carries 2026 from the first turn, so "two weeks before June 1 is May 18, a Monday" is checked against the right year. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -586,7 +587,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-four scenarios, $0.2873297 metered total**. `architecture.svg`
+The current run is **ninety-five scenarios, $0.2879317 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1242,13 +1243,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-four
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-five
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-four packages together; the output above is a genuine capture,
+  of all ninety-five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1259,7 +1260,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-four real packages compose and run," which the sample output
+means "the ninety-five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2706,3 +2707,34 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the violations are planted, not observed. The three paid turns meter
     **$0.0020925**, exactly the change in the total. The running total after scenario 94 is
     **$0.2873297 across ninety-four scenarios**.
+
+95. **`CalendarClaimKit`** adds the ninety-fifth scenario. date-math-bench (described in *LLMs can't
+    reliably do date math*, DEV Community, July 2026) found confident errors in every category it
+    tried: "April 31, 2025" for one month after March 31, the day after Monday July 27 given as July
+    29, business days counted as calendar days. Nothing in this demo could check a date the model
+    computed itself: `NumberBindingKit` needs a tool output or a source to bind a figure to. Here the
+    calendar is the evidence.
+
+    One route (`calendar-claim-host`, $2/$8 per million tokens), scripted replies, one `LLMSession`
+    per turn, metered by `TokenMeterKit`, one `CalendarSession` for the conversation, and a fixed
+    clock (Tuesday, October 27, 2026, UTC).
+    - "My 90-day trial started on March 3, 2026. When does it end, and what weekday is that?" is
+      answered "Your trial ends 90 days later, on June 2, 2026, a Tuesday." `June 2, 2026 is a
+      Tuesday` is **verified**; `90 days after March 3, 2026 is June 2, 2026` is **contradicted**:
+      it is Monday, June 1, 2026. The base date is in the question, not the answer.
+    - The report's `feedback` (the computed value) goes back with the answer. The rewrite, "Your trial
+      ends on Monday, June 1, 2026, 90 days after March 3.", is **verified**. The app shows it.
+    - "When should the reminder go out, two weeks before it ends?" is answered "Send it on May 18, a
+      Monday: two weeks before June 1 is May 18." No year anywhere; the session carries 2026 from the
+      first question, and both claims are **verified**.
+    - Session: 3 turns, 6 checks, 5 verified, 1 contradicted.
+
+    This scenario found a real gap. Against `calendar-claim-kit` 1.0.0 the first answer came back
+    **verified**: the kit only counted "90 days later" from a date in the answer itself, so only the
+    (correct) weekday was checked and the wrong date went through. 1.0.1 counts from the question's
+    last date, no longer reads "When does it end" as "what day is it", and reads "June 1, 2026, 90
+    days after March 3"; the demo resolves 1.0.1.
+
+    The replies are scripted, so the error is planted, not observed. The three turns meter
+    **$0.000602**, exactly the change in the total. The running total after scenario 95 is
+    **$0.2879317 across ninety-five scenarios**.

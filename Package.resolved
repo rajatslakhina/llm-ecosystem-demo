@@ -1,5 +1,5 @@
 {
-  "originHash" : "653ec47a77fcf337f64e99cec9208a633bae02d5ce8d0c5984ab5835320a533c",
+  "originHash" : "3c8d26c0a7cc097cfcc4974d2dae5d9c824075cd7b634572c025fa58510899d5",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -80,6 +80,15 @@
       "state" : {
         "revision" : "18b73c53857719e23f646c904151e11f4d0f0fa2",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "calendar-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/calendar-claim-kit.git",
+      "state" : {
+        "revision" : "0afe8c5853010af173d36b5934860d5578418bb8",
+        "version" : "1.0.1"
       }
     },
     {

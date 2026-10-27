@@ -79,5 +79,6 @@ extension EcosystemDemo {
         await runStanceGuardScenario(meter: meter)
         await runNumberBindingScenario(meter: meter)
         await runInstructionComplianceScenario(meter: meter)
+        await runCalendarClaimScenario(meter: meter)
     }
 }
