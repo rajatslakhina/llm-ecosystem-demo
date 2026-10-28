@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-five packages in this
+A single runnable demo that wires together all ninety-six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -153,6 +153,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`NumberBindingKit`](https://github.com/rajatslakhina/number-binding-kit) | Grounding scores a sentence by overlap, and a sentence with one wrong figure overlaps its source almost perfectly. Scenario 93 runs `ToolRegistryKit`'s `analytics` tool (`{"conversion_rate":0.057,"orders":2645,...}`) and one `ProviderGatewayKit` session whose answer puts the rate at **6.7%**. `NumberBindingKit` binds every figure in the answer to the tool output and the user's message: 46,404 and 2,645 **exact**, 15% growth **derived** (percent change from the user's 2,300 and the tool's 2,645), 6.7% **contradicted**. The app sends the note back; the corrected 5.7% binds as **rescaled** (0.057). On a follow-up with no tool call, `BindingSession` reports 15% and 5.7% as **echoed** (only the model's own earlier answers carry them) and the projection 3,040 as **unbound**. |
 | [`InstructionComplianceKit`](https://github.com/rajatslakhina/instruction-compliance-kit) | Every check above judges what an answer says; none reads what the user asked it to look like. Scenario 94 sends "From now on, keep every answer under 60 words and end with a question. Summarize the outage as 3 to 5 bullet points, and don't use the word \"synergy\"." through one `ProviderGatewayKit` session. `InstructionComplianceKit` reads five instructions, two of them **standing**, and the first answer breaks three: 6 list items, ends with ".", uses "synergy" once. The report's feedback goes back to the model and the rewrite is **compliant** (strict 100%). The next request asks for at most 2 sentences across at least 3 paragraphs, and `ConflictDetector` turns it back **before any provider call**. A third turn carries the word limit and the closing question without the user repeating them, and the answer keeps both. |
 | [`CalendarClaimKit`](https://github.com/rajatslakhina/calendar-claim-kit) | `NumberBindingKit` binds a figure to what a tool returned; a date the model worked out has nothing to bind to, and date arithmetic is where models are confidently wrong. Scenario 95 asks one `ProviderGatewayKit` session when a 90-day trial that started on March 3, 2026 ends. The answer says "90 days later, on June 2, 2026, a Tuesday": the weekday is right for June 2 and the date is wrong. `CalendarClaimKit` counts "90 days later" from the question's date, reports **contradicted** with June 1, and its feedback gets a rewrite that holds. A follow-up names no year; `CalendarSession` carries 2026 from the first turn, so "two weeks before June 1 is May 18, a Monday" is checked against the right year. |
+| [`LanguageConfusionKit`](https://github.com/rajatslakhina/language-confusion-kit) | Every check above reads what an answer says or how it is shaped; none reads which language it is in, and a model that routes the same conversation to many providers meets the ones that drift. Scenario 96 asks in French what separates a list from a tuple. `LanguageSession` puts "Answer in French" into the prompt before the call, and the answer still switches to English for the sentence that matters: **mixedSentences**, 1 of 2 sentences in English. The report's feedback gets a rewrite that is **matched**. The follow-up "ok — et un set ?" is too short to identify, so the session expects the conversation's French, and the English answer is **wrongLanguage** ("this conversation is in French"). |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -587,7 +588,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-five scenarios, $0.2879317 metered total**. `architecture.svg`
+The current run is **ninety-six scenarios, $0.2884067 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1243,13 +1244,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-five
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-six
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-five packages together; the output above is a genuine capture,
+  of all ninety-six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1260,7 +1261,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-five real packages compose and run," which the sample output
+means "the ninety-six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2738,3 +2739,26 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the error is planted, not observed. The three turns meter
     **$0.000602**, exactly the change in the total. The running total after scenario 95 is
     **$0.2879317 across ninety-five scenarios**.
+
+96. **`LanguageConfusionKit`** adds the ninety-sixth scenario. Marchisio et al. (*Understanding and
+    Mitigating Language Confusion in LLMs*, EMNLP 2024) found models answering in the wrong language,
+    whole or in part, and worst on short and complex prompts. Every package above judges what an answer
+    says, cites, computes or looks like; none of them would notice that half of it is in English when
+    the user wrote in French.
+
+    One route (`language-confusion-host`, $1/$4 per million tokens), scripted replies, one `LLMSession`
+    per turn, metered by `TokenMeterKit`, one `LanguageSession` for the conversation.
+    - Before the first call, `session.expectation(for:)` reads "Quelle est la différence entre une liste
+      et un tuple en Python ?" as French (the message's own language), and its `instruction`, "Answer in
+      French. Keep code, names and quotations as they are.", goes at the top of the prompt.
+    - The answer keeps the first sentence in French and gives the advice in English. Verdict
+      **mixedSentences**: 1 of 2 sentences in English. The note names the sentence.
+    - The report's `feedback` goes back with the answer; the rewrite is **matched**. The app shows it.
+    - "ok — et un set ?" has 9 letters, too few to identify. The session expects **French** from the
+      conversation (source `conversation`), and the English answer is **wrongLanguage**: "This answer
+      is in English, but this conversation is in French."
+    - Session: 3 turns, 5 sentences judged, 2 wrong, 0 stray words.
+
+    The replies are scripted, so the drift is planted, not observed. The three turns meter
+    **$0.000475**, exactly the change in the total. The running total after scenario 96 is
+    **$0.2884067 across ninety-six scenarios**.

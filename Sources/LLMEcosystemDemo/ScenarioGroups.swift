@@ -80,5 +80,6 @@ extension EcosystemDemo {
         await runNumberBindingScenario(meter: meter)
         await runInstructionComplianceScenario(meter: meter)
         await runCalendarClaimScenario(meter: meter)
+        await runLanguageConfusionScenario(meter: meter)
     }
 }

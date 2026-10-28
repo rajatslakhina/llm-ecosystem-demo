@@ -1,5 +1,5 @@
 {
-  "originHash" : "3c8d26c0a7cc097cfcc4974d2dae5d9c824075cd7b634572c025fa58510899d5",
+  "originHash" : "d9f7f57f87991fe1a5f605db57114fbb5f476fe541c2e92376d67fac9790ec64",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -394,6 +394,15 @@
       "location" : "https://github.com/rajatslakhina/label-return-kit.git",
       "state" : {
         "revision" : "54d5436b5cbbe38dfcf439877c7cc865aa33d87b",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "language-confusion-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/language-confusion-kit.git",
+      "state" : {
+        "revision" : "79bb3ecc6b483c2c89ab474ef351888590ce7331",
         "version" : "1.0.0"
       }
     },

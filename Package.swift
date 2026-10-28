@@ -105,7 +105,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/stance-guard-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/number-binding-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/instruction-compliance-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/calendar-claim-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/calendar-claim-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/language-confusion-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -219,7 +220,8 @@ let package = Package(
                 .product(name: "StanceGuardKit", package: "stance-guard-kit"),
                 .product(name: "NumberBindingKit", package: "number-binding-kit"),
                 .product(name: "InstructionComplianceKit", package: "instruction-compliance-kit"),
-                .product(name: "CalendarClaimKit", package: "calendar-claim-kit")
+                .product(name: "CalendarClaimKit", package: "calendar-claim-kit"),
+                .product(name: "LanguageConfusionKit", package: "language-confusion-kit")
             ]
         )
     ]
