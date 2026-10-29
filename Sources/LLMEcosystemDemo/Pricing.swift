@@ -112,7 +112,8 @@ extension EcosystemDemo {
             (.numberBindingHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.instructionComplianceHost, ModelPricing(inputPerMillion: 2.5, outputPerMillion: 10)),
             (.calendarClaimHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
-            (.languageConfusionHost, ModelPricing(inputPerMillion: 1, outputPerMillion: 4))
+            (.languageConfusionHost, ModelPricing(inputPerMillion: 1, outputPerMillion: 4)),
+            (.packageClaimHost, ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6))
         ]
     }
 }

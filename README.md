@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-six packages in this
+A single runnable demo that wires together all ninety-seven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -154,6 +154,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`InstructionComplianceKit`](https://github.com/rajatslakhina/instruction-compliance-kit) | Every check above judges what an answer says; none reads what the user asked it to look like. Scenario 94 sends "From now on, keep every answer under 60 words and end with a question. Summarize the outage as 3 to 5 bullet points, and don't use the word \"synergy\"." through one `ProviderGatewayKit` session. `InstructionComplianceKit` reads five instructions, two of them **standing**, and the first answer breaks three: 6 list items, ends with ".", uses "synergy" once. The report's feedback goes back to the model and the rewrite is **compliant** (strict 100%). The next request asks for at most 2 sentences across at least 3 paragraphs, and `ConflictDetector` turns it back **before any provider call**. A third turn carries the word limit and the closing question without the user repeating them, and the answer keeps both. |
 | [`CalendarClaimKit`](https://github.com/rajatslakhina/calendar-claim-kit) | `NumberBindingKit` binds a figure to what a tool returned; a date the model worked out has nothing to bind to, and date arithmetic is where models are confidently wrong. Scenario 95 asks one `ProviderGatewayKit` session when a 90-day trial that started on March 3, 2026 ends. The answer says "90 days later, on June 2, 2026, a Tuesday": the weekday is right for June 2 and the date is wrong. `CalendarClaimKit` counts "90 days later" from the question's date, reports **contradicted** with June 1, and its feedback gets a rewrite that holds. A follow-up names no year; `CalendarSession` carries 2026 from the first turn, so "two weeks before June 1 is May 18, a Monday" is checked against the right year. |
 | [`LanguageConfusionKit`](https://github.com/rajatslakhina/language-confusion-kit) | Every check above reads what an answer says or how it is shaped; none reads which language it is in, and a model that routes the same conversation to many providers meets the ones that drift. Scenario 96 asks in French what separates a list from a tuple. `LanguageSession` puts "Answer in French" into the prompt before the call, and the answer still switches to English for the sentence that matters: **mixedSentences**, 1 of 2 sentences in English. The report's feedback gets a rewrite that is **matched**. The follow-up "ok — et un set ?" is too short to identify, so the session expects the conversation's French, and the English answer is **wrongLanguage** ("this conversation is in French"). |
+| [`PackageClaimKit`](https://github.com/rajatslakhina/package-claim-kit) | Every check above reads what an answer says; none reads the commands in its code blocks, the part people paste into a terminal without reading. Models invent package names, and invent the same ones repeatedly, so an attacker can register them (slopsquatting). Scenario 97 asks one `ProviderGatewayKit` session what to install to call a flaky REST API from FastAPI. The answer says `pip install fastapi reqeusts tenacity==9.3.0`: `PackageClaimKit` reports `reqeusts` **not found** (did you mean `requests`?) and `tenacity==9.3.0` a **version that was never released** (latest 9.2.1). The feedback gets a rewrite that is **verified**. The follow-up answer adds `fastapi-jwt-shield`, first published six days ago in the snapshot: **caution**, a note for the user, not a re-prompt. One `PackageVetter` serves the conversation: 8 registry lookups, 2 answered from memory. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -588,7 +589,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-six scenarios, $0.2884067 metered total**. `architecture.svg`
+The current run is **ninety-seven scenarios, $0.2890037 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1244,13 +1245,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-six
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-seven
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-six packages together; the output above is a genuine capture,
+  of all ninety-seven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1261,7 +1262,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-six real packages compose and run," which the sample output
+means "the ninety-seven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2762,3 +2763,26 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the drift is planted, not observed. The three turns meter
     **$0.000475**, exactly the change in the total. The running total after scenario 96 is
     **$0.2884067 across ninety-six scenarios**.
+
+97. **`PackageClaimKit`** adds the ninety-seventh scenario. Spracklen et al. (USENIX Security 2025)
+    found at least 5.2% of the packages commercial models suggested did not exist, and that the
+    invented names come back on reruns; a 2026 replication (a preprint) measured 4.6% to 6.1% on five
+    newer models. A name invented that predictably can be registered by an attacker. Every package
+    above judges the prose of an answer; none reads the install commands in its code.
+
+    One route (`package-claim-host`, $1.50/$6 per million tokens), scripted replies, one `LLMSession`
+    per turn, metered by `TokenMeterKit`, one `PackageVetter` over a `StaticRegistry` snapshot (dates and
+    latest versions as PyPI and npm returned them on 2026-10-29; `fastapi-jwt-shield` is made up).
+    - The first answer's `pip install fastapi reqeusts tenacity==9.3.0` gives verdict **wrong**:
+      `reqeusts` is not on PyPI (did you mean `requests`?, also looked up on npm and crates.io), and
+      PyPI has no `tenacity` 9.3.0 (the latest is 9.2.1). `fastapi` is fine.
+    - The report's `feedback` goes back with the answer; the rewrite `pip install fastapi requests
+      tenacity==9.2.1` is **verified**. The app shows it.
+    - "And for JWT auth?" gets `pip install pyjwt fastapi-jwt-shield`: **caution**, because
+      `fastapi-jwt-shield` was first published six days ago. That is a note for the user ("Look at who
+      published a new or look-alike package before installing it"), not a re-prompt.
+    - Session: 3 reviews, 8 registry lookups, 2 answered from memory (`fastapi`, `tenacity`).
+
+    The replies are scripted, so the invented names are planted, not observed. The three turns meter
+    **$0.000597**, exactly the change in the total. The running total after scenario 97 is
+    **$0.2890037 across ninety-seven scenarios**.

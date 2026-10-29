@@ -1,5 +1,5 @@
 {
-  "originHash" : "d9f7f57f87991fe1a5f605db57114fbb5f476fe541c2e92376d67fac9790ec64",
+  "originHash" : "9e205b3fc94bcf416a30430c85b2015103cb27f6d0610ea57e7125e1828a945a",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -476,6 +476,15 @@
       "state" : {
         "revision" : "e2a25fe1df01d0eabe4139a4b8e7dc7465ebd52d",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "package-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/package-claim-kit.git",
+      "state" : {
+        "revision" : "1916a0ef2bd8b43f714be954a5a6ad0580fe8dc4",
+        "version" : "1.0.1"
       }
     },
     {
