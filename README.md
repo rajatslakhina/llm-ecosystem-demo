@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-seven packages in this
+A single runnable demo that wires together all ninety-eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -155,6 +155,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`CalendarClaimKit`](https://github.com/rajatslakhina/calendar-claim-kit) | `NumberBindingKit` binds a figure to what a tool returned; a date the model worked out has nothing to bind to, and date arithmetic is where models are confidently wrong. Scenario 95 asks one `ProviderGatewayKit` session when a 90-day trial that started on March 3, 2026 ends. The answer says "90 days later, on June 2, 2026, a Tuesday": the weekday is right for June 2 and the date is wrong. `CalendarClaimKit` counts "90 days later" from the question's date, reports **contradicted** with June 1, and its feedback gets a rewrite that holds. A follow-up names no year; `CalendarSession` carries 2026 from the first turn, so "two weeks before June 1 is May 18, a Monday" is checked against the right year. |
 | [`LanguageConfusionKit`](https://github.com/rajatslakhina/language-confusion-kit) | Every check above reads what an answer says or how it is shaped; none reads which language it is in, and a model that routes the same conversation to many providers meets the ones that drift. Scenario 96 asks in French what separates a list from a tuple. `LanguageSession` puts "Answer in French" into the prompt before the call, and the answer still switches to English for the sentence that matters: **mixedSentences**, 1 of 2 sentences in English. The report's feedback gets a rewrite that is **matched**. The follow-up "ok — et un set ?" is too short to identify, so the session expects the conversation's French, and the English answer is **wrongLanguage** ("this conversation is in French"). |
 | [`PackageClaimKit`](https://github.com/rajatslakhina/package-claim-kit) | Every check above reads what an answer says; none reads the commands in its code blocks, the part people paste into a terminal without reading. Models invent package names, and invent the same ones repeatedly, so an attacker can register them (slopsquatting). Scenario 97 asks one `ProviderGatewayKit` session what to install to call a flaky REST API from FastAPI. The answer says `pip install fastapi reqeusts tenacity==9.3.0`: `PackageClaimKit` reports `reqeusts` **not found** (did you mean `requests`?) and `tenacity==9.3.0` a **version that was never released** (latest 9.2.1). The feedback gets a rewrite that is **verified**. The follow-up answer adds `fastapi-jwt-shield`, first published six days ago in the snapshot: **caution**, a note for the user, not a re-prompt. One `PackageVetter` serves the conversation: 8 registry lookups, 2 answered from memory. |
+| [`ArithmeticClaimKit`](https://github.com/rajatslakhina/arithmetic-claim-kit) | `NumberBindingKit` checks figures against a tool result or a source; nothing checked the arithmetic an answer works out on its own, where there is no evidence to bind to. Scenario 98 asks one `ProviderGatewayKit` session what a $480 plan costs per month after a 15% discount. The answer takes 15% of $480 as $62: `ArithmeticClaimKit` recomputes it exactly (**wrong**, $72), while $480 - $62 = $418 and $418 / 12 = $34.83 **hold** as arithmetic. The feedback asks for every dependent figure too, and the rewrite (**verified**) says $34 a month. The follow-up calls $480 to $540 a 15% increase (12.5%); asked again, the model repeats it, and the conversation's `ArithmeticLedger` marks it **repeated**, so the app stops re-asking and shows the note. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -589,7 +590,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-seven scenarios, $0.2890037 metered total**. `architecture.svg`
+The current run is **ninety-eight scenarios, $0.2894293 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1245,13 +1246,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-seven
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-eight
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-seven packages together; the output above is a genuine capture,
+  of all ninety-eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1262,7 +1263,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-seven real packages compose and run," which the sample output
+means "the ninety-eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2786,3 +2787,26 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the invented names are planted, not observed. The three turns meter
     **$0.000597**, exactly the change in the total. The running total after scenario 97 is
     **$0.2890037 across ninety-seven scenarios**.
+
+98. **`ArithmeticClaimKit`** adds the ninety-eighth scenario. The ORCA benchmark (arXiv 2511.02589) put
+    five frontier models through 500 everyday calculations: 45% to 63% right, with rounding and
+    precision problems 34.7% of the mistakes and plain calculation errors 33.4%. `NumberBindingKit`
+    needs evidence to bind a figure to; a model doing arithmetic in its own prose gives it none.
+
+    One route (`arithmetic-claim-host`, $0.80/$3.20 per million tokens), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `ArithmeticLedger` for the conversation.
+    - "Our plan costs $480 a year. With a 15% discount, what do we pay per month?" The answer: "15% of
+      $480 is $62, so the year costs $480 - $62 = $418, which is $418 / 12 = $34.83 a month." Verdict
+      **wrong**: 15% of $480 is $72. The other two steps hold as arithmetic, and are still wrong as
+      answers, because they start from $62; the feedback asks the model to correct every figure that
+      depends on a wrong one.
+    - The rewrite ($72, $408, $34 a month) is **verified**: 3 results, 3 hold. The app shows it.
+    - "Next year the list price goes from $480 to $540. How big a rise is that?" gets "a 15% increase":
+      **wrong**, it is 12.5% ($540 / 12 = $45 holds). Asked again with the feedback, the model repeats
+      15%. The ledger marks the finding **repeated**, so there is no third request: the app shows the
+      answer with the note.
+    - Ledger: 4 reviews, 9 results, 3 flagged, 1 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.0004256**, exactly the change in the total. The running total after scenario 98 is
+    **$0.2894293 across ninety-eight scenarios**.

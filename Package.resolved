@@ -1,5 +1,5 @@
 {
-  "originHash" : "9e205b3fc94bcf416a30430c85b2015103cb27f6d0610ea57e7125e1828a945a",
+  "originHash" : "da946e07ce8d4af56ef145a8c261ebe4e4b901392f1bbbd6a65e6ab3aea1b3bd",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -52,6 +52,15 @@
       "location" : "https://github.com/rajatslakhina/argument-attribution-kit.git",
       "state" : {
         "revision" : "0749baefc2266736389de8c4be6dba4fab7fb3e6",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "arithmetic-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/arithmetic-claim-kit.git",
+      "state" : {
+        "revision" : "695d895a1836a07c81cab1dcbb65ab069a6df8c1",
         "version" : "1.0.0"
       }
     },

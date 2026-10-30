@@ -82,5 +82,6 @@ extension EcosystemDemo {
         await runCalendarClaimScenario(meter: meter)
         await runLanguageConfusionScenario(meter: meter)
         await runPackageClaimScenario(meter: meter)
+        await runArithmeticClaimScenario(meter: meter)
     }
 }
