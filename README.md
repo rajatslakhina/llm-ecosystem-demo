@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-eight packages in this
+A single runnable demo that wires together all ninety-nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -156,6 +156,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`LanguageConfusionKit`](https://github.com/rajatslakhina/language-confusion-kit) | Every check above reads what an answer says or how it is shaped; none reads which language it is in, and a model that routes the same conversation to many providers meets the ones that drift. Scenario 96 asks in French what separates a list from a tuple. `LanguageSession` puts "Answer in French" into the prompt before the call, and the answer still switches to English for the sentence that matters: **mixedSentences**, 1 of 2 sentences in English. The report's feedback gets a rewrite that is **matched**. The follow-up "ok — et un set ?" is too short to identify, so the session expects the conversation's French, and the English answer is **wrongLanguage** ("this conversation is in French"). |
 | [`PackageClaimKit`](https://github.com/rajatslakhina/package-claim-kit) | Every check above reads what an answer says; none reads the commands in its code blocks, the part people paste into a terminal without reading. Models invent package names, and invent the same ones repeatedly, so an attacker can register them (slopsquatting). Scenario 97 asks one `ProviderGatewayKit` session what to install to call a flaky REST API from FastAPI. The answer says `pip install fastapi reqeusts tenacity==9.3.0`: `PackageClaimKit` reports `reqeusts` **not found** (did you mean `requests`?) and `tenacity==9.3.0` a **version that was never released** (latest 9.2.1). The feedback gets a rewrite that is **verified**. The follow-up answer adds `fastapi-jwt-shield`, first published six days ago in the snapshot: **caution**, a note for the user, not a re-prompt. One `PackageVetter` serves the conversation: 8 registry lookups, 2 answered from memory. |
 | [`ArithmeticClaimKit`](https://github.com/rajatslakhina/arithmetic-claim-kit) | `NumberBindingKit` checks figures against a tool result or a source; nothing checked the arithmetic an answer works out on its own, where there is no evidence to bind to. Scenario 98 asks one `ProviderGatewayKit` session what a $480 plan costs per month after a 15% discount. The answer takes 15% of $480 as $62: `ArithmeticClaimKit` recomputes it exactly (**wrong**, $72), while $480 - $62 = $418 and $418 / 12 = $34.83 **hold** as arithmetic. The feedback asks for every dependent figure too, and the rewrite (**verified**) says $34 a month. The follow-up calls $480 to $540 a 15% increase (12.5%); asked again, the model repeats it, and the conversation's `ArithmeticLedger` marks it **repeated**, so the app stops re-asking and shows the note. |
+| [`UnitClaimKit`](https://github.com/rajatslakhina/unit-claim-kit) | `ArithmeticClaimKit` treats units as text, and `NumberBindingKit` converts units only against evidence; nothing checked a conversion the answer made on its own. Scenario 99 asks one `ProviderGatewayKit` session to convert an American recipe. The answer weighs 2 cups of flour as 500 g: `UnitClaimKit` recomputes it through a density range (**wrong**, 237 to 284 g) and names the slip (weighed as water), notes that 250 ml of milk holds only for a metric cup (**caution**), and lets 350°F (175°C) through as a round figure. The rewrite is **verified**. The follow-up converts a 10°C rise as 50°F (it is 18°F, a change has no offset); asked again, the model repeats it, and the conversation's `ConversionLedger` marks it **repeated**. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -590,7 +591,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-eight scenarios, $0.2894293 metered total**. `architecture.svg`
+The current run is **ninety-nine scenarios, $0.2901061 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1246,13 +1247,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-eight
+- **Build:** `swift build` — clean, zero warnings, resolving all ninety-nine
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-eight packages together; the output above is a genuine capture,
+  of all ninety-nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1263,7 +1264,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-eight real packages compose and run," which the sample output
+means "the ninety-nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2810,3 +2811,28 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.0004256**, exactly the change in the total. The running total after scenario 98 is
     **$0.2894293 across ninety-eight scenarios**.
+
+99. **`UnitClaimKit`** adds the ninety-ninth scenario. NUMCoT (arXiv 2406.02864) found that errors with
+    units of measurement mostly come from getting the size relationship between units wrong; a study of
+    medical calculations (arXiv 2509.16584) lists a value left unconverted, a factor of the wrong size or
+    direction, and a misread unit label. `ArithmeticClaimKit` treats `12 kg` as a number with a label, and
+    `NumberBindingKit` converts only against evidence, so a conversion the model makes in its own prose
+    went unchecked.
+
+    One route (`unit-claim-host`, $1.20/$4.80 per million tokens), scripted replies, one `LLMSession` per
+    turn, metered by `TokenMeterKit`, one `ConversionLedger` for the conversation.
+    - "My American recipe says 2 cups of flour, 1 cup of milk and an oven at 350°F. What is that in grams,
+      millilitres and Celsius?" The answer: "Use 2 cups of flour (500 g) and 1 cup of milk (250 ml), and
+      bake at 350°F (175°C)." Verdict **wrong**: two cups of flour are 237 to 284 g (flour's density is a
+      range), and 500 g weighs them as if they were water. 250 ml holds only for a metric cup (a US cup is
+      237 ml), a **caution**. 175°C is a round figure for 176.7°C and holds.
+    - The rewrite (250 g, 240 ml, 175°C) is **verified**: 3 conversions, 3 hold. The app shows it.
+    - "The forecast says tomorrow will be 10°C warmer than today. How much is that in Fahrenheit?" gets
+      "10°C (50°F) warmer": **wrong**. "Warmer" makes it a change, which converts without the 32° offset:
+      18°F. Asked again with the feedback, the model repeats 50°F, and the ledger marks the finding
+      **repeated**, so there is no third request: the app shows the answer with the note.
+    - Ledger: 4 reviews, 8 conversions, 4 flagged, 1 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.0006768**, exactly the change in the total. The running total after scenario 99 is
+    **$0.2901061 across ninety-nine scenarios**.

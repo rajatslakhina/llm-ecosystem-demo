@@ -1,5 +1,5 @@
 {
-  "originHash" : "da946e07ce8d4af56ef145a8c261ebe4e4b901392f1bbbd6a65e6ab3aea1b3bd",
+  "originHash" : "2bcbf3a90d5cb484bde37b6a07e845cfb81aa6d7126ab6c7eb7c5a466ae64f3e",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -853,6 +853,15 @@
       "location" : "https://github.com/rajatslakhina/unconditional-exact-kit.git",
       "state" : {
         "revision" : "585b5e38b92bc18489cf9b98e4810d9d578c36a4",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "unit-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/unit-claim-kit.git",
+      "state" : {
+        "revision" : "f80da76dd99eaba2958392c4e1a35db026cfc869",
         "version" : "1.0.0"
       }
     },

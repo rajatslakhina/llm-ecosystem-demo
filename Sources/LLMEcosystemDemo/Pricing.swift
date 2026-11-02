@@ -114,7 +114,8 @@ extension EcosystemDemo {
             (.calendarClaimHost, ModelPricing(inputPerMillion: 2, outputPerMillion: 8)),
             (.languageConfusionHost, ModelPricing(inputPerMillion: 1, outputPerMillion: 4)),
             (.packageClaimHost, ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6)),
-            (.arithmeticClaimHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2))
+            (.arithmeticClaimHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2)),
+            (.unitClaimHost, ModelPricing(inputPerMillion: 1.2, outputPerMillion: 4.8))
         ]
     }
 }
