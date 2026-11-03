@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all ninety-nine packages in this
+A single runnable demo that wires together all one hundred packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -157,6 +157,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`PackageClaimKit`](https://github.com/rajatslakhina/package-claim-kit) | Every check above reads what an answer says; none reads the commands in its code blocks, the part people paste into a terminal without reading. Models invent package names, and invent the same ones repeatedly, so an attacker can register them (slopsquatting). Scenario 97 asks one `ProviderGatewayKit` session what to install to call a flaky REST API from FastAPI. The answer says `pip install fastapi reqeusts tenacity==9.3.0`: `PackageClaimKit` reports `reqeusts` **not found** (did you mean `requests`?) and `tenacity==9.3.0` a **version that was never released** (latest 9.2.1). The feedback gets a rewrite that is **verified**. The follow-up answer adds `fastapi-jwt-shield`, first published six days ago in the snapshot: **caution**, a note for the user, not a re-prompt. One `PackageVetter` serves the conversation: 8 registry lookups, 2 answered from memory. |
 | [`ArithmeticClaimKit`](https://github.com/rajatslakhina/arithmetic-claim-kit) | `NumberBindingKit` checks figures against a tool result or a source; nothing checked the arithmetic an answer works out on its own, where there is no evidence to bind to. Scenario 98 asks one `ProviderGatewayKit` session what a $480 plan costs per month after a 15% discount. The answer takes 15% of $480 as $62: `ArithmeticClaimKit` recomputes it exactly (**wrong**, $72), while $480 - $62 = $418 and $418 / 12 = $34.83 **hold** as arithmetic. The feedback asks for every dependent figure too, and the rewrite (**verified**) says $34 a month. The follow-up calls $480 to $540 a 15% increase (12.5%); asked again, the model repeats it, and the conversation's `ArithmeticLedger` marks it **repeated**, so the app stops re-asking and shows the note. |
 | [`UnitClaimKit`](https://github.com/rajatslakhina/unit-claim-kit) | `ArithmeticClaimKit` treats units as text, and `NumberBindingKit` converts units only against evidence; nothing checked a conversion the answer made on its own. Scenario 99 asks one `ProviderGatewayKit` session to convert an American recipe. The answer weighs 2 cups of flour as 500 g: `UnitClaimKit` recomputes it through a density range (**wrong**, 237 to 284 g) and names the slip (weighed as water), notes that 250 ml of milk holds only for a metric cup (**caution**), and lets 350°F (175°C) through as a round figure. The rewrite is **verified**. The follow-up converts a 10°C rise as 50°F (it is 18°F, a change has no offset); asked again, the model repeats it, and the conversation's `ConversionLedger` marks it **repeated**. |
+| [`RegexClaimKit`](https://github.com/rajatslakhina/regex-claim-kit) | The claim checkers recompute dates, arithmetic, units and package names; nothing ran the regular expressions an answer gives against what it says they match. Scenario 100 asks one `ProviderGatewayKit` session for a ZIP code regex. The answer's `/\d{5}(-\d{4})?/` has no anchors and is said to reject `123456` and to return `false` for `12345-678`: `RegexClaimKit` runs both and finds a match inside each (**wrong**, slip: no `^`…`$` anchors). The anchored rewrite is **verified**. The follow-up strips dashes with `replace(/-/, "")` and claims `"20261103"`; it gives `"202611-03"` (no `g` flag), and asked again the model repeats it, so the conversation's `RegexLedger` marks it **repeated**. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -591,7 +592,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **ninety-nine scenarios, $0.2901061 metered total**. `architecture.svg`
+The current run is **one hundred scenarios, $0.2908521 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1247,13 +1248,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all ninety-nine
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all ninety-nine packages together; the output above is a genuine capture,
+  of all one hundred packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1264,7 +1265,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the ninety-nine real packages compose and run," which the sample output
+means "the one hundred real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2836,3 +2837,26 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.0006768**, exactly the change in the total. The running total after scenario 99 is
     **$0.2901061 across ninety-nine scenarios**.
+
+100. **`RegexClaimKit`** adds the hundredth scenario. Query4Regex (EACL 2026 Findings) found that semantic
+    errors stay common even in model-written regexes that parse, and ∀uto∃val (arXiv 2403.18327) found that
+    most of the errors it saw were models explaining simple regexes wrongly. A regex an answer gives comes
+    with claims about what it matches, and nothing in the ecosystem ran them.
+
+    One route (`regex-claim-host`, $1.00/$4.00 per million tokens), scripted replies, one `LLMSession` per
+    turn, metered by `TokenMeterKit`, one `RegexLedger` for the conversation.
+    - "Give me a JavaScript regex that validates a US ZIP code (12345 or 12345-6789), with examples." The
+      answer gives `/\d{5}(-\d{4})?/`, says it matches `12345` and `12345-6789` but not `1234` or `123456`,
+      and shows `/\d{5}(-\d{4})?/.test("12345-678") // false`. Verdict **wrong**: the pattern has no anchors,
+      so it matches `12345` inside `123456`, and `test` returns `true` for `12345-678`. Each finding names the
+      slip by trying one change at a time: wrapped in `^(?:…)$`, both claims hold.
+    - The rewrite, `/^\d{5}(-\d{4})?$/`, is **verified**: 5 claims run, 5 hold. The app shows it.
+    - "How do I turn 2026-11-03 into 20261103 in JavaScript?" gets `"2026-11-03".replace(/-/, "") //
+      "20261103"`: **wrong**, it gives `"202611-03"`, because without the `g` flag only the first dash goes.
+      Asked again with the feedback, the model repeats it, and the ledger marks the finding **repeated**, so
+      there is no third request: the app shows the answer with the note.
+    - Ledger: 4 reviews, 12 claims, 4 flagged, 1 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.000746**, exactly the change in the total. The running total after scenario 100 is
+    **$0.2908521 across one hundred scenarios**.

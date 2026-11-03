@@ -109,7 +109,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/language-confusion-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/package-claim-kit.git", from: "1.0.1"),
         .package(url: "https://github.com/rajatslakhina/arithmetic-claim-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/unit-claim-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/unit-claim-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/regex-claim-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -227,7 +228,8 @@ let package = Package(
                 .product(name: "LanguageConfusionKit", package: "language-confusion-kit"),
                 .product(name: "PackageClaimKit", package: "package-claim-kit"),
                 .product(name: "ArithmeticClaimKit", package: "arithmetic-claim-kit"),
-                .product(name: "UnitClaimKit", package: "unit-claim-kit")
+                .product(name: "UnitClaimKit", package: "unit-claim-kit"),
+                .product(name: "RegexClaimKit", package: "regex-claim-kit")
             ]
         )
     ]

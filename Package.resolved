@@ -1,5 +1,5 @@
 {
-  "originHash" : "2bcbf3a90d5cb484bde37b6a07e845cfb81aa6d7126ab6c7eb7c5a466ae64f3e",
+  "originHash" : "e5d3eb370d13c11c0f8b4865b856f562e0174eedf02e99fb641bf944018de3e0",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -556,6 +556,15 @@
       "location" : "https://github.com/rajatslakhina/realtime-session-kit.git",
       "state" : {
         "revision" : "d924a6f210d40222154d28f52388a0d8a66e0ab7",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "regex-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/regex-claim-kit.git",
+      "state" : {
+        "revision" : "d172e5c9be8c16ee6eb5b4564748b116354a556c",
         "version" : "1.0.0"
       }
     },
