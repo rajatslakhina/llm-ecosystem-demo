@@ -116,7 +116,8 @@ extension EcosystemDemo {
             (.packageClaimHost, ModelPricing(inputPerMillion: 1.5, outputPerMillion: 6)),
             (.arithmeticClaimHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2)),
             (.unitClaimHost, ModelPricing(inputPerMillion: 1.2, outputPerMillion: 4.8)),
-            (.regexClaimHost, ModelPricing(inputPerMillion: 1.0, outputPerMillion: 4.0))
+            (.regexClaimHost, ModelPricing(inputPerMillion: 1.0, outputPerMillion: 4.0)),
+            (.stringClaimHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2))
         ]
     }
 }
