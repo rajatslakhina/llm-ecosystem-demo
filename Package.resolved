@@ -1,5 +1,5 @@
 {
-  "originHash" : "9fecaa42d7ae69f04dd4d555095bb587e3d410ade66313da3117380f79b2d248",
+  "originHash" : "549d24fcba384e62d04e9db0f6fd64e10fbdcaebb8162181b5d314e11c0c7198",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -385,6 +385,15 @@
       "location" : "https://github.com/rajatslakhina/instruction-compliance-kit.git",
       "state" : {
         "revision" : "0e9cb490bf17a979d2965f6037ff12c6e7b16c29",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "json-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/json-claim-kit.git",
+      "state" : {
+        "revision" : "f66d2f2bdd2fda7cd0d988842a40333f32f2d719",
         "version" : "1.0.0"
       }
     },

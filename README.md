@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and one packages in this
+A single runnable demo that wires together all one hundred and two packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -159,6 +159,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`UnitClaimKit`](https://github.com/rajatslakhina/unit-claim-kit) | `ArithmeticClaimKit` treats units as text, and `NumberBindingKit` converts units only against evidence; nothing checked a conversion the answer made on its own. Scenario 99 asks one `ProviderGatewayKit` session to convert an American recipe. The answer weighs 2 cups of flour as 500 g: `UnitClaimKit` recomputes it through a density range (**wrong**, 237 to 284 g) and names the slip (weighed as water), notes that 250 ml of milk holds only for a metric cup (**caution**), and lets 350°F (175°C) through as a round figure. The rewrite is **verified**. The follow-up converts a 10°C rise as 50°F (it is 18°F, a change has no offset); asked again, the model repeats it, and the conversation's `ConversionLedger` marks it **repeated**. |
 | [`RegexClaimKit`](https://github.com/rajatslakhina/regex-claim-kit) | The claim checkers recompute dates, arithmetic, units and package names; nothing ran the regular expressions an answer gives against what it says they match. Scenario 100 asks one `ProviderGatewayKit` session for a ZIP code regex. The answer's `/\d{5}(-\d{4})?/` has no anchors and is said to reject `123456` and to return `false` for `12345-678`: `RegexClaimKit` runs both and finds a match inside each (**wrong**, slip: no `^`…`$` anchors). The anchored rewrite is **verified**. The follow-up strips dashes with `replace(/-/, "")` and claims `"20261103"`; it gives `"202611-03"` (no `g` flag), and asked again the model repeats it, so the conversation's `RegexLedger` marks it **repeated**. |
 | [`StringClaimKit`](https://github.com/rajatslakhina/string-claim-kit) | The claim checkers recompute numbers, units and dates and run regexes; nothing checked what an answer says about strings themselves, the claims tokenization makes hard for a model. Scenario 101 asks one `ProviderGatewayKit` route for a letter count and a base64 value: the answer counts two r's in "strawberry" (the doubled `rr` counted once) and gives `aGVsbG8K`, the base64 of "hello" with the newline `echo` sends, while its own `echo hello \| base64` transcript holds. The rewrite holds; a SHA-256 copied from `echo hello \| sha256sum` is repeated after the feedback and the `StringLedger` marks it. |
+| [`JSONClaimKit`](https://github.com/rajatslakhina/json-claim-kit) | The claim checkers ran numbers, units, dates, regexes and strings; nothing checked what an answer says about JSON: a block labeled `json` that does not parse, a `json.dumps` or `JSON.stringify` result, a value read back with `JSON.parse`, jq output. Scenario 102 asks one `ProviderGatewayKit` route for a webhook body: the block has a trailing comma (named at line 3, column 30) and the answer says `JSON.stringify` sends an `undefined` secret as `null`. The rewrite holds; an id past 2^53 read with `JSON.parse` is repeated after the feedback and the `JSONLedger` marks it. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -593,7 +594,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and one scenarios, $0.2914553 metered total**. `architecture.svg`
+The current run is **one hundred and two scenarios, $0.2928163 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1249,13 +1250,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and one
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and two
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and one packages together; the output above is a genuine capture,
+  of all one hundred and two packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1266,7 +1267,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and one real packages compose and run," which the sample output
+means "the one hundred and two real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2883,3 +2884,27 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.0006032**, exactly the change in the total. The running total after scenario 101 is
     **$0.2914553 across one hundred and one scenarios**.
+
+102. **`JSONClaimKit`** adds the hundred-and-second scenario. The answer a person pastes is where a JSON
+    mistake costs most: a block labeled `json` with a trailing comma, `json.dumps` output shown with
+    JavaScript's spacing, an id past 2^53 that `JSON.parse` rounds. Schema benchmarks check JSON a model is
+    asked to produce for an app; nothing checked JSON a model hands to a person.
+
+    One route (`json-claim-host`, $1.00/$4.00 per million tokens), scripted replies, one `LLMSession` per
+    turn, metered by `TokenMeterKit`, one `JSONLedger` for the conversation.
+    - "What body do I POST to create the webhook, and what does JSON.stringify send?" The block labeled
+      `json` ends `"events": ["order.created"],` before `}`, and the answer says
+      `JSON.stringify(payload)` gives `…,"secret":null}` for `secret: undefined`. Verdict **wrong**, 2
+      claims, 0 hold: the block does not parse (a trailing comma at line 3, column 30), and
+      `JSON.stringify` leaves out properties whose value is `undefined`.
+    - The rewrite (no trailing comma, `{"url":…,"events":["order.created"]}`) is **verified**: 2 claims, 2
+      hold.
+    - "How do I read the new webhook's id from the response?" gets
+      `JSON.parse(body).id  // 9007199254740993`: **wrong**, a JavaScript number holds integers exactly
+      only up to 2^53, so it reads `9007199254740992`. Asked again with the feedback, the model repeats
+      it, and the ledger marks the finding **repeated**, so there is no third request.
+    - Ledger: 4 reviews, 6 claims, 4 flagged, 1 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.001361**, exactly the change in the total. The running total after scenario 102 is
+    **$0.2928163 across one hundred and two scenarios**.

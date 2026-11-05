@@ -86,5 +86,6 @@ extension EcosystemDemo {
         await runUnitClaimScenario(meter: meter)
         await runRegexClaimScenario(meter: meter)
         await runStringClaimScenario(meter: meter)
+        await runJSONClaimScenario(meter: meter)
     }
 }
