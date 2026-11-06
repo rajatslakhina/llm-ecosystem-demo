@@ -1,5 +1,5 @@
 {
-  "originHash" : "549d24fcba384e62d04e9db0f6fd64e10fbdcaebb8162181b5d314e11c0c7198",
+  "originHash" : "5746b63e33a93d38ec5778996480d3a603129f6da3cbb9cf0fa044069aea01ec",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -916,6 +916,15 @@
       "location" : "https://github.com/rajatslakhina/workload-profiler-kit.git",
       "state" : {
         "revision" : "30e3164f52c85797bdac9b7274102e31b612fac2",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "yaml-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/yaml-claim-kit.git",
+      "state" : {
+        "revision" : "19b52250e8ff68789e28021d38afad77072710cb",
         "version" : "1.0.0"
       }
     }

@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and two packages in this
+A single runnable demo that wires together all one hundred and three packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -160,6 +160,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`RegexClaimKit`](https://github.com/rajatslakhina/regex-claim-kit) | The claim checkers recompute dates, arithmetic, units and package names; nothing ran the regular expressions an answer gives against what it says they match. Scenario 100 asks one `ProviderGatewayKit` session for a ZIP code regex. The answer's `/\d{5}(-\d{4})?/` has no anchors and is said to reject `123456` and to return `false` for `12345-678`: `RegexClaimKit` runs both and finds a match inside each (**wrong**, slip: no `^`…`$` anchors). The anchored rewrite is **verified**. The follow-up strips dashes with `replace(/-/, "")` and claims `"20261103"`; it gives `"202611-03"` (no `g` flag), and asked again the model repeats it, so the conversation's `RegexLedger` marks it **repeated**. |
 | [`StringClaimKit`](https://github.com/rajatslakhina/string-claim-kit) | The claim checkers recompute numbers, units and dates and run regexes; nothing checked what an answer says about strings themselves, the claims tokenization makes hard for a model. Scenario 101 asks one `ProviderGatewayKit` route for a letter count and a base64 value: the answer counts two r's in "strawberry" (the doubled `rr` counted once) and gives `aGVsbG8K`, the base64 of "hello" with the newline `echo` sends, while its own `echo hello \| base64` transcript holds. The rewrite holds; a SHA-256 copied from `echo hello \| sha256sum` is repeated after the feedback and the `StringLedger` marks it. |
 | [`JSONClaimKit`](https://github.com/rajatslakhina/json-claim-kit) | The claim checkers ran numbers, units, dates, regexes and strings; nothing checked what an answer says about JSON: a block labeled `json` that does not parse, a `json.dumps` or `JSON.stringify` result, a value read back with `JSON.parse`, jq output. Scenario 102 asks one `ProviderGatewayKit` route for a webhook body: the block has a trailing comma (named at line 3, column 30) and the answer says `JSON.stringify` sends an `undefined` secret as `null`. The rewrite holds; an id past 2^53 read with `JSON.parse` is repeated after the feedback and the `JSONLedger` marks it. |
+| [`YAMLClaimKit`](https://github.com/rajatslakhina/yaml-claim-kit) | Config answers are mostly YAML, and YAML mistakes load without an error: an unquoted `3.10` is the float 3.1, PyYAML reads `NO` and `on` as booleans and `0755` as octal. Nothing checked what an answer says about YAML. Scenario 103 asks one `ProviderGatewayKit` route for a CI workflow: the answer says `python-version: 3.10` stays "3.10" and reads `workflow["on"]` (a `KeyError`, the key is `True`). The rewrite holds; a list of country codes with `NO` unquoted is repeated after the feedback and the `YAMLLedger` marks it. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -594,7 +595,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and two scenarios, $0.2928163 metered total**. `architecture.svg`
+The current run is **one hundred and three scenarios, $0.2941816 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1250,13 +1251,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and two
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and three
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and two packages together; the output above is a genuine capture,
+  of all one hundred and three packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1267,7 +1268,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and two real packages compose and run," which the sample output
+means "the one hundred and three real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2908,3 +2909,27 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.001361**, exactly the change in the total. The running total after scenario 102 is
     **$0.2928163 across one hundred and two scenarios**.
+
+103. **`YAMLClaimKit`** adds the hundred-and-third scenario. Almost any text is valid YAML, so a config
+    answer's mistakes load without an error and surface in a deploy: an unquoted `3.10` is the float 3.1,
+    YAML 1.1 (PyYAML) reads `NO`, `yes`, `on` and `off` as booleans and `0755` as octal. Studies of generated
+    CI and infrastructure YAML find the same pattern: the output parses, and the values are wrong.
+
+    One route (`yaml-claim-host`, $0.90/$3.60 per million tokens), scripted replies, one `LLMSession` per
+    turn, metered by `TokenMeterKit`, one `YAMLLedger` for the conversation.
+    - "Write a CI workflow for Python 3.10, and show how to read its trigger in Python." The workflow block
+      parses, but the answer says `python-version: 3.10` is read as the string "3.10" and shows
+      `print(workflow["on"])  # push`. Verdict **wrong**, 3 claims, 1 holds: YAML 1.1 reads `3.10` as the
+      float 3.1 (`trailingZeroDropped`), and PyYAML stored the key `on` as `True`, so the lookup raises
+      `KeyError: 'on'` (`booleanKey`).
+    - The rewrite (`python-version: "3.10"`, `workflow[True]`) is **verified**: 3 claims, 3 hold.
+    - "Can I list the deploy regions by country code without quotes?" gets `regions: [GB, NO, SE]` and
+      `print(config["regions"])  # ['GB', 'NO', 'SE']`: **wrong**, PyYAML gives `['GB', False, 'SE']`
+      (`booleanWord`), and the block gets a caveat for `NO`, which YAML 1.1 and 1.2 read differently. Asked
+      again with the feedback, the model repeats it, and the ledger marks both findings **repeated**, so
+      there is no third request.
+    - Ledger: 4 reviews, 10 claims, 6 flagged, 2 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.0013653**, exactly the change in the total. The running total after scenario 103 is
+    **$0.2941816 across one hundred and three scenarios**.
