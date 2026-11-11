@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and four packages in this
+A single runnable demo that wires together all one hundred and five packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -162,6 +162,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`JSONClaimKit`](https://github.com/rajatslakhina/json-claim-kit) | The claim checkers ran numbers, units, dates, regexes and strings; nothing checked what an answer says about JSON: a block labeled `json` that does not parse, a `json.dumps` or `JSON.stringify` result, a value read back with `JSON.parse`, jq output. Scenario 102 asks one `ProviderGatewayKit` route for a webhook body: the block has a trailing comma (named at line 3, column 30) and the answer says `JSON.stringify` sends an `undefined` secret as `null`. The rewrite holds; an id past 2^53 read with `JSON.parse` is repeated after the feedback and the `JSONLedger` marks it. |
 | [`YAMLClaimKit`](https://github.com/rajatslakhina/yaml-claim-kit) | Config answers are mostly YAML, and YAML mistakes load without an error: an unquoted `3.10` is the float 3.1, PyYAML reads `NO` and `on` as booleans and `0755` as octal. Nothing checked what an answer says about YAML. Scenario 103 asks one `ProviderGatewayKit` route for a CI workflow: the answer says `python-version: 3.10` stays "3.10" and reads `workflow["on"]` (a `KeyError`, the key is `True`). The rewrite holds; a list of country codes with `NO` unquoted is repeated after the feedback and the `YAMLLedger` marks it. |
 | [`TOMLClaimKit`](https://github.com/rajatslakhina/toml-claim-kit) | TOML is the other config format answers write all the time (`pyproject.toml`, `Cargo.toml`), and it fails the other way from YAML: it refuses a lot that looks fine (`^3.10`, `True`, `0755`, a table written twice) and quietly turns the rest into types the answer did not mean (`3.10` into 3.1). Scenario 104 asks one `ProviderGatewayKit` route to set mypy to Python 3.10: the answer says `python_version = 3.10` stays "3.10" and reads the file with `tomllib.load` on a text-mode file (a `TypeError`). The rewrite holds; Poetry dependencies with `python = ^3.10` unquoted are called valid TOML, repeated after the feedback, and the `TOMLLedger` marks the repeat. | Scenario 104 |
+| [`SQLClaimKit`](https://github.com/rajatslakhina/sql-claim-kit) | Answers show SQL with its output written next to it, and the usual mistakes do not fail loudly: the query runs and returns something plausible. `SQLClaimKit` runs the answer's SQL on the tables and rows the answer creates, in a sandboxed in-memory SQLite, and checks the output it states. Scenario 105 asks one `ProviderGatewayKit` route for the customers with no email: the answer filters with `= NULL` and shows two rows (it returns none). The `IS NULL` rewrite holds; a `LEFT JOIN` filtered in `WHERE`, shown keeping every customer, keeps one, is repeated after the feedback, and the `SQLLedger` marks the repeat. | Scenario 105 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -596,7 +597,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and four scenarios, $0.29522625 metered total**. `architecture.svg`
+The current run is **one hundred and five scenarios, $0.2977143 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1252,13 +1253,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and four
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and five
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and four packages together; the output above is a genuine capture,
+  of all one hundred and five packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1269,7 +1270,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and four real packages compose and run," which the sample output
+means "the one hundred and five real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2958,3 +2959,24 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.00104465**, exactly the change in the total. The running total after scenario 104 is
     **$0.29522625 across one hundred and four scenarios**.
+
+105. **`SQLClaimKit`** adds the hundred-and-fifth scenario. An answer that shows its SQL usually shows the output
+    too, and the classic slips (`= NULL`, `COUNT(column)`, `NOT IN` with a NULL, a `LEFT JOIN` undone by
+    `WHERE`) run without an error and return something plausible. `SQLClaimKit` runs the answer's own SQL on the
+    data it shows, in a private in-memory SQLite database, and compares.
+
+    One route (`sql-claim-host`, $0.95/$3.80 per million tokens), scripted replies, one `LLMSession` per turn,
+    metered by `TokenMeterKit`, one `SQLLedger` for the conversation.
+    - "Which customers have no email on file?" The answer creates `customers` and `orders`, runs
+      `SELECT name FROM customers WHERE email = NULL;` and shows Ben and Chen. Verdict **wrong**: it returns no
+      rows (`nullComparison`, "= NULL is never true; use IS NULL or IS NOT NULL").
+    - The rewrite (`WHERE email IS NULL`) is **verified**: 1 claim, 1 holds.
+    - "Now list every customer with their paid order totals, including customers with none." gets a `LEFT JOIN`
+      with `WHERE o.status = 'paid'` and a table of all three customers: **wrong**, it returns one row
+      (`leftJoinFilter`, "move it into the ON clause"). Asked again with the feedback, the model repeats it, and
+      the ledger marks the finding **repeated**, so there is no third request.
+    - Ledger: 4 reviews, 4 claims, 3 flagged, 1 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.00248805**, exactly the change in the total. The running total after scenario 105 is
+    **$0.2977143 across one hundred and five scenarios**.

@@ -1,5 +1,5 @@
 {
-  "originHash" : "5670a382c388e2539ba39e824a16054483589736c98d0d1b297ee6c21fd9e56f",
+  "originHash" : "df8fd948ab2af73ecb69c05bd6067f0fdf595f7cfe4f582104c6c10f584e2204",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -727,6 +727,15 @@
       "location" : "https://github.com/rajatslakhina/split-contrast-kit.git",
       "state" : {
         "revision" : "10de20a1b88e94b3e19cea95dc0305fd7e5985f0",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "sql-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/sql-claim-kit.git",
+      "state" : {
+        "revision" : "76ccfe6e7bb5970f9fbf8367cd375ae00d387e37",
         "version" : "1.0.0"
       }
     },

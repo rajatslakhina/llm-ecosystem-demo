@@ -114,7 +114,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/string-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/json-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/yaml-claim-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/toml-claim-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/toml-claim-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/sql-claim-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -237,7 +238,8 @@ let package = Package(
                 .product(name: "StringClaimKit", package: "string-claim-kit"),
                 .product(name: "JSONClaimKit", package: "json-claim-kit"),
                 .product(name: "YAMLClaimKit", package: "yaml-claim-kit"),
-                .product(name: "TOMLClaimKit", package: "toml-claim-kit")
+                .product(name: "TOMLClaimKit", package: "toml-claim-kit"),
+                .product(name: "SQLClaimKit", package: "sql-claim-kit")
             ]
         )
     ]

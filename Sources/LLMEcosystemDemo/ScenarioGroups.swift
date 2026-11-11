@@ -89,5 +89,6 @@ extension EcosystemDemo {
         await runJSONClaimScenario(meter: meter)
         await runYAMLClaimScenario(meter: meter)
         await runTOMLClaimScenario(meter: meter)
+        await runSQLClaimScenario(meter: meter)
     }
 }
