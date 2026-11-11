@@ -735,8 +735,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/sql-claim-kit.git",
       "state" : {
-        "revision" : "76ccfe6e7bb5970f9fbf8367cd375ae00d387e37",
-        "version" : "1.0.0"
+        "revision" : "a2d4903fba7cd74dae1ea938dad36cd7299ebe07",
+        "version" : "1.1.0"
       }
     },
     {
