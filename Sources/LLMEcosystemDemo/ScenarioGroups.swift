@@ -88,5 +88,6 @@ extension EcosystemDemo {
         await runStringClaimScenario(meter: meter)
         await runJSONClaimScenario(meter: meter)
         await runYAMLClaimScenario(meter: meter)
+        await runTOMLClaimScenario(meter: meter)
     }
 }

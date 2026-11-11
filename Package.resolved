@@ -1,5 +1,5 @@
 {
-  "originHash" : "5746b63e33a93d38ec5778996480d3a603129f6da3cbb9cf0fa044069aea01ec",
+  "originHash" : "5670a382c388e2539ba39e824a16054483589736c98d0d1b297ee6c21fd9e56f",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -808,6 +808,15 @@
       "location" : "https://github.com/rajatslakhina/token-meter-kit.git",
       "state" : {
         "revision" : "d817dc67b5ea688c556dde40067cc1dd782631ac",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "toml-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/toml-claim-kit.git",
+      "state" : {
+        "revision" : "4060b16793d16f7a619ff4df5c95f4bb7a1ee49d",
         "version" : "1.0.0"
       }
     },
