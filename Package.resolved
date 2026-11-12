@@ -933,8 +933,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/version-range-claim-kit.git",
       "state" : {
-        "revision" : "2f95d72762523ae4006c9d86b361efa6f8ec9faf",
-        "version" : "1.0.0"
+        "revision" : "0362100200342b235d73fadfe4fb0c5e9ea831a2",
+        "version" : "1.0.1"
       }
     },
     {
