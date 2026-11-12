@@ -90,5 +90,6 @@ extension EcosystemDemo {
         await runYAMLClaimScenario(meter: meter)
         await runTOMLClaimScenario(meter: meter)
         await runSQLClaimScenario(meter: meter)
+        await runVersionRangeClaimScenario(meter: meter)
     }
 }

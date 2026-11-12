@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and five packages in this
+A single runnable demo that wires together all one hundred and six packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -163,6 +163,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`YAMLClaimKit`](https://github.com/rajatslakhina/yaml-claim-kit) | Config answers are mostly YAML, and YAML mistakes load without an error: an unquoted `3.10` is the float 3.1, PyYAML reads `NO` and `on` as booleans and `0755` as octal. Nothing checked what an answer says about YAML. Scenario 103 asks one `ProviderGatewayKit` route for a CI workflow: the answer says `python-version: 3.10` stays "3.10" and reads `workflow["on"]` (a `KeyError`, the key is `True`). The rewrite holds; a list of country codes with `NO` unquoted is repeated after the feedback and the `YAMLLedger` marks it. |
 | [`TOMLClaimKit`](https://github.com/rajatslakhina/toml-claim-kit) | TOML is the other config format answers write all the time (`pyproject.toml`, `Cargo.toml`), and it fails the other way from YAML: it refuses a lot that looks fine (`^3.10`, `True`, `0755`, a table written twice) and quietly turns the rest into types the answer did not mean (`3.10` into 3.1). Scenario 104 asks one `ProviderGatewayKit` route to set mypy to Python 3.10: the answer says `python_version = 3.10` stays "3.10" and reads the file with `tomllib.load` on a text-mode file (a `TypeError`). The rewrite holds; Poetry dependencies with `python = ^3.10` unquoted are called valid TOML, repeated after the feedback, and the `TOMLLedger` marks the repeat. | Scenario 104 |
 | [`SQLClaimKit`](https://github.com/rajatslakhina/sql-claim-kit) | Answers show SQL with its output written next to it, and the usual mistakes do not fail loudly: the query runs and returns something plausible. `SQLClaimKit` runs the answer's SQL on the tables and rows the answer creates, in a sandboxed in-memory SQLite, and checks the output it states. Scenario 105 asks one `ProviderGatewayKit` route for the customers with no email: the answer filters with `= NULL` and shows two rows (it returns none). The `IS NULL` rewrite holds; a `LEFT JOIN` filtered in `WHERE`, shown keeping every customer, keeps one, is repeated after the feedback, and the `SQLLedger` marks the repeat. | Scenario 105 |
+| [`VersionRangeClaimKit`](https://github.com/rajatslakhina/version-range-claim-kit) | Coding answers state what a version range lets in, and the rules have corners that read naturally the wrong way: a caret on 0.x, `~=` with two numbers or three, `>1.2` meaning `>=1.3.0`, `==1.2` matching 1.2.0. `VersionRangeClaimKit` settles each claim with the package manager's own rules (npm, pip, RubyGems, SwiftPM), from inline code and dependency manifests. Scenario 106 asks one `ProviderGatewayKit` route to add a 0.x dependency: the answer says `^0.2.3` takes minor updates and 0.3.0 (it stops below 0.3.0). The rewrite holds; a `requirements.txt` with `requests^2.31` (pip has no caret) and `django~=4.2` said to allow 5.0 is repeated after the feedback, and the `RangeLedger` marks the repeat. | Scenario 106 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -597,7 +598,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and five scenarios, $0.2977143 metered total**. `architecture.svg`
+The current run is **one hundred and six scenarios, $0.2987061 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1253,13 +1254,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and five
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and six
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and five packages together; the output above is a genuine capture,
+  of all one hundred and six packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1270,7 +1271,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and five real packages compose and run," which the sample output
+means "the one hundred and six real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -2980,3 +2981,24 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.00248805**, exactly the change in the total. The running total after scenario 105 is
     **$0.2977143 across one hundred and five scenarios**.
+
+106. **`VersionRangeClaimKit`** adds the hundred-and-sixth scenario. Coding answers say what a version range lets
+    in, and the rules have corners that read the wrong way: a caret on 0.x moves only the patch number, `~=4.2`
+    stops below 5.0, pip has no `^`. `VersionRangeClaimKit` settles each claim with the package manager's own
+    rules (node-semver for npm, PEP 440 for pip, RubyGems, SwiftPM), from inline code and dependency manifests.
+
+    One route (`version-range-host`, $0.90/$3.60 per million tokens), scripted replies, one `LLMSession` per
+    turn, metered by `TokenMeterKit`, one `RangeLedger` for the conversation.
+    - "Add tiny-parser 0.2.3 to package.json so we get its updates." The answer adds `"tiny-parser": "^0.2.3"` and
+      says npm takes minor updates and will pick up 0.3.0. Verdict **wrong**, 2 claims, both `caretOnZero`: in npm
+      `^0.2.3` means `>=0.2.3 <0.3.0`.
+    - The rewrite (patch updates only: 0.2.9 yes, 0.3.0 no) is **verified**: 3 claims, 3 hold.
+    - "Now pin requests 2.31 and Django 4.2 in requirements.txt" gets `requests^2.31` (pip refuses it: no `^`
+      operator; rewrite `>=2.31,<3`) and "`django~=4.2` allows Django 5.0 ... the next major release": **wrong**,
+      3 claims (`invalid`, and `compatibleReleaseDepth` twice). Asked again with the feedback, the model repeats
+      it, and the ledger marks all three **repeated**, so there is no third request.
+    - Ledger: 4 reviews, 11 claims, 8 flagged, 3 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.0009918**, exactly the change in the total. The running total after scenario 106 is
+    **$0.2987061 across one hundred and six scenarios**.
