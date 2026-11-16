@@ -3026,3 +3026,7 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.0009576**, exactly the change in the total. The running total after scenario 107 is
     **$0.2996637 across one hundred and seven scenarios**.
+
+    The demo requires `gitignore-claim-kit` 1.0.1, where a sentence's own patterns are read as ignore rules only
+    when an ignore file is in view (the answer, the question passed as `context`, or an earlier turn of the same
+    `IgnoreLedger`). The scenario passes each question; its output is unchanged from 1.0.0.

@@ -32,26 +32,26 @@ extension EcosystemDemo {
             print("[gitignore scenario] user: \(question)")
             let first = try await ignoreTurn(question, router: router, meter: meter)
             print("[gitignore scenario] answer 1: \(flatIgnore(first))")
-            let report = await ledger.review(first)
+            let report = await ledger.review(first, context: question)
             printIgnoreFindings(report)
 
             let repair = question + "\n" + first + "\n" + (report.feedback ?? "")
             let second = try await ignoreTurn(repair, router: router, meter: meter)
             print("[gitignore scenario] answer 2 (after the feedback): \(flatIgnore(second))")
-            let fixed = await ledger.review(second)
+            let fixed = await ledger.review(second, context: question)
             print("[gitignore scenario] verdict \(fixed.verdict.rawValue): \(fixed.summary); the app shows answer 2")
 
             let followUp = "Also ignore the generated docs: every .txt file under doc/, however deep."
             print("[gitignore scenario] user: \(followUp)")
             let third = try await ignoreTurn(followUp, router: router, meter: meter)
             print("[gitignore scenario] answer 3: \(flatIgnore(third))")
-            let docs = await ledger.review(third)
+            let docs = await ledger.review(third, context: followUp)
             printIgnoreFindings(docs)
 
             let retry = followUp + "\n" + third + "\n" + (docs.feedback ?? "")
             let fourth = try await ignoreTurn(retry, router: router, meter: meter)
             print("[gitignore scenario] answer 4 (after the feedback): \(flatIgnore(fourth))")
-            let again = await ledger.review(fourth)
+            let again = await ledger.review(fourth, context: followUp)
             printIgnoreFindings(again)
             if again.repeatedCount > 0 {
                 print("[gitignore scenario] repeated after a correction: no third request; the app shows "
