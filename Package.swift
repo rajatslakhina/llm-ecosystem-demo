@@ -116,7 +116,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/yaml-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/toml-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/sql-claim-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/version-range-claim-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/version-range-claim-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/rajatslakhina/gitignore-claim-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -241,7 +242,8 @@ let package = Package(
                 .product(name: "YAMLClaimKit", package: "yaml-claim-kit"),
                 .product(name: "TOMLClaimKit", package: "toml-claim-kit"),
                 .product(name: "SQLClaimKit", package: "sql-claim-kit"),
-                .product(name: "VersionRangeClaimKit", package: "version-range-claim-kit")
+                .product(name: "VersionRangeClaimKit", package: "version-range-claim-kit"),
+                .product(name: "GitignoreClaimKit", package: "gitignore-claim-kit")
             ]
         )
     ]

@@ -122,7 +122,8 @@ extension EcosystemDemo {
             (.yamlClaimHost, ModelPricing(inputPerMillion: 0.9, outputPerMillion: 3.6)),
             (.tomlClaimHost, ModelPricing(inputPerMillion: 0.85, outputPerMillion: 3.4)),
             (.sqlClaimHost, ModelPricing(inputPerMillion: 0.95, outputPerMillion: 3.8)),
-            (.versionRangeHost, ModelPricing(inputPerMillion: 0.9, outputPerMillion: 3.6))
+            (.versionRangeHost, ModelPricing(inputPerMillion: 0.9, outputPerMillion: 3.6)),
+            (.gitignoreHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2))
         ]
     }
 }

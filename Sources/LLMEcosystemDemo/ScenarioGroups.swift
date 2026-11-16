@@ -91,5 +91,6 @@ extension EcosystemDemo {
         await runTOMLClaimScenario(meter: meter)
         await runSQLClaimScenario(meter: meter)
         await runVersionRangeClaimScenario(meter: meter)
+        await runGitignoreClaimScenario(meter: meter)
     }
 }
