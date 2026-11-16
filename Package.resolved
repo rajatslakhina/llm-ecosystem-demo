@@ -1,5 +1,5 @@
 {
-  "originHash" : "80b5fc99c8f3edd7f42e6c973cbd9d7252148c422dc70ac4b85c3d35ee837416",
+  "originHash" : "ee50f79c49600eeeb67a905ad08a247dcd8dc1bcc74263ab317a81d84ee4da37",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -339,8 +339,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/gitignore-claim-kit.git",
       "state" : {
-        "revision" : "6aac5c52bf0f37b81ee630dc36384ddba2304b5a",
-        "version" : "1.0.1"
+        "revision" : "88cdc539b617ab7814488bed8c18f2e1cf12b128",
+        "version" : "1.0.2"
       }
     },
     {
