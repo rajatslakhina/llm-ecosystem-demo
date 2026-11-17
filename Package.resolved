@@ -1,5 +1,5 @@
 {
-  "originHash" : "abe5489c99ed6d733202c2473476f906e7806f2c2e5c6f9cc3f2b1cd5b1440c2",
+  "originHash" : "640d966e678ebd245027086bbd17633ba20a2a534d7051f7a9fe367ed12407eb",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -267,8 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/dockerignore-claim-kit.git",
       "state" : {
-        "revision" : "e0dea5e3c4941c1bc3b6ef4c00aeb5168b29e2d1",
-        "version" : "1.0.0"
+        "revision" : "911e4b7a97bf054b5d3e06a7da5f0b5fe5cfffe3",
+        "version" : "1.0.1"
       }
     },
     {

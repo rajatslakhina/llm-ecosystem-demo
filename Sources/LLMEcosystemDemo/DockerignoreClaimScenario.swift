@@ -17,8 +17,9 @@ extension EcosystemDemo {
     /// .dockerignore the way it would write a .gitignore: `node_modules` and `*.log`, said to match in every
     /// package; `.env   # local secrets` on one line; a `.dockerignore` per service folder. `GitignoreClaimKit`
     /// finds no claim of its own to check there (another tool's file); `DockerignoreClaimKit` checks them: Docker
-    /// matches from the root of the build context, `#` starts a comment only at the start of a line, and only the root
-    /// file is read. Its feedback gets a rewrite that holds. The follow-up keeps one file inside `node_modules`
+    /// matches from the root of the build context and `#` starts a comment only at the start of a line; the
+    /// per-service file is a second look (right only if that folder is the build context). Its feedback gets a
+    /// rewrite that holds. The follow-up keeps one file inside `node_modules`
     /// with `!**/keep.txt`; the team builds with the classic builder, which never searches the excluded folder for
     /// a wildcard exception, so the conversation's one `DockerignoreLedger` (pinned to `.classic`) flags it, and
     /// the literal `!node_modules/pkg/keep.txt` it suggests holds.
