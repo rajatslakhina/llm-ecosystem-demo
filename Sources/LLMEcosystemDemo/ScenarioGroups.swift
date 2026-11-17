@@ -92,5 +92,6 @@ extension EcosystemDemo {
         await runSQLClaimScenario(meter: meter)
         await runVersionRangeClaimScenario(meter: meter)
         await runGitignoreClaimScenario(meter: meter)
+        await runDockerignoreClaimScenario(meter: meter)
     }
 }

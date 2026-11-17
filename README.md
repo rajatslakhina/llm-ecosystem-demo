@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and seven packages in this
+A single runnable demo that wires together all one hundred and eight packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -165,6 +165,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`SQLClaimKit`](https://github.com/rajatslakhina/sql-claim-kit) | Answers show SQL with its output written next to it, and the usual mistakes do not fail loudly: the query runs and returns something plausible. `SQLClaimKit` runs the answer's SQL on the tables and rows the answer creates, in a sandboxed in-memory SQLite, and checks the output it states. Scenario 105 asks one `ProviderGatewayKit` route for the customers with no email: the answer filters with `= NULL` and shows two rows (it returns none). The `IS NULL` rewrite holds; a `LEFT JOIN` filtered in `WHERE`, shown keeping every customer, keeps one, is repeated after the feedback, and the `SQLLedger` marks the repeat. | Scenario 105 |
 | [`VersionRangeClaimKit`](https://github.com/rajatslakhina/version-range-claim-kit) | Coding answers state what a version range lets in, and the rules have corners that read naturally the wrong way: a caret on 0.x, `~=` with two numbers or three, `>1.2` meaning `>=1.3.0`, `==1.2` matching 1.2.0. `VersionRangeClaimKit` settles each claim with the package manager's own rules (npm, pip, RubyGems, SwiftPM), from inline code and dependency manifests. Scenario 106 asks one `ProviderGatewayKit` route to add a 0.x dependency: the answer says `^0.2.3` takes minor updates and 0.3.0 (it stops below 0.3.0). The rewrite holds; a `requirements.txt` with `requests^2.31` (pip has no caret) and `django~=4.2` said to allow 5.0 is repeated after the feedback, and the `RangeLedger` marks the repeat. | Scenario 106 |
 | [`GitignoreClaimKit`](https://github.com/rajatslakhina/gitignore-claim-kit) | Coding answers write `.gitignore` files and say what they do, and git's rules have corners that read the wrong way: nothing below an excluded directory can be re-included, `#` starts a comment only at the start of a line, a slash in the middle anchors a pattern, `*` stops at `/`, and listing a committed file does not untrack it. `GitignoreClaimKit` judges each claim with a port of git's own matcher, parity-tested against git 2.49.0. Scenario 107 asks one `ProviderGatewayKit` route to keep one log file and stop committing `.env`: the answer writes `logs/` then `!logs/keep.log`, puts a comment after `.env` on the same line and says the entry untracks `.env`. The rewrite (`logs/*`, the comment on its own line, `git rm --cached`) holds; a follow-up saying `doc/*.txt` matches `doc/server/arch.txt` is repeated after the feedback, and the `IgnoreLedger` marks the repeat. | Scenario 107 |
+| [`DockerignoreClaimKit`](https://github.com/rajatslakhina/dockerignore-claim-kit) | Answers write `.dockerignore` files the way they write `.gitignore` files, and Docker reads them differently: every pattern matches from the root of the build context (`node_modules` and `*.log` only at the top), `#` starts a comment only at the start of a line, only the root `.dockerignore` is read, an excluded `Dockerfile` still builds, and the classic builder never searches an excluded folder for a wildcard exception. `DockerignoreClaimKit` judges each claim with a port of the Docker CLI's `ignorefile` and `moby/patternmatcher`, parity-tested against `docker build` (69 contexts, 312 paths), and asks `GitignoreClaimKit` how git would read the same lines. Scenario 108 asks one `ProviderGatewayKit` route for a monorepo `.dockerignore`: the answer's gitignore habits (4 claims) are wrong and the rewrite holds; a `!**/keep.txt` exception is flagged under the classic builder (a caveat when the builder is unknown) and the literal `!node_modules/pkg/keep.txt` holds. | Scenario 108 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -599,7 +600,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and seven scenarios, $0.2996637 metered total**. `architecture.svg`
+The current run is **one hundred and eight scenarios, $0.30113335 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1255,13 +1256,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and seven
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and eight
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and seven packages together; the output above is a genuine capture,
+  of all one hundred and eight packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1272,7 +1273,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and seven real packages compose and run," which the sample output
+means "the one hundred and eight real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3031,3 +3032,30 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     when the answer or the question passed as `context` names an ignore file; in a later turn that names none,
     only repeats of a claim already flagged are read (answer 4 is one). The scenario passes each question; its
     output is unchanged from 1.0.0.
+
+108. **`DockerignoreClaimKit`** adds the hundred-and-eighth scenario. Answers write `.dockerignore` files the way
+    they write `.gitignore` files, and Docker reads them differently: every pattern matches from the root of the
+    build context, so `node_modules` and `*.log` only match at the top; `.env   # local secrets` is one pattern that
+    excludes nothing; only the `.dockerignore` at the root of the context is read; and the classic builder searches
+    an excluded folder only for exceptions whose text starts with its path. `DockerignoreClaimKit` settles each
+    claim with a port of the Docker CLI's `ignorefile.ReadAll` and `moby/patternmatcher` plus each builder's
+    directory walk, parity-tested against the classic `docker build` over 69 contexts and 312 paths.
+
+    One route (`dockerignore-host`, $0.85/$3.40 per million tokens), scripted replies, one `LLMSession` per turn,
+    metered by `TokenMeterKit`, one `DockerignoreLedger` pinned to the classic builder (`.classic`).
+    - "Write a .dockerignore for our monorepo: keep every package's node_modules, the log files and .env out of the
+      image." The answer shows `node_modules`, `*.log` and `.env   # local secrets`, says `node_modules` is left
+      out of every package and `*.log` matches at any depth, and suggests `packages/api/.dockerignore`.
+      `GitignoreClaimKit` finds no claim to check in it; `DockerignoreClaimKit` says **wrong**, 4 claims:
+      `trailingComment`, `rootRelative` twice (fixes `**/node_modules`, `**/*.log`) and `nestedIgnoreFile`.
+    - The rewrite (`**/node_modules`, `**/*.log`, the comment on its own line, the root file only) is **verified**:
+      3 claims, 3 hold.
+    - "One package needs node_modules/pkg/keep.txt in the image" gets `!**/keep.txt` after `**/node_modules`:
+      **wrong** under the classic builder, `skippedDirectory` (fix: `!node_modules/pkg/keep.txt`); with the builder
+      unknown the same answer is a **caution** (BuildKit would send the file). The literal exception is
+      **verified**: 2 claims, 2 hold.
+    - Ledger: 4 reviews, 10 claims, 5 flagged, 0 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.00146965**, exactly the change in the total. The running total after scenario 108 is
+    **$0.30113335 across one hundred and eight scenarios**.
