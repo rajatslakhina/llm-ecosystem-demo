@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and eight packages in this
+A single runnable demo that wires together all one hundred and nine packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -166,6 +166,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`VersionRangeClaimKit`](https://github.com/rajatslakhina/version-range-claim-kit) | Coding answers state what a version range lets in, and the rules have corners that read naturally the wrong way: a caret on 0.x, `~=` with two numbers or three, `>1.2` meaning `>=1.3.0`, `==1.2` matching 1.2.0. `VersionRangeClaimKit` settles each claim with the package manager's own rules (npm, pip, RubyGems, SwiftPM), from inline code and dependency manifests. Scenario 106 asks one `ProviderGatewayKit` route to add a 0.x dependency: the answer says `^0.2.3` takes minor updates and 0.3.0 (it stops below 0.3.0). The rewrite holds; a `requirements.txt` with `requests^2.31` (pip has no caret) and `django~=4.2` said to allow 5.0 is repeated after the feedback, and the `RangeLedger` marks the repeat. | Scenario 106 |
 | [`GitignoreClaimKit`](https://github.com/rajatslakhina/gitignore-claim-kit) | Coding answers write `.gitignore` files and say what they do, and git's rules have corners that read the wrong way: nothing below an excluded directory can be re-included, `#` starts a comment only at the start of a line, a slash in the middle anchors a pattern, `*` stops at `/`, and listing a committed file does not untrack it. `GitignoreClaimKit` judges each claim with a port of git's own matcher, parity-tested against git 2.49.0. Scenario 107 asks one `ProviderGatewayKit` route to keep one log file and stop committing `.env`: the answer writes `logs/` then `!logs/keep.log`, puts a comment after `.env` on the same line and says the entry untracks `.env`. The rewrite (`logs/*`, the comment on its own line, `git rm --cached`) holds; a follow-up saying `doc/*.txt` matches `doc/server/arch.txt` is repeated after the feedback, and the `IgnoreLedger` marks the repeat. | Scenario 107 |
 | [`DockerignoreClaimKit`](https://github.com/rajatslakhina/dockerignore-claim-kit) | Answers write `.dockerignore` files the way they write `.gitignore` files, and Docker reads them differently: every pattern matches from the root of the build context (`node_modules` and `*.log` only at the top), `#` starts a comment only at the start of a line, only the root `.dockerignore` is read, an excluded `Dockerfile` still builds, and the classic builder never searches an excluded folder for a wildcard exception. `DockerignoreClaimKit` judges each claim with a port of the Docker CLI's `ignorefile` and `moby/patternmatcher`, parity-tested against `docker build` (69 contexts, 312 paths), and asks `GitignoreClaimKit` how git would read the same lines. Scenario 108 asks one `ProviderGatewayKit` route for a monorepo `.dockerignore`: the answer's gitignore habits are wrong (3 claims; a per-service `.dockerignore` is a caveat, right only if that folder is the build context) and the rewrite holds; a `!**/keep.txt` exception is flagged under the classic builder (a caveat when the builder is unknown) and the literal `!node_modules/pkg/keep.txt` holds. | Scenario 108 |
+| [`DockerfileClaimKit`](https://github.com/rajatslakhina/dockerfile-claim-kit) | Answers explain their Dockerfiles as if Docker read them like a shell script or `cp -r`: `COPY src /app` said to keep the `src` folder (Docker copies what is inside it), `RUN cd /app` said to last (each `RUN` is a new shell), an `ARG` above `FROM` used in a `RUN` (empty until the stage declares it again), `$PORT` in an exec-form `CMD` (no shell expands it), a build stage's `ENV` said to reach a final stage built from a fresh image. `DockerfileClaimKit` checks each claim against a model of Docker's parser, word processing, stages and `COPY` placement, parity-tested against the classic `docker build` (69 contexts, 8 `docker run` cases), and uses `DockerignoreClaimKit` for files the `.dockerignore` keeps out. Scenario 109 asks one `ProviderGatewayKit` route for a Node Dockerfile: four lines and the placement sentence are wrong (several sources to `.` is a caution: it stops the classic builder, BuildKit was not checked) and the rewrite holds; a multi-stage follow-up's `ENV NODE_ENV` claim is wrong until the final stage is built `FROM` the build stage. | Scenario 109 |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -600,7 +601,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and eight scenarios, $0.3011291 metered total**. `architecture.svg`
+The current run is **one hundred and nine scenarios, $0.3029579 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1256,13 +1257,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and eight
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and nine
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and eight packages together; the output above is a genuine capture,
+  of all one hundred and nine packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1273,7 +1274,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and eight real packages compose and run," which the sample output
+means "the one hundred and nine real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3064,3 +3065,32 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The demo requires `dockerignore-claim-kit` 1.0.1, where a `.dockerignore` per service folder is a caveat
     rather than a wrong claim (1.0.0 called it wrong: 4 wrong claims, $0.00146965, because the feedback text it
     sends back was longer).
+
+109. **`DockerfileClaimKit`** adds the hundred-and-ninth scenario. Answers explain their Dockerfiles as if Docker
+    read them like a shell script or like `cp -r`, and the mistakes surface only when the container runs: the app
+    is not at `/app/src/index.js`, `$APP_VERSION` is empty, the server is told to listen on the text `$PORT`.
+    `DockerfileClaimKit` reads what an answer says, in its prose and in the Dockerfile it shows, and checks each
+    claim against a model of Docker's parser, word processing, stages and `COPY` placement, parity-tested against
+    the classic `docker build` (69 contexts, 87 files) and 8 `docker run` cases.
+
+    One route (`dockerfile-host`, $0.90/$3.60 per million tokens), scripted replies, one `LLMSession` per turn,
+    metered by `TokenMeterKit`, one `DockerfileLedger` for the conversation.
+    - "Write a Dockerfile for our Node API ... and say where the code ends up in the image." The answer has
+      `RUN cd /app` on its own line, `COPY package.json package-lock.json .`, `COPY src /app` described as keeping
+      the folder, `ARG APP_VERSION` above `FROM` used in a `RUN`, and `$PORT` in an exec-form `CMD`.
+      `DockerignoreClaimKit` finds no claim in it (no .dockerignore); `DockerfileClaimKit` says **wrong**: 5 wrong
+      claims (`runCdDoesNotPersist`, `argBeforeFrom`, `execFormNoShell`, `copiesDirectoryItself` twice: the
+      statement and "`src/index.js` ends up at `/app/src/index.js`", where Docker puts `/app/index.js`) and one
+      **caution** (several sources to `.` stop the classic builder; BuildKit was not checked). With the builder
+      named (`.classic`) the caution becomes a sixth wrong claim.
+    - The rewrite (`ARG APP_VERSION` redeclared, `WORKDIR /app`, `./` destinations, `COPY src ./src`, `sh -c`) is
+      **verified**: 2 claims, 2 hold.
+    - "Make it multi-stage and keep NODE_ENV=production in the final image" gets a final stage built from
+      `node:20-slim` and the sentence that the build stage's `ENV NODE_ENV` is still set there: **wrong**
+      (`stageStartsFresh`); the file copied through `COPY --from=build /app /app` holds. Built `FROM build`
+      instead, the same sentence is **verified**: 2 claims, 2 hold.
+    - Ledger: 4 reviews, 12 claims, 7 flagged, 0 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0018288**,
+    exactly the change in the total. The running total after scenario 109 is
+    **$0.3029579 across one hundred and nine scenarios**.

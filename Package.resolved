@@ -1,5 +1,5 @@
 {
-  "originHash" : "640d966e678ebd245027086bbd17633ba20a2a534d7051f7a9fe367ed12407eb",
+  "originHash" : "e6707d28d865a1249f8b2ce9584eed0785fd80da052c794dc5cd8afcdceb83c8",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -259,6 +259,15 @@
       "location" : "https://github.com/rajatslakhina/delay-signal-kit.git",
       "state" : {
         "revision" : "5befe44e37eb51e673e9a67414c7bf5a7290feea",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "dockerfile-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/dockerfile-claim-kit.git",
+      "state" : {
+        "revision" : "3993092ba97874e9bc27caa80e9f2bc728476513",
         "version" : "1.0.0"
       }
     },

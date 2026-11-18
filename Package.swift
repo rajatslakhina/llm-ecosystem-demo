@@ -118,7 +118,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/sql-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/version-range-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/gitignore-claim-kit.git", from: "1.0.2"),
-        .package(url: "https://github.com/rajatslakhina/dockerignore-claim-kit.git", from: "1.0.1")
+        .package(url: "https://github.com/rajatslakhina/dockerignore-claim-kit.git", from: "1.0.1"),
+        .package(url: "https://github.com/rajatslakhina/dockerfile-claim-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -245,7 +246,8 @@ let package = Package(
                 .product(name: "SQLClaimKit", package: "sql-claim-kit"),
                 .product(name: "VersionRangeClaimKit", package: "version-range-claim-kit"),
                 .product(name: "GitignoreClaimKit", package: "gitignore-claim-kit"),
-                .product(name: "DockerignoreClaimKit", package: "dockerignore-claim-kit")
+                .product(name: "DockerignoreClaimKit", package: "dockerignore-claim-kit"),
+                .product(name: "DockerfileClaimKit", package: "dockerfile-claim-kit")
             ]
         )
     ]
