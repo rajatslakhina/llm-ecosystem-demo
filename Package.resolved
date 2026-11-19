@@ -1,5 +1,5 @@
 {
-  "originHash" : "e6707d28d865a1249f8b2ce9584eed0785fd80da052c794dc5cd8afcdceb83c8",
+  "originHash" : "e63f5ec9888b60cdbe7b556b24ab1e1ccd417d77463128a95aa70a82ef9a59f8",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -296,6 +296,15 @@
       "state" : {
         "revision" : "b937bedf1b7f7ed1a5a0518aa57e450ef181f54b",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "entrypoint-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/entrypoint-claim-kit.git",
+      "state" : {
+        "revision" : "ec2ec592820fe82ba07efff265a27ca731f770d4",
+        "version" : "1.0.1"
       }
     },
     {

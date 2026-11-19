@@ -94,5 +94,6 @@ extension EcosystemDemo {
         await runGitignoreClaimScenario(meter: meter)
         await runDockerignoreClaimScenario(meter: meter)
         await runDockerfileClaimScenario(meter: meter)
+        await runEntrypointClaimScenario(meter: meter)
     }
 }

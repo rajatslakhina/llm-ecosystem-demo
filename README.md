@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and nine packages in this
+A single runnable demo that wires together all one hundred and ten packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -167,6 +167,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`GitignoreClaimKit`](https://github.com/rajatslakhina/gitignore-claim-kit) | Coding answers write `.gitignore` files and say what they do, and git's rules have corners that read the wrong way: nothing below an excluded directory can be re-included, `#` starts a comment only at the start of a line, a slash in the middle anchors a pattern, `*` stops at `/`, and listing a committed file does not untrack it. `GitignoreClaimKit` judges each claim with a port of git's own matcher, parity-tested against git 2.49.0. Scenario 107 asks one `ProviderGatewayKit` route to keep one log file and stop committing `.env`: the answer writes `logs/` then `!logs/keep.log`, puts a comment after `.env` on the same line and says the entry untracks `.env`. The rewrite (`logs/*`, the comment on its own line, `git rm --cached`) holds; a follow-up saying `doc/*.txt` matches `doc/server/arch.txt` is repeated after the feedback, and the `IgnoreLedger` marks the repeat. | Scenario 107 |
 | [`DockerignoreClaimKit`](https://github.com/rajatslakhina/dockerignore-claim-kit) | Answers write `.dockerignore` files the way they write `.gitignore` files, and Docker reads them differently: every pattern matches from the root of the build context (`node_modules` and `*.log` only at the top), `#` starts a comment only at the start of a line, only the root `.dockerignore` is read, an excluded `Dockerfile` still builds, and the classic builder never searches an excluded folder for a wildcard exception. `DockerignoreClaimKit` judges each claim with a port of the Docker CLI's `ignorefile` and `moby/patternmatcher`, parity-tested against `docker build` (69 contexts, 312 paths), and asks `GitignoreClaimKit` how git would read the same lines. Scenario 108 asks one `ProviderGatewayKit` route for a monorepo `.dockerignore`: the answer's gitignore habits are wrong (3 claims; a per-service `.dockerignore` is a caveat, right only if that folder is the build context) and the rewrite holds; a `!**/keep.txt` exception is flagged under the classic builder (a caveat when the builder is unknown) and the literal `!node_modules/pkg/keep.txt` holds. | Scenario 108 |
 | [`DockerfileClaimKit`](https://github.com/rajatslakhina/dockerfile-claim-kit) | Answers explain their Dockerfiles as if Docker read them like a shell script or `cp -r`: `COPY src /app` said to keep the `src` folder (Docker copies what is inside it), `RUN cd /app` said to last (each `RUN` is a new shell), an `ARG` above `FROM` used in a `RUN` (empty until the stage declares it again), `$PORT` in an exec-form `CMD` (no shell expands it), a build stage's `ENV` said to reach a final stage built from a fresh image. `DockerfileClaimKit` checks each claim against a model of Docker's parser, word processing, stages and `COPY` placement, parity-tested against the classic `docker build` (69 contexts, 8 `docker run` cases), and uses `DockerignoreClaimKit` for files the `.dockerignore` keeps out. Scenario 109 asks one `ProviderGatewayKit` route for a Node Dockerfile: four lines and the placement sentence are wrong (several sources to `.` is a caution: it stops the classic builder, BuildKit was not checked) and the rewrite holds; a multi-stage follow-up's `ENV NODE_ENV` claim is wrong until the final stage is built `FROM` the build stage. | Scenario 109 |
+| [`EntrypointClaimKit`](https://github.com/rajatslakhina/entrypoint-claim-kit) | Answers explain what a container runs with the wrong picture of how `CMD`, `ENTRYPOINT` and `docker run` combine: `docker run api --debug` said to keep the `CMD`'s `--port 80` (arguments after the image replace `CMD`), `docker run -it api bash` said to give a shell (an exec-form `ENTRYPOINT` gets `bash` as an argument), `--entrypoint` said to keep the `CMD`, `CMD ['node', 'server.js']` read as the exec form (it is not JSON, so `/bin/sh` runs it). `EntrypointClaimKit` checks run claims, statements and the `CMD`/`ENTRYPOINT` lines against Docker's parser, builder and daemon rules, parity-tested against `docker inspect` and `docker create`. A base image's unseen `ENTRYPOINT` and a wrapper such as `tini --` never make a claim wrong. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -601,7 +602,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and nine scenarios, $0.3029579 metered total**. `architecture.svg`
+The current run is **one hundred and ten scenarios, $0.3046137 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1257,13 +1258,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and nine
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and ten
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and nine packages together; the output above is a genuine capture,
+  of all one hundred and ten packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1274,7 +1275,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and nine real packages compose and run," which the sample output
+means "the one hundred and ten real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3071,7 +3072,8 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     is not at `/app/src/index.js`, `$APP_VERSION` is empty, the server is told to listen on the text `$PORT`.
     `DockerfileClaimKit` reads what an answer says, in its prose and in the Dockerfile it shows, and checks each
     claim against a model of Docker's parser, word processing, stages and `COPY` placement, parity-tested against
-    the classic `docker build` (69 contexts, 87 files) and 8 `docker run` cases.
+    the classic `docker build` (69 contexts holding 100 files; 87 of them are in the 62 contexts that build)
+    and 8 `docker run` cases.
 
     One route (`dockerfile-host`, $0.90/$3.60 per million tokens), scripted replies, one `LLMSession` per turn,
     metered by `TokenMeterKit`, one `DockerfileLedger` for the conversation.
@@ -3094,3 +3096,36 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0018288**,
     exactly the change in the total. The running total after scenario 109 is
     **$0.3029579 across one hundred and nine scenarios**.
+
+110. **`EntrypointClaimKit`** adds the hundred-and-tenth scenario. Answers explain what a container runs with the
+    wrong picture of how `CMD`, `ENTRYPOINT` and `docker run` combine, and the mistakes surface only when the
+    container starts: the port is gone, the "shell" is an argument to the app, the inherited `CMD` is empty.
+    `EntrypointClaimKit` reads run claims ("`docker run api --debug` runs ..."), statements and the answer's
+    `CMD`/`ENTRYPOINT` lines, and checks them against Docker's parser, builder and daemon rules, parity-tested
+    against the classic `docker build --no-cache`, `docker inspect` and `docker create` (39 Dockerfiles, 56 runs).
+
+    One route (`entrypoint-host`, $0.85/$3.40 per million tokens), scripted replies, one `LLMSession` per turn,
+    metered by `TokenMeterKit`, one `EntrypointLedger` for the conversation.
+    - "How do I turn on --debug when I run our API container, and how do I get a shell in it?" The answer's
+      Dockerfile has `ENTRYPOINT ["python", "app.py"]` and `CMD ["--port", "80"]`. It says
+      `docker run api --debug` runs `python app.py --port 80 --debug` and `docker run -it api bash` starts
+      `bash`. `DockerfileClaimKit` finds no claim of its own in it; `EntrypointClaimKit` says **wrong**, with 2
+      wrong claims: `argumentsAppendToCmd` (it runs `python app.py --debug`) and `argumentsReplaceEntrypoint`
+      (it runs `python app.py bash`).
+    - The rewrite (`docker run api --port 80 --debug`, `docker run -it --entrypoint bash api`, and two
+      statements about arguments and `--entrypoint`) is **verified**: 4 claims, 4 hold.
+    - "Run the server under tini so it is PID 1" gets a final stage built `FROM base` (a stage that set `CMD`)
+      with `ENTRYPOINT ["tini", "--"]`, and the sentence that setting ENTRYPOINT keeps the base stage's CMD:
+      **wrong**, 2 claims (the statement, and the run, which is `tini --` alone: `entrypointKeepsBaseCmd`).
+      With `CMD` set again after the `ENTRYPOINT`, it is **verified**: 2 claims, 2 hold.
+      `DockerfileClaimKit` finds no claim in that answer either.
+    - Ledger: 4 reviews, 10 claims, 4 flagged, 0 repeated.
+
+    The demo requires `entrypoint-claim-kit` 1.0.1. The first run of this scenario used 1.0.0, which put a
+    caution on the corrected answer (its `CMD` after the `ENTRYPOINT` was not seen to set the emptied `CMD`
+    again) and read "the final stage ... runs" as a statement about the last `CMD`. 1.0.1 fixes both, and the
+    corrected answer is kept as one of its tests.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0016558**,
+    exactly the change in the total. The running total after scenario 110 is
+    **$0.3046137 across one hundred and ten scenarios**.
