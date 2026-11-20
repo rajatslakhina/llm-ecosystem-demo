@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and ten packages in this
+A single runnable demo that wires together all one hundred and eleven packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -168,6 +168,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`DockerignoreClaimKit`](https://github.com/rajatslakhina/dockerignore-claim-kit) | Answers write `.dockerignore` files the way they write `.gitignore` files, and Docker reads them differently: every pattern matches from the root of the build context (`node_modules` and `*.log` only at the top), `#` starts a comment only at the start of a line, only the root `.dockerignore` is read, an excluded `Dockerfile` still builds, and the classic builder never searches an excluded folder for a wildcard exception. `DockerignoreClaimKit` judges each claim with a port of the Docker CLI's `ignorefile` and `moby/patternmatcher`, parity-tested against `docker build` (69 contexts, 312 paths), and asks `GitignoreClaimKit` how git would read the same lines. Scenario 108 asks one `ProviderGatewayKit` route for a monorepo `.dockerignore`: the answer's gitignore habits are wrong (3 claims; a per-service `.dockerignore` is a caveat, right only if that folder is the build context) and the rewrite holds; a `!**/keep.txt` exception is flagged under the classic builder (a caveat when the builder is unknown) and the literal `!node_modules/pkg/keep.txt` holds. | Scenario 108 |
 | [`DockerfileClaimKit`](https://github.com/rajatslakhina/dockerfile-claim-kit) | Answers explain their Dockerfiles as if Docker read them like a shell script or `cp -r`: `COPY src /app` said to keep the `src` folder (Docker copies what is inside it), `RUN cd /app` said to last (each `RUN` is a new shell), an `ARG` above `FROM` used in a `RUN` (empty until the stage declares it again), `$PORT` in an exec-form `CMD` (no shell expands it), a build stage's `ENV` said to reach a final stage built from a fresh image. `DockerfileClaimKit` checks each claim against a model of Docker's parser, word processing, stages and `COPY` placement, parity-tested against the classic `docker build` (69 contexts, 8 `docker run` cases), and uses `DockerignoreClaimKit` for files the `.dockerignore` keeps out. Scenario 109 asks one `ProviderGatewayKit` route for a Node Dockerfile: four lines and the placement sentence are wrong (several sources to `.` is a caution: it stops the classic builder, BuildKit was not checked) and the rewrite holds; a multi-stage follow-up's `ENV NODE_ENV` claim is wrong until the final stage is built `FROM` the build stage. | Scenario 109 |
 | [`EntrypointClaimKit`](https://github.com/rajatslakhina/entrypoint-claim-kit) | Answers explain what a container runs with the wrong picture of how `CMD`, `ENTRYPOINT` and `docker run` combine: `docker run api --debug` said to keep the `CMD`'s `--port 80` (arguments after the image replace `CMD`), `docker run -it api bash` said to give a shell (an exec-form `ENTRYPOINT` gets `bash` as an argument), `--entrypoint` said to keep the `CMD`, `CMD ['node', 'server.js']` read as the exec form (it is not JSON, so `/bin/sh` runs it). `EntrypointClaimKit` checks run claims, statements and the `CMD`/`ENTRYPOINT` lines against Docker's parser, builder and daemon rules, parity-tested against `docker inspect` and `docker create`. A base image's unseen `ENTRYPOINT` and a wrapper such as `tini --` never make a claim wrong. |
+| [`ComposeClaimKit`](https://github.com/rajatslakhina/compose-claim-kit) | Answers wire Docker Compose services with the wrong picture of the network and of substitution: `DATABASE_URL=postgres://db:5433/app` when `db` publishes `5433:5432` (containers reach each other on the container port), `localhost:5432` inside the `api` container (there `localhost` is the container itself), `depends_on` said to wait until the database is ready (it waits for the container to start), `${TAG-latest}` said to give `latest` for an empty `TAG` (without a colon only an unset one), `.env` said to reach the containers (it feeds substitution only). `ComposeClaimKit` reads addresses, port mappings, substitutions, statements and the compose file's own `environment:` addresses, parity-tested against `docker compose config --format json` (73 cases) and a running two-container project. A fragment that leaves out a service and a URL a browser reads never make a claim wrong. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -602,7 +603,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and ten scenarios, $0.3046137 metered total**. `architecture.svg`
+The current run is **one hundred and eleven scenarios, $0.3061273 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1258,13 +1259,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and ten
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and eleven
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and ten packages together; the output above is a genuine capture,
+  of all one hundred and eleven packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1275,7 +1276,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and ten real packages compose and run," which the sample output
+means "the one hundred and eleven real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3129,3 +3130,32 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0016558**,
     exactly the change in the total. The running total after scenario 110 is
     **$0.3046137 across one hundred and ten scenarios**.
+
+111. **`ComposeClaimKit`** adds the hundred-and-eleventh scenario. Answers wire Docker Compose services with the
+    wrong picture of the network and of substitution, and `docker compose config` accepts every one of them: the
+    mistakes show up as a refused connection, a database that is not ready, or an empty image tag.
+    `ComposeClaimKit` reads addresses ("`api` connects to `db:5433`"), port mappings, substitutions
+    ("`${TAG:-latest}` becomes ..."), statements and the compose file's own `environment:` addresses, and checks
+    them against compose's reading of the file, the `.env` and the `export` lines the chat shows. It is
+    parity-tested against `docker compose config --format json` (73 cases) and, for reachability, a running
+    two-container project.
+
+    One route (`compose-host`, $0.80/$3.20 per million tokens, priced explicitly), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `ComposeLedger` for the conversation.
+    - "Our API can't reach Postgres under docker compose. How do I set DATABASE_URL, and when is the database
+      ready?" The answer's compose file publishes `db` as `5433:5432` and points `DATABASE_URL` at `db:5433`; it
+      says the `api` service connects to Postgres at `db:5433` and that `depends_on` makes sure the database is
+      ready. `EntrypointClaimKit` finds no claim in it; `ComposeClaimKit` says **wrong**, with 2 wrong claims:
+      `publishedPortInsideNetwork` (use `db:5432`, the container port) and `startedMeansReady`. The same
+      `db:5433` in `environment:` is the same mistake, so it gets no second finding.
+    - The rewrite (`db:5432`, `localhost:5433` from the laptop, `condition: service_healthy` with a
+      `pg_isready` healthcheck) is **verified**: 2 claims, 2 hold.
+    - "Pin the Postgres image tag with a .env file" gets `image: "postgres:${PG_TAG-16}"` with `PG_TAG=` in
+      `.env`, and the sentences that it becomes `postgres:16` and that `.env` variables are available inside the
+      container: **wrong**, 2 claims (`dashCoversEmpty`: it gives `postgres:`; `dotEnvReachesContainer`). With
+      `${PG_TAG:-16}` and `.env` described as substitution only, it is **verified**: 2 claims, 2 hold.
+    - Ledger: 4 reviews, 8 claims, 4 flagged, 0 repeated.
+
+    The replies are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0015136**,
+    exactly the change in the total. The running total after scenario 111 is
+    **$0.3061273 across one hundred and eleven scenarios**.
