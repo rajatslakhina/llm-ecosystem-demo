@@ -96,5 +96,6 @@ extension EcosystemDemo {
         await runDockerfileClaimScenario(meter: meter)
         await runEntrypointClaimScenario(meter: meter)
         await runComposeClaimScenario(meter: meter)
+        await runComposeMergeClaimScenario(meter: meter)
     }
 }

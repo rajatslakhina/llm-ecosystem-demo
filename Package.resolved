@@ -1,5 +1,5 @@
 {
-  "originHash" : "86bc0485a50487de948d17bbfd98023d4305d321edf42fd79dd6052c2506f819",
+  "originHash" : "2f263fb38fbd26b5ce63445ebfe92d7d78681ad72dd81cc0e105a4188f71b804",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -170,6 +170,15 @@
       "state" : {
         "revision" : "fa8de359041bc97f77e2321709e917260600b86e",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "compose-merge-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/compose-merge-claim-kit.git",
+      "state" : {
+        "revision" : "309c56c99aecaf7f4e47d4bd648ab5ba39621e4b",
+        "version" : "1.0.1"
       }
     },
     {

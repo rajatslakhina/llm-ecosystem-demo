@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and eleven packages in this
+A single runnable demo that wires together all one hundred and twelve packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -169,6 +169,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`DockerfileClaimKit`](https://github.com/rajatslakhina/dockerfile-claim-kit) | Answers explain their Dockerfiles as if Docker read them like a shell script or `cp -r`: `COPY src /app` said to keep the `src` folder (Docker copies what is inside it), `RUN cd /app` said to last (each `RUN` is a new shell), an `ARG` above `FROM` used in a `RUN` (empty until the stage declares it again), `$PORT` in an exec-form `CMD` (no shell expands it), a build stage's `ENV` said to reach a final stage built from a fresh image. `DockerfileClaimKit` checks each claim against a model of Docker's parser, word processing, stages and `COPY` placement, parity-tested against the classic `docker build` (69 contexts, 8 `docker run` cases), and uses `DockerignoreClaimKit` for files the `.dockerignore` keeps out. Scenario 109 asks one `ProviderGatewayKit` route for a Node Dockerfile: four lines and the placement sentence are wrong (several sources to `.` is a caution: it stops the classic builder, BuildKit was not checked) and the rewrite holds; a multi-stage follow-up's `ENV NODE_ENV` claim is wrong until the final stage is built `FROM` the build stage. | Scenario 109 |
 | [`EntrypointClaimKit`](https://github.com/rajatslakhina/entrypoint-claim-kit) | Answers explain what a container runs with the wrong picture of how `CMD`, `ENTRYPOINT` and `docker run` combine: `docker run api --debug` said to keep the `CMD`'s `--port 80` (arguments after the image replace `CMD`), `docker run -it api bash` said to give a shell (an exec-form `ENTRYPOINT` gets `bash` as an argument), `--entrypoint` said to keep the `CMD`, `CMD ['node', 'server.js']` read as the exec form (it is not JSON, so `/bin/sh` runs it). `EntrypointClaimKit` checks run claims, statements and the `CMD`/`ENTRYPOINT` lines against Docker's parser, builder and daemon rules, parity-tested against `docker inspect` and `docker create`. A base image's unseen `ENTRYPOINT` and a wrapper such as `tini --` never make a claim wrong. |
 | [`ComposeClaimKit`](https://github.com/rajatslakhina/compose-claim-kit) | Answers wire Docker Compose services with the wrong picture of the network and of substitution: `DATABASE_URL=postgres://db:5433/app` when `db` publishes `5433:5432` (containers reach each other on the container port), `localhost:5432` inside the `api` container (there `localhost` is the container itself), `depends_on` said to wait until the database is ready (it waits for the container to start), `${TAG-latest}` said to give `latest` for an empty `TAG` (without a colon only an unset one), `.env` said to reach the containers (it feeds substitution only). `ComposeClaimKit` reads addresses, port mappings, substitutions, statements and the compose file's own `environment:` addresses, parity-tested against `docker compose config --format json` (73 cases) and a running two-container project. A fragment that leaves out a service and a URL a browser reads never make a claim wrong. |
+| [`ComposeMergeClaimKit`](https://github.com/rajatslakhina/compose-merge-claim-kit) | Answers show `docker-compose.yml` and `docker-compose.override.yml` and then describe what the two do together with the wrong picture of compose's merge: the override's `ports` said to replace the base ones (compose appends them), `LOG_LEVEL` said to be gone because the override sets `environment` (it merges by key), `ports: []` said to clear the base ports (it adds nothing; `!reset []` clears), the override said to still apply with `-f docker-compose.yml` (only the files named are read). `ComposeMergeClaimKit` merges the files the answer shows the way compose picks them, checks the ports, image, command and variables the answer states and the merge rules it states, and calls a result wrong only when a named misreading reproduces it. Parity-tested against `docker compose -f ... config --format json` (200 cases). |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -603,7 +604,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and eleven scenarios, $0.3061273 metered total**. `architecture.svg`
+The current run is **one hundred and twelve scenarios, $0.30750515 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1259,13 +1260,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and eleven
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and twelve
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and eleven packages together; the output above is a genuine capture,
+  of all one hundred and twelve packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1276,7 +1277,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and eleven real packages compose and run," which the sample output
+means "the one hundred and twelve real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3159,3 +3160,32 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The replies are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0015136**,
     exactly the change in the total. The running total after scenario 111 is
     **$0.3061273 across one hundred and eleven scenarios**.
+
+112. **`ComposeMergeClaimKit`** adds the hundred-and-twelfth scenario. Scenario 111 checks one compose file; this one
+    checks what an answer says two files do together. `docker compose config` accepts every merge, so a wrong
+    picture of it shows up only when the stack runs: a port still bound, a variable that did not go away, a
+    production run that still has the development settings. `ComposeMergeClaimKit` merges the files the answer
+    shows (the base file and its override, or the `-f` list), checks the ports, image, command and variables the
+    answer states and the merge rules it states, and names the misreading behind a wrong claim. It is
+    parity-tested against `docker compose -f ... config --format json` (200 cases).
+
+    One route (`compose-merge-host`, $0.85/$3.40 per million tokens, priced explicitly), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `MergeLedger` for the conversation.
+    - "In development I want the API on port 8081 with debug logging. How do I use a docker compose override file
+      for that?" The answer shows `docker-compose.yml` (`8080:8000`, `LOG_LEVEL: info`, `DEBUG: "0"`) and an
+      override (`8081:8000`, `DEBUG: "1"`), and says that with both files `api` publishes `8081` instead of `8080`
+      and that `LOG_LEVEL` is gone. `ComposeClaimKit` finds no claim in it (it reads one file at a time);
+      `ComposeMergeClaimKit` says **wrong**, with 2 wrong claims: `listReplaced` (compose publishes `8080` and
+      `8081`) and `mappingReplaced` (`LOG_LEVEL` stays `info`).
+    - The rewrite (both ports, `DEBUG` is `1`, `LOG_LEVEL` stays `info`) is **verified**: 3 claims, 3 hold.
+    - "How do I run it in production without the development override?" gets
+      `docker compose -f docker-compose.yml up -d` and the sentence that the override is still applied, so `DEBUG`
+      stays `1`: **wrong**, 1 claim (`overrideLoadedWithFile`: with `-f`, compose reads only the files named, and
+      `DEBUG` is `0`). The rewrite (`DEBUG` is `0`, `api` publishes only `8080`) is **verified**: 2 claims, 2 hold.
+    - Ledger: 4 reviews, 8 claims, 3 flagged, 0 repeated.
+
+    The third turn found a gap in the kit: 1.0.0 skipped any sentence that starts with "Run `docker compose ...`;",
+    so the production answer made no claim. 1.0.1 reads the result after a run command, and this demo pins
+    `from: "1.0.1"`. The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    **$0.00137785**, exactly the change in the total. The running total after scenario 112 is
+    **$0.30750515 across one hundred and twelve scenarios**.
