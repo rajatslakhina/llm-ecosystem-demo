@@ -1,5 +1,5 @@
 {
-  "originHash" : "2f263fb38fbd26b5ce63445ebfe92d7d78681ad72dd81cc0e105a4188f71b804",
+  "originHash" : "9d8bf959734d03c1c6270d9a5025ee921887dafe2935c5dd1a45ed74f94228b5",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/compose-merge-claim-kit.git",
       "state" : {
-        "revision" : "309c56c99aecaf7f4e47d4bd648ab5ba39621e4b",
-        "version" : "1.0.1"
+        "revision" : "0d34581bdae40b8d5143215d7c1ab254f1a85e47",
+        "version" : "1.0.2"
       }
     },
     {

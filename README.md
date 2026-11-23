@@ -3174,7 +3174,7 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     - "In development I want the API on port 8081 with debug logging. How do I use a docker compose override file
       for that?" The answer shows `docker-compose.yml` (`8080:8000`, `LOG_LEVEL: info`, `DEBUG: "0"`) and an
       override (`8081:8000`, `DEBUG: "1"`), and says that with both files `api` publishes `8081` instead of `8080`
-      and that `LOG_LEVEL` is gone. `ComposeClaimKit` finds no claim in it (it reads one file at a time);
+      and that `LOG_LEVEL` is gone. `ComposeClaimKit` finds no claim in it;
       `ComposeMergeClaimKit` says **wrong**, with 2 wrong claims: `listReplaced` (compose publishes `8080` and
       `8081`) and `mappingReplaced` (`LOG_LEVEL` stays `info`).
     - The rewrite (both ports, `DEBUG` is `1`, `LOG_LEVEL` stays `info`) is **verified**: 3 claims, 3 hold.
@@ -3185,7 +3185,8 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     - Ledger: 4 reviews, 8 claims, 3 flagged, 0 repeated.
 
     The third turn found a gap in the kit: 1.0.0 skipped any sentence that starts with "Run `docker compose ...`;",
-    so the production answer made no claim. 1.0.1 reads the result after a run command, and this demo pins
-    `from: "1.0.1"`. The replies are scripted, so the mistakes are planted, not observed. The four turns meter
+    so the production answer made no claim. 1.0.1 reads the result after a run command; 1.0.2 (same day) stops a
+    clause that names one file ("the base file still uses ...") from being called wrong, and this demo pins
+    `from: "1.0.2"`. The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.00137785**, exactly the change in the total. The running total after scenario 112 is
     **$0.30750515 across one hundred and twelve scenarios**.
