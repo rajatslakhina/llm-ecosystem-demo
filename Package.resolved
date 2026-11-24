@@ -1,5 +1,5 @@
 {
-  "originHash" : "1e3088fe31e70b545a04a72de48fc0cfa54a1a517db172cb5b8eb266ed3f6a0b",
+  "originHash" : "55af5df1effb5e1213740b7cc5dc16398b70fec0f5dd32de9d5a7cc3bcbeeb6e",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/compose-command-claim-kit.git",
       "state" : {
-        "revision" : "8a91963ccd8edbd24571eb597902805e6e1a8ed6",
-        "version" : "1.0.0"
+        "revision" : "55e501db888dece76a50d1473bb4e3762e9de749",
+        "version" : "1.0.1"
       }
     },
     {

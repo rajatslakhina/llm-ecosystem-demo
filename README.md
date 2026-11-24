@@ -3218,6 +3218,8 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
 
     Before this demo was written, the app-side question was checked: on these answers `EntrypointClaimKit`,
     `ComposeClaimKit` and `ComposeMergeClaimKit` make no note (the merge kit leaves the claims unchecked), so
-    one mistake gets one note. The replies are scripted, so the mistakes are planted, not observed. The four turns
+    one mistake gets one note. 1.0.1 (same day) stops four correct sentences from being flagged (a clause about
+    the image, an inline setting, both sides of a rule, a defaulted variable); this demo's output did not change,
+    and it pins `from: "1.0.1"`. The replies are scripted, so the mistakes are planted, not observed. The four turns
     meter **$0.0014724**, exactly the change in the total. The running total after scenario 113 is
     **$0.30897755 across one hundred and thirteen scenarios**.
