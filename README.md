@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and twelve packages in this
+A single runnable demo that wires together all one hundred and thirteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -170,6 +170,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`EntrypointClaimKit`](https://github.com/rajatslakhina/entrypoint-claim-kit) | Answers explain what a container runs with the wrong picture of how `CMD`, `ENTRYPOINT` and `docker run` combine: `docker run api --debug` said to keep the `CMD`'s `--port 80` (arguments after the image replace `CMD`), `docker run -it api bash` said to give a shell (an exec-form `ENTRYPOINT` gets `bash` as an argument), `--entrypoint` said to keep the `CMD`, `CMD ['node', 'server.js']` read as the exec form (it is not JSON, so `/bin/sh` runs it). `EntrypointClaimKit` checks run claims, statements and the `CMD`/`ENTRYPOINT` lines against Docker's parser, builder and daemon rules, parity-tested against `docker inspect` and `docker create`. A base image's unseen `ENTRYPOINT` and a wrapper such as `tini --` never make a claim wrong. |
 | [`ComposeClaimKit`](https://github.com/rajatslakhina/compose-claim-kit) | Answers wire Docker Compose services with the wrong picture of the network and of substitution: `DATABASE_URL=postgres://db:5433/app` when `db` publishes `5433:5432` (containers reach each other on the container port), `localhost:5432` inside the `api` container (there `localhost` is the container itself), `depends_on` said to wait until the database is ready (it waits for the container to start), `${TAG-latest}` said to give `latest` for an empty `TAG` (without a colon only an unset one), `.env` said to reach the containers (it feeds substitution only). `ComposeClaimKit` reads addresses, port mappings, substitutions, statements and the compose file's own `environment:` addresses, parity-tested against `docker compose config --format json` (73 cases) and a running two-container project. A fragment that leaves out a service and a URL a browser reads never make a claim wrong. |
 | [`ComposeMergeClaimKit`](https://github.com/rajatslakhina/compose-merge-claim-kit) | Answers show `docker-compose.yml` and `docker-compose.override.yml` and then describe what the two do together with the wrong picture of compose's merge: the override's `ports` said to replace the base ones (compose appends them), `LOG_LEVEL` said to be gone because the override sets `environment` (it merges by key), `ports: []` said to clear the base ports (it adds nothing; `!reset []` clears), the override said to still apply with `-f docker-compose.yml` (only the files named are read). `ComposeMergeClaimKit` merges the files the answer shows the way compose picks them, checks the ports, image, command and variables the answer states and the merge rules it states, and calls a result wrong only when a named misreading reproduces it. Parity-tested against `docker compose -f ... config --format json` (200 cases). |
+| [`ComposeCommandClaimKit`](https://github.com/rajatslakhina/compose-command-claim-kit) | Answers say what a compose service runs: `command: npm install && npm start` said to run through a shell (compose splits the string with no shell and stops at `&&`), an `entrypoint:` said to keep the image's `CMD`, `docker compose run` arguments said to be added to the command. Checked against compose's word splitting, substitution and the daemon's entrypoint/command merge (parity with `docker inspect`, 260 cases). |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -604,7 +605,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and twelve scenarios, $0.30750515 metered total**. `architecture.svg`
+The current run is **one hundred and thirteen scenarios, $0.30897755 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1260,13 +1261,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and twelve
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and thirteen
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and twelve packages together; the output above is a genuine capture,
+  of all one hundred and thirteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1277,7 +1278,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and twelve real packages compose and run," which the sample output
+means "the one hundred and thirteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3190,3 +3191,33 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     `from: "1.0.2"`. The replies are scripted, so the mistakes are planted, not observed. The four turns meter
     **$0.00137785**, exactly the change in the total. The running total after scenario 112 is
     **$0.30750515 across one hundred and twelve scenarios**.
+
+113. **`ComposeCommandClaimKit`** adds the hundred-and-thirteenth scenario. Scenarios 109 to 112 check Dockerfiles,
+    what a container runs, one compose file and merged files; this one checks what an answer says a compose service
+    runs. Compose runs no shell for a `command:` string: it splits it into words and stops at the first
+    `&&`, `;`, `|`, `<` or `>`, dropping the rest unread, so `command: npm install && npm start`
+    installs and never starts. `docker compose config` accepts the file. `ComposeCommandClaimKit` reads the compose
+    file, the Dockerfile and the `.env` the conversation shows, works out the process each service starts, and
+    checks stated command lines, 15 stated rules and the file's own `command:` lines. It is parity-tested against
+    `docker compose create` / `run -d` and `docker inspect` (260 cases).
+
+    One route (`compose-command-host`, $0.90/$3.60 per million tokens, priced explicitly), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `CommandLedger` for the conversation.
+    - The question shows `command: npm install && npm start` and asks why the server never starts. The answer
+      says compose runs `command` through a shell, so `web` runs `npm install && npm start`.
+      `EntrypointClaimKit` finds no claim in it (it reads Dockerfiles and `docker run`);
+      `ComposeCommandClaimKit` says **wrong**, 2 claims, both `stringRunsInShell` (the container runs
+      `npm install` after the image's entrypoint).
+    - The rewrite (a `["sh", "-c", "npm install && npm start"]` list, and "the old file ran only
+      `npm install`") is **verified**: 2 claims, 2 hold.
+    - "Can I run it under tini so signals reach node?" gets a Dockerfile with `CMD ["node", "server.js"]`, a
+      compose file with `entrypoint: ["/sbin/tini", "--"]` and no `command:`, and the sentence that the
+      image's `CMD` still runs: **wrong**, 2 claims (`entrypointKeepsImageCmd`: `web` runs
+      `/sbin/tini --`). The rewrite repeats the command in `command:` and is **verified**: 2 claims, 2 hold.
+    - Ledger: 4 reviews, 8 claims, 4 flagged, 0 repeated.
+
+    Before this demo was written, the app-side question was checked: on these answers `EntrypointClaimKit`,
+    `ComposeClaimKit` and `ComposeMergeClaimKit` make no note (the merge kit leaves the claims unchecked), so
+    one mistake gets one note. The replies are scripted, so the mistakes are planted, not observed. The four turns
+    meter **$0.0014724**, exactly the change in the total. The running total after scenario 113 is
+    **$0.30897755 across one hundred and thirteen scenarios**.

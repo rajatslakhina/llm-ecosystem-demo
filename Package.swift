@@ -122,7 +122,8 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/dockerfile-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/entrypoint-claim-kit.git", from: "1.0.1"),
         .package(url: "https://github.com/rajatslakhina/compose-claim-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/rajatslakhina/compose-merge-claim-kit.git", from: "1.0.2")
+        .package(url: "https://github.com/rajatslakhina/compose-merge-claim-kit.git", from: "1.0.2"),
+        .package(url: "https://github.com/rajatslakhina/compose-command-claim-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -253,7 +254,8 @@ let package = Package(
                 .product(name: "DockerfileClaimKit", package: "dockerfile-claim-kit"),
                 .product(name: "EntrypointClaimKit", package: "entrypoint-claim-kit"),
                 .product(name: "ComposeClaimKit", package: "compose-claim-kit"),
-                .product(name: "ComposeMergeClaimKit", package: "compose-merge-claim-kit")
+                .product(name: "ComposeMergeClaimKit", package: "compose-merge-claim-kit"),
+                .product(name: "ComposeCommandClaimKit", package: "compose-command-claim-kit")
             ]
         )
     ]
