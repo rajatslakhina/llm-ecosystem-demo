@@ -3239,7 +3239,7 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     - The question shows `api` with `restart: always` and `test: ["CMD", "curl", "-f", "http://localhost:3000/health",
       "||", "exit", "1"]` and asks why it stays unhealthy and never restarts. The answer says the test runs through
       a shell and that Docker restarts unhealthy containers under `restart: always`. `ComposeCommandClaimKit` finds
-      no claim in it (a healthcheck is not a `command:`); `HealthcheckClaimKit` says **wrong**, 2 claims
+      no claim in it; `HealthcheckClaimKit` says **wrong**, 2 claims
       (`execFormUsesShell`, read from "your healthcheck" with only an exec-form test in view, and
       `unhealthyRestarts`).
     - The rewrite (`CMD-SHELL`, and "Docker never restarts an unhealthy container") is **verified**: 2 claims, 2 hold.
@@ -3251,6 +3251,11 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
       claims (a `containerVariable` caution on the file line, `variableFromContainer` wrong). The rewrite writes
       `$$API_TOKEN` and is **verified**: 2 claims, 2 hold.
     - Ledger: 4 reviews, 8 claims, 4 flagged, 0 repeated.
+
+    One known gap in the neighbouring kit: answer 2's first sentence ("so the `||` reached it as an argument") is
+    true for a healthcheck exec form, and `ComposeCommandClaimKit` 1.0.1 flags it with its `command:` operator rule.
+    This scenario runs that kit on answer 1 only; checked separately, 2 of 63 correct healthcheck answers get a note
+    from it. A fix is planned as ComposeCommandClaimKit 1.0.2.
 
     Before this demo was written, the app-side question was checked: 20 wrong healthcheck answers passed
     `ComposeClaimKit`, `ComposeMergeClaimKit`, `ComposeCommandClaimKit`, `EntrypointClaimKit`, `DockerfileClaimKit`
