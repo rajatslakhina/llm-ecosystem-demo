@@ -1,5 +1,5 @@
 {
-  "originHash" : "55af5df1effb5e1213740b7cc5dc16398b70fec0f5dd32de9d5a7cc3bcbeeb6e",
+  "originHash" : "80491d04ebdad74a1484b8ecbbef7b48fe1ac6df329a29897c90b2c74bd60e7b",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -413,6 +413,15 @@
       "state" : {
         "revision" : "a27c8e98f482cb1032e5c73db5ee13098b098e3e",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "healthcheck-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/healthcheck-claim-kit.git",
+      "state" : {
+        "revision" : "9728306395324b70589be10a22017bb942389041",
+        "version" : "1.0.1"
       }
     },
     {

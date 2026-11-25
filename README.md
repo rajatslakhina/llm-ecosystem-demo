@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and thirteen packages in this
+A single runnable demo that wires together all one hundred and fourteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -171,6 +171,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ComposeClaimKit`](https://github.com/rajatslakhina/compose-claim-kit) | Answers wire Docker Compose services with the wrong picture of the network and of substitution: `DATABASE_URL=postgres://db:5433/app` when `db` publishes `5433:5432` (containers reach each other on the container port), `localhost:5432` inside the `api` container (there `localhost` is the container itself), `depends_on` said to wait until the database is ready (it waits for the container to start), `${TAG-latest}` said to give `latest` for an empty `TAG` (without a colon only an unset one), `.env` said to reach the containers (it feeds substitution only). `ComposeClaimKit` reads addresses, port mappings, substitutions, statements and the compose file's own `environment:` addresses, parity-tested against `docker compose config --format json` (73 cases) and a running two-container project. A fragment that leaves out a service and a URL a browser reads never make a claim wrong. |
 | [`ComposeMergeClaimKit`](https://github.com/rajatslakhina/compose-merge-claim-kit) | Answers show `docker-compose.yml` and `docker-compose.override.yml` and then describe what the two do together with the wrong picture of compose's merge: the override's `ports` said to replace the base ones (compose appends them), `LOG_LEVEL` said to be gone because the override sets `environment` (it merges by key), `ports: []` said to clear the base ports (it adds nothing; `!reset []` clears), the override said to still apply with `-f docker-compose.yml` (only the files named are read). `ComposeMergeClaimKit` merges the files the answer shows the way compose picks them, checks the ports, image, command and variables the answer states and the merge rules it states, and calls a result wrong only when a named misreading reproduces it. Parity-tested against `docker compose -f ... config --format json` (200 cases). |
 | [`ComposeCommandClaimKit`](https://github.com/rajatslakhina/compose-command-claim-kit) | Answers say what a compose service runs: `command: npm install && npm start` said to run through a shell (compose splits the string with no shell and stops at `&&`), an `entrypoint:` said to keep the image's `CMD`, `docker compose run` arguments said to be added to the command. Checked against compose's word splitting, substitution and the daemon's entrypoint/command merge (parity with `docker inspect`, 260 cases). |
+| [`HealthcheckClaimKit`](https://github.com/rajatslakhina/healthcheck-claim-kit) | Answers say how a container healthcheck behaves: `["CMD", ..., "||", "exit", "1"]` said to run through a shell (the engine execs it; `||` is an argument), Docker said to restart unhealthy containers under `restart: always` (it never does), `$API_TOKEN` in `test:` said to come from the container's `environment:` (compose substitutes it from the shell and `.env`), wrong defaults, a compose override said to drop the image's `HEALTHCHECK` command. Checked against compose and the engine (parity with `docker inspect`, 114 cases) and running containers. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -605,7 +606,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and thirteen scenarios, $0.30897755 metered total**. `architecture.svg`
+The current run is **one hundred and fourteen scenarios, $0.3105101 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1261,13 +1262,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and thirteen
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and fourteen
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and thirteen packages together; the output above is a genuine capture,
+  of all one hundred and fourteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1278,7 +1279,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and thirteen real packages compose and run," which the sample output
+means "the one hundred and fourteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3223,3 +3224,36 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     and it pins `from: "1.0.1"`. The replies are scripted, so the mistakes are planted, not observed. The four turns
     meter **$0.0014724**, exactly the change in the total. The running total after scenario 113 is
     **$0.30897755 across one hundred and thirteen scenarios**.
+
+114. **`HealthcheckClaimKit`** adds the hundred-and-fourteenth scenario. Scenario 113 checks what a compose service
+    runs; this one checks what an answer says about its healthcheck. Two facts make healthchecks easy to get wrong:
+    a `test:` written as a list starting with `CMD` is exec'd with no shell (so `||` and `exit` reach `curl` as
+    arguments and the check fails), while a `test:` string runs in `/bin/sh -c`, the opposite of a `command:`
+    string; and the engine never restarts a container for being unhealthy, whatever the restart policy.
+    `HealthcheckClaimKit` reads the compose file, Dockerfile and `.env` the conversation shows, and checks 20 stated
+    rules, stated defaults and the healthcheck lines of the answer's own files. It is parity-tested against
+    `docker compose config`, `build`, `create` and `docker inspect` (114 cases).
+
+    One route (`healthcheck-host`, $0.85/$3.40 per million tokens, priced explicitly), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `HealthLedger` for the conversation.
+    - The question shows `api` with `restart: always` and `test: ["CMD", "curl", "-f", "http://localhost:3000/health",
+      "||", "exit", "1"]` and asks why it stays unhealthy and never restarts. The answer says the test runs through
+      a shell and that Docker restarts unhealthy containers under `restart: always`. `ComposeCommandClaimKit` finds
+      no claim in it (a healthcheck is not a `command:`); `HealthcheckClaimKit` says **wrong**, 2 claims
+      (`execFormUsesShell`, read from "your healthcheck" with only an exec-form test in view, and
+      `unhealthyRestarts`).
+    - The rewrite (`CMD-SHELL`, and "Docker never restarts an unhealthy container") is **verified**: 2 claims, 2 hold.
+      The scene shows compose's settings for `api` (test, interval 10s, the rest at engine defaults) and says its
+      effective healthcheck is unknown: `api` uses an unseen image, whose own `HEALTHCHECK` would fill the unset
+      fields (the 1.0.1 change).
+    - "Can the healthcheck send the API token the service already has in `environment:`?" gets a file whose test
+      writes `$API_TOKEN` and the sentence that compose fills it from the container's environment: **wrong**, 2
+      claims (a `containerVariable` caution on the file line, `variableFromContainer` wrong). The rewrite writes
+      `$$API_TOKEN` and is **verified**: 2 claims, 2 hold.
+    - Ledger: 4 reviews, 8 claims, 4 flagged, 0 repeated.
+
+    Before this demo was written, the app-side question was checked: 20 wrong healthcheck answers passed
+    `ComposeClaimKit`, `ComposeMergeClaimKit`, `ComposeCommandClaimKit`, `EntrypointClaimKit`, `DockerfileClaimKit`
+    and `YAMLClaimKit` with no note, so this kit adds notes nothing else gives. The replies are scripted, so the
+    mistakes are planted, not observed. The four turns meter **$0.00153255**, exactly the change in the total. The
+    running total after scenario 114 is **$0.3105101 across one hundred and fourteen scenarios**.

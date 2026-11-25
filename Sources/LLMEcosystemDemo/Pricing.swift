@@ -129,7 +129,8 @@ extension EcosystemDemo {
             (.entrypointHost, ModelPricing(inputPerMillion: 0.85, outputPerMillion: 3.4)),
             (.composeHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2)),
             (.composeMergeHost, ModelPricing(inputPerMillion: 0.85, outputPerMillion: 3.4)),
-            (.composeCommandHost, ModelPricing(inputPerMillion: 0.9, outputPerMillion: 3.6))
+            (.composeCommandHost, ModelPricing(inputPerMillion: 0.9, outputPerMillion: 3.6)),
+            (.healthcheckHost, ModelPricing(inputPerMillion: 0.85, outputPerMillion: 3.4))
         ]
     }
 }
