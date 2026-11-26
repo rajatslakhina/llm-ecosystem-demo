@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and fourteen packages in this
+A single runnable demo that wires together all one hundred and fifteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -172,6 +172,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ComposeMergeClaimKit`](https://github.com/rajatslakhina/compose-merge-claim-kit) | Answers show `docker-compose.yml` and `docker-compose.override.yml` and then describe what the two do together with the wrong picture of compose's merge: the override's `ports` said to replace the base ones (compose appends them), `LOG_LEVEL` said to be gone because the override sets `environment` (it merges by key), `ports: []` said to clear the base ports (it adds nothing; `!reset []` clears), the override said to still apply with `-f docker-compose.yml` (only the files named are read). `ComposeMergeClaimKit` merges the files the answer shows the way compose picks them, checks the ports, image, command and variables the answer states and the merge rules it states, and calls a result wrong only when a named misreading reproduces it. Parity-tested against `docker compose -f ... config --format json` (200 cases). |
 | [`ComposeCommandClaimKit`](https://github.com/rajatslakhina/compose-command-claim-kit) | Answers say what a compose service runs: `command: npm install && npm start` said to run through a shell (compose splits the string with no shell and stops at `&&`), an `entrypoint:` said to keep the image's `CMD`, `docker compose run` arguments said to be added to the command. Checked against compose's word splitting, substitution and the daemon's entrypoint/command merge (parity with `docker inspect`, 260 cases). |
 | [`HealthcheckClaimKit`](https://github.com/rajatslakhina/healthcheck-claim-kit) | Answers say how a container healthcheck behaves: `["CMD", ..., "||", "exit", "1"]` said to run through a shell (the engine execs it; `||` is an argument), Docker said to restart unhealthy containers under `restart: always` (it never does), `$API_TOKEN` in `test:` said to come from the container's `environment:` (compose substitutes it from the shell and `.env`), wrong defaults, a compose override said to drop the image's `HEALTHCHECK` command. Checked against compose and the engine (parity with `docker inspect`, 114 cases) and running containers. |
+| [`ComposeVolumeClaimKit`](https://github.com/rajatslakhina/compose-volume-claim-kit) | Answers explain lost or stale data with the wrong picture of compose volumes: `docker compose down` said to delete named volumes (only `down -v` does), `up --build` said to refresh the `node_modules` volume (compose keeps it, and Docker never copies into a volume that has files), compose said to create a missing `external` volume, `data:/x` read as the project's `data` folder (a bare name is a named volume), a volume's name given without its `<project>_` prefix, relative paths said to resolve from the current directory. Also the volume lines of the answer's own compose file (undeclared volumes, a duplicate target, `/cache:ro`, `external` with `driver`). Checked against `docker compose config` (144 parity cases) and running containers. |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -606,7 +607,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and fourteen scenarios, $0.3105101 metered total**. `architecture.svg`
+The current run is **one hundred and fifteen scenarios, $0.3116973 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1262,13 +1263,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and fourteen
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and fifteen
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and fourteen packages together; the output above is a genuine capture,
+  of all one hundred and fifteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1279,7 +1280,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and fourteen real packages compose and run," which the sample output
+means "the one hundred and fifteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3262,3 +3263,36 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     and `YAMLClaimKit` with no note, so this kit adds notes nothing else gives. The replies are scripted, so the
     mistakes are planted, not observed. The four turns meter **$0.00153255**, exactly the change in the total. The
     running total after scenario 114 is **$0.3105101 across one hundred and fourteen scenarios**.
+
+115. **`ComposeVolumeClaimKit`** adds the hundred-and-fifteenth scenario. Scenario 114 checks what an answer says about
+    a healthcheck; this one checks what it says about volumes and bind mounts. Two facts cause most of the wrong
+    answers: `docker compose down` keeps named volumes (only `down -v` deletes them, and never an `external` one),
+    and Docker copies an image's files only into an *empty* volume, so a volume that already holds `node_modules`
+    keeps the old packages across `up --build` until `-V` renews it. `ComposeVolumeClaimKit` reads the compose file
+    and `.env` the conversation shows and checks 19 stated rules, the mount type and volume name an answer states,
+    and the volume lines of its own compose file. It is parity-tested against `docker compose config` (144 cases),
+    and its behaviour rules were run on colima containers.
+
+    One route (`compose-volume-host`, $0.80/$3.20 per million tokens, priced explicitly), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `VolumeLedger` for the conversation.
+    - The question shows `db` on the named volume `pgdata` and `web` with `.:/app` and an anonymous
+      `/app/node_modules`, and asks whether `down` loses the database and why new npm packages never appear. The
+      answer says `down` deletes `pgdata` and that `up --build` gives the `node_modules` volume the new packages.
+      `ComposeMergeClaimKit` finds no claim in it; `ComposeVolumeClaimKit` says **wrong**, 2 claims
+      (`namedVolumeLostOnDown`, `volumeRefreshedOnRebuild`).
+    - The rewrite ("named volumes such as `pgdata` survive `docker compose down`", "the anonymous volume survives
+      `docker compose up --build`") is **verified**: 2 claims, 2 hold. With no project name shown, the scene names the
+      volume `<project>_pgdata`, and reads `web`'s mounts as a bind mount and an anonymous volume.
+    - "Can another compose project use the same database volume?" gets a file with `external: true` next to
+      `driver: local` and the sentence that compose creates the volume if it doesn't exist: **wrong**, 3 claims (the
+      `externalWithDriver` file line and `externalCreatedIfMissing` wrong; "`docker volume ls` will list it as
+      `pgdata`" holds, because an `external` volume keeps its key as its name). The rewrite drops `driver`, says the
+      volume must exist first and that `down -v` never removes it: **verified**, 2 claims, 2 hold.
+    - Ledger: 4 reviews, 9 claims, 4 flagged, 0 repeated.
+
+    Before this scenario was written, the one-note question was checked both ways: the kit's 30 wrong probe answers
+    got no note from `YAMLClaimKit`, `DockerfileClaimKit`, `EntrypointClaimKit`, `ComposeClaimKit`,
+    `ComposeMergeClaimKit`, `ComposeCommandClaimKit` or `HealthcheckClaimKit`, and 2,027 strings from the test files
+    of seven Docker kits got no note from this one. The replies are scripted, so the mistakes are planted, not
+    observed. The four turns meter **$0.0011872**, exactly the change in the total. The running total after scenario
+    115 is **$0.3116973 across one hundred and fifteen scenarios**.

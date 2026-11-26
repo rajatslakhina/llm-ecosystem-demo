@@ -99,5 +99,6 @@ extension EcosystemDemo {
         await runComposeMergeClaimScenario(meter: meter)
         await runComposeCommandClaimScenario(meter: meter)
         await runHealthcheckClaimScenario(meter: meter)
+        await runComposeVolumeClaimScenario(meter: meter)
     }
 }
