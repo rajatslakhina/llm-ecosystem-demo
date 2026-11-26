@@ -125,7 +125,7 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/compose-merge-claim-kit.git", from: "1.0.2"),
         .package(url: "https://github.com/rajatslakhina/compose-command-claim-kit.git", from: "1.0.1"),
         .package(url: "https://github.com/rajatslakhina/healthcheck-claim-kit.git", from: "1.0.1"),
-        .package(url: "https://github.com/rajatslakhina/compose-volume-claim-kit.git", from: "1.0.0")
+        .package(url: "https://github.com/rajatslakhina/compose-volume-claim-kit.git", from: "1.0.1")
     ],
     targets: [
         .executableTarget(

@@ -3296,3 +3296,7 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     of seven Docker kits got no note from this one. The replies are scripted, so the mistakes are planted, not
     observed. The four turns meter **$0.0011872**, exactly the change in the total. The running total after scenario
     115 is **$0.3116973 across one hundred and fifteen scenarios**.
+
+    The scenario was first wired against 1.0.0. An independent review then found eight correct sentences that 1.0.0
+    flagged (a container removed or recreated read as the volume, among others); 1.0.1 fixes them, and this demo
+    now pins 1.0.1. Its output did not change.

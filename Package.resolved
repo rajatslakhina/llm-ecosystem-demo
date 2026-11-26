@@ -1,5 +1,5 @@
 {
-  "originHash" : "cb679fa02284657edf374c270e34e291460b757d5fc1694942ff05a8a746a800",
+  "originHash" : "47c68a66e9f9b4f0fa56fef73fa4b89c99d6aa3d79c2c71e749f29940dc0839e",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/compose-volume-claim-kit.git",
       "state" : {
-        "revision" : "27123cec45dc7306ba2744dee661bed35f84a468",
-        "version" : "1.0.0"
+        "revision" : "bd62380b56a85f059a2827d394fe5af17f3511ec",
+        "version" : "1.0.1"
       }
     },
     {
