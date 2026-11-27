@@ -131,7 +131,8 @@ extension EcosystemDemo {
             (.composeMergeHost, ModelPricing(inputPerMillion: 0.85, outputPerMillion: 3.4)),
             (.composeCommandHost, ModelPricing(inputPerMillion: 0.9, outputPerMillion: 3.6)),
             (.healthcheckHost, ModelPricing(inputPerMillion: 0.85, outputPerMillion: 3.4)),
-            (.composeVolumeHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2))
+            (.composeVolumeHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2)),
+            (.composeSecretHost, ModelPricing(inputPerMillion: 0.8, outputPerMillion: 3.2))
         ]
     }
 }

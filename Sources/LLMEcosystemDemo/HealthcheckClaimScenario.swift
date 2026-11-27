@@ -41,6 +41,10 @@ extension EcosystemDemo {
             let repair = question + "\n" + first + "\n" + report.corrections.joined(separator: " ")
             let second = try await healthcheckTurn(repair, router: router, meter: meter)
             print("[healthcheck scenario] answer 2 (after the feedback): \(flatHealthcheck(second))")
+            // ComposeCommandClaimKit 1.0.1 flagged this answer's exec-form sentence; 1.0.2 leaves healthchecks alone.
+            let commandOnFix = CommandClaimChecker().check(second, context: question)
+            print("[healthcheck scenario] ComposeCommandClaimKit on answer 2: \(commandOnFix.verdict.rawValue) "
+                + "(\(commandOnFix.summary))")
             printHealthcheckFindings(await ledger.review(second, context: question))
             let scene = HealthClaimChecker().scene(for: second)
             print("[healthcheck scenario] api's image is unseen, so its effective healthcheck is "

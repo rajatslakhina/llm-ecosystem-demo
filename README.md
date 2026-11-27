@@ -1,6 +1,6 @@
 # LLM Ecosystem Demo
 
-A single runnable demo that wires together all one hundred and fifteen packages in this
+A single runnable demo that wires together all one hundred and sixteen packages in this
 ecosystem — [`ProviderGatewayKit`](https://github.com/rajatslakhina/foundation-model-provider-gateway),
 [`TokenMeterKit`](https://github.com/rajatslakhina/token-meter-kit),
 [`StructuredOutputKit`](https://github.com/rajatslakhina/structured-output-kit),
@@ -173,6 +173,7 @@ one bad reply isolated to its own item instead of taking the job down.
 | [`ComposeCommandClaimKit`](https://github.com/rajatslakhina/compose-command-claim-kit) | Answers say what a compose service runs: `command: npm install && npm start` said to run through a shell (compose splits the string with no shell and stops at `&&`), an `entrypoint:` said to keep the image's `CMD`, `docker compose run` arguments said to be added to the command. Checked against compose's word splitting, substitution and the daemon's entrypoint/command merge (parity with `docker inspect`, 260 cases). |
 | [`HealthcheckClaimKit`](https://github.com/rajatslakhina/healthcheck-claim-kit) | Answers say how a container healthcheck behaves: `["CMD", ..., "||", "exit", "1"]` said to run through a shell (the engine execs it; `||` is an argument), Docker said to restart unhealthy containers under `restart: always` (it never does), `$API_TOKEN` in `test:` said to come from the container's `environment:` (compose substitutes it from the shell and `.env`), wrong defaults, a compose override said to drop the image's `HEALTHCHECK` command. Checked against compose and the engine (parity with `docker inspect`, 114 cases) and running containers. |
 | [`ComposeVolumeClaimKit`](https://github.com/rajatslakhina/compose-volume-claim-kit) | Answers explain lost or stale data with the wrong picture of compose volumes: `docker compose down` said to delete named volumes (only `down -v` does), `up --build` said to refresh the `node_modules` volume (compose keeps it, and Docker never copies into a volume that has files), compose said to create a missing `external` volume, `data:/x` read as the project's `data` folder (a bare name is a named volume), a volume's name given without its `<project>_` prefix, relative paths said to resolve from the current directory. Also the volume lines of the answer's own compose file (undeclared volumes, a duplicate target, `/cache:ro`, `external` with `driver`). Checked against `docker compose config` (144 parity cases) and running containers. |
+| [`ComposeSecretClaimKit`](https://github.com/rajatslakhina/compose-secret-claim-kit) | Answers about compose secrets carry Swarm's picture, or an env-var one, into plain `docker compose`: a secret said to become an environment variable (it is a file, `/run/secrets/<name>`), Swarm said to be needed (only `external: true` needs it), `docker compose up` said to read a secret made with `docker secret create` ("unsupported external secret"), secrets said to be encrypted or on a tmpfs, a top-level declaration said to give every service the secret, `mode: 0400` said to lock down a `file:` secret (compose bind-mounts the host file and ignores it), a path compose does not mount it on. Also the secret and config lines of the answer's own compose file. Checked against `config`, `up` and the files inside running containers (132 parity cases). |
 ![Architecture](Screenshots/architecture.svg)
 
 ## What it demonstrates
@@ -607,7 +608,7 @@ their `1.0.0` tags — no local checkouts or path overrides needed.
 
 *The capture above is from an earlier run and shows twenty-four scenarios; it is left
 as captured rather than edited, because a doctored total is worse than a dated one.
-The current run is **one hundred and fifteen scenarios, $0.3116973 metered total**. `architecture.svg`
+The current run is **one hundred and sixteen scenarios, $0.3129165 metered total**. `architecture.svg`
 is likewise a point-in-time subset. The package table and narrative above are current.*
 
 28. **`ClaimSegmenterKit`** adds the twenty-eighth scenario, and it is the only
@@ -1263,13 +1264,13 @@ is likewise a point-in-time subset. The package table and narrative above are cu
     place scenario 51 hit it. Scenario 51 widened these readings for the
     corpus. Nothing until now widened them for each other.
 
-- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and fifteen
+- **Build:** `swift build` — clean, zero warnings, resolving all one hundred and sixteen
   dependencies from their real tagged releases. Build with
   `--scratch-path` outside iCloud if this checkout is inside a synced
   folder: the sync daemon rewrites `.build/checkouts` mtimes mid-build and
   SwiftPM fails with "input file ... was modified during the build".
 - **Run:** `swift run LLMEcosystemDemo` — exercises the real, compiled code
-  of all one hundred and fifteen packages together; the output above is a genuine capture,
+  of all one hundred and sixteen packages together; the output above is a genuine capture,
   not a mock-up.
 - **Lint:** `swiftlint lint --strict` — zero violations. (An earlier version
   of this README noted `swiftlint` wasn't installable in the sandbox this
@@ -1280,7 +1281,7 @@ is likewise a point-in-time subset. The package table and narrative above are cu
 
 This repository intentionally has no test target — it's an integration
 demo, not a library with independently testable units. Correctness here
-means "the one hundred and fifteen real packages compose and run," which the sample output
+means "the one hundred and sixteen real packages compose and run," which the sample output
 above demonstrates directly rather than through unit assertions.
 
 ## Architecture
@@ -3253,10 +3254,10 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
       `$$API_TOKEN` and is **verified**: 2 claims, 2 hold.
     - Ledger: 4 reviews, 8 claims, 4 flagged, 0 repeated.
 
-    One known gap in the neighbouring kit: answer 2's first sentence ("so the `||` reached it as an argument") is
-    true for a healthcheck exec form, and `ComposeCommandClaimKit` 1.0.1 flags it with its `command:` operator rule.
-    This scenario runs that kit on answer 1 only; checked separately, 2 of 63 correct healthcheck answers get a note
-    from it. A fix is planned as ComposeCommandClaimKit 1.0.2.
+    A gap in the neighbouring kit, now closed: answer 2's first sentence ("so the `||` reached it as an argument") is
+    true for a healthcheck exec form, and `ComposeCommandClaimKit` 1.0.1 flagged it with its `command:` operator rule
+    (2 of 63 correct healthcheck answers got such a note). 1.0.2 (2026-11-27) leaves healthcheck sentences alone, and
+    this demo pins it: the scenario now also runs that kit on answer 2, which comes back `unchecked` with no note.
 
     Before this demo was written, the app-side question was checked: 20 wrong healthcheck answers passed
     `ComposeClaimKit`, `ComposeMergeClaimKit`, `ComposeCommandClaimKit`, `EntrypointClaimKit`, `DockerfileClaimKit`
@@ -3300,3 +3301,38 @@ MIT © 2026 Rajat S. Lakhina. See [LICENSE](LICENSE).
     The scenario was first wired against 1.0.0. An independent review then found eight correct sentences that 1.0.0
     flagged (a container removed or recreated read as the volume, among others); 1.0.1 fixes them, and this demo
     now pins 1.0.1. Its output did not change.
+
+116. **`ComposeSecretClaimKit`** adds the hundred-and-sixteenth scenario. Scenario 115 checks what an answer says about
+    volumes; this one checks what it says about compose `secrets:` and `configs:`. Two pictures cause most of the wrong
+    answers: Swarm's (secrets need Swarm, are encrypted, sit on a tmpfs, and `external` ones just work) and an env-var
+    one (the secret shows up as `$DB_PASSWORD`). With plain `docker compose up` a secret is a file in
+    `/run/secrets/`, a `file:` secret is the host file bind-mounted read-only (so `uid`/`gid`/`mode` are ignored), a
+    copied `environment:` value does honour them, and `external: true` stops `up`. `ComposeSecretClaimKit` reads the
+    compose file the conversation shows and checks 16 stated rules, the path and default place an answer states, what
+    it says `mode` does, and 11 problems in the answer's own compose file. It is parity-tested against `config`, `up`
+    and `stat` inside running containers (132 cases).
+
+    One route (`compose-secret-host`, $0.80/$3.20 per million tokens, priced explicitly), scripted replies, one
+    `LLMSession` per turn, metered by `TokenMeterKit`, one `SecretLedger` for the conversation.
+    - The question shows `db` reading its password through `POSTGRES_PASSWORD_FILE` from the `file:` secret
+      `db_password`, and `web` with the `environment:` secret `api_key` (`target: api.key`) and the `file:` secret
+      `tls_key` (`mode: 0400`). The answer says the secret becomes an environment variable, puts the API key at
+      `/api_key`, says `mode: 0400` makes `tls_key` readable only by its owner and that compose encrypts secrets.
+      `ComposeVolumeClaimKit` finds no claim in it; `ComposeSecretClaimKit` says **wrong**, 4 claims
+      (`secretAsEnvironmentVariable`, the path (compose uses `/run/secrets/api.key`), the `mode` claim on a `file:`
+      source, `secretEncrypted`).
+    - The rewrite ("mounts the secret as a file at `/run/secrets/db_password`", "the API key is at
+      `/run/secrets/api.key`", "compose ignores its `mode`", "not encrypted") is **verified**: 3 claims, 3 hold. The
+      scene lists where compose mounts each secret.
+    - "Can I use a secret I made with `docker secret create`?" gets a file with `external: true` and the sentence that
+      `docker compose up` reads it: **wrong**, 2 claims (the `externalWithoutSwarm` file line and
+      `externalWorksWithCompose`). The rewrite keeps the `file:` source and is **verified**, 1 claim.
+    - Ledger: 4 reviews, 10 claims, 6 flagged, 0 repeated.
+
+    Before this scenario was written, the one-note question was checked both ways: the kit's correct probe answers got
+    no note from the nine Docker and YAML kits already in the demo (one wrong probe, `mode: 0440`, also gets
+    `YAMLClaimKit`'s octal caveat), and 4,714 strings from those kits' tests got no note from this one. The replies
+    are scripted, so the mistakes are planted, not observed. The four turns meter **$0.0012192**, exactly the change
+    in the total. The running total after scenario 116 is **$0.3129165 across one hundred and sixteen scenarios**.
+    Output: 2133 lines (2107 + 24 scenario lines, the pricing row, the new total row and line, the scenario 114 line;
+    the old total row and line went), two runs identical.

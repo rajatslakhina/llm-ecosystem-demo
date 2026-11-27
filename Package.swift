@@ -123,9 +123,10 @@ let package = Package(
         .package(url: "https://github.com/rajatslakhina/entrypoint-claim-kit.git", from: "1.0.1"),
         .package(url: "https://github.com/rajatslakhina/compose-claim-kit.git", from: "1.0.0"),
         .package(url: "https://github.com/rajatslakhina/compose-merge-claim-kit.git", from: "1.0.2"),
-        .package(url: "https://github.com/rajatslakhina/compose-command-claim-kit.git", from: "1.0.1"),
+        .package(url: "https://github.com/rajatslakhina/compose-command-claim-kit.git", from: "1.0.2"),
         .package(url: "https://github.com/rajatslakhina/healthcheck-claim-kit.git", from: "1.0.1"),
-        .package(url: "https://github.com/rajatslakhina/compose-volume-claim-kit.git", from: "1.0.1")
+        .package(url: "https://github.com/rajatslakhina/compose-volume-claim-kit.git", from: "1.0.1"),
+        .package(url: "https://github.com/rajatslakhina/compose-secret-claim-kit.git", from: "1.0.0")
     ],
     targets: [
         .executableTarget(
@@ -259,7 +260,8 @@ let package = Package(
                 .product(name: "ComposeMergeClaimKit", package: "compose-merge-claim-kit"),
                 .product(name: "ComposeCommandClaimKit", package: "compose-command-claim-kit"),
                 .product(name: "HealthcheckClaimKit", package: "healthcheck-claim-kit"),
-                .product(name: "ComposeVolumeClaimKit", package: "compose-volume-claim-kit")
+                .product(name: "ComposeVolumeClaimKit", package: "compose-volume-claim-kit"),
+                .product(name: "ComposeSecretClaimKit", package: "compose-secret-claim-kit")
             ]
         )
     ]

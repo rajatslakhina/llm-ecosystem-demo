@@ -1,5 +1,5 @@
 {
-  "originHash" : "47c68a66e9f9b4f0fa56fef73fa4b89c99d6aa3d79c2c71e749f29940dc0839e",
+  "originHash" : "c055b10f8e97f2df02c80347bcabeee672c411532b80921aeb5b62edfe45af11",
   "pins" : [
     {
       "identity" : "abstention-policy-kit",
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rajatslakhina/compose-command-claim-kit.git",
       "state" : {
-        "revision" : "55e501db888dece76a50d1473bb4e3762e9de749",
-        "version" : "1.0.1"
+        "revision" : "243ed9fa465eee01e05c53d73ca5701a543aebbb",
+        "version" : "1.0.2"
       }
     },
     {
@@ -188,6 +188,15 @@
       "state" : {
         "revision" : "0d34581bdae40b8d5143215d7c1ab254f1a85e47",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "compose-secret-claim-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rajatslakhina/compose-secret-claim-kit.git",
+      "state" : {
+        "revision" : "00c98b6c0389576d20737d70d7aa4872245af495",
+        "version" : "1.0.0"
       }
     },
     {
